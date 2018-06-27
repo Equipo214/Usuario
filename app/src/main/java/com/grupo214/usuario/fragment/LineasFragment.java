@@ -1,27 +1,19 @@
 package com.grupo214.usuario.fragment;
 
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.EditText;
 
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.adapters.LineasAdapter;
 import com.grupo214.usuario.apiGoogleDirection.GoogleMapsDirectionsAPI;
 import com.grupo214.usuario.objetos.Linea;
-import com.grupo214.usuario.objetos.Punto;
 
 import java.util.ArrayList;
 
@@ -47,7 +39,7 @@ public class LineasFragment extends Fragment {
        // EditText busqueda = rootView.findViewById(R.id.busqueda);
 
         if (GoogleMapsDirectionsAPI.checkNull(mLineas)) {
-            GoogleMapsDirectionsAPI.cargarPolylineOptions(mLineas);
+            GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
         }
 
 
@@ -61,7 +53,7 @@ public class LineasFragment extends Fragment {
                 //por si las moscas que no tire null :v
                 if (l.isCheck()) {
                     if (l.getPolylineOptions() == null) {
-                        GoogleMapsDirectionsAPI.cargarPolylineOptions(l);
+                        GoogleMapsDirectionsAPI.loadPolylineOptions(l);
                     }
                 }
             }

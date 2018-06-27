@@ -16,9 +16,9 @@ public class  GoogleMapsDirectionsAPI {
     /**
      *
      */
-    public static void cargarPolylineOptions(List<Linea> lineas){
+    public static void loadPolylineOptions(List<Linea> lineas){
         for (Linea l : lineas) {
-                cargarPolylineOptions(l);
+                loadPolylineOptions(l);
         }
     }
 
@@ -32,10 +32,9 @@ public class  GoogleMapsDirectionsAPI {
 
     /**
      * Disparar el evento asyncronico para obtener las rutas de google.
-     *
      * @param linea
      */
-    public static void cargarPolylineOptions(Linea linea) {
+    public static void loadPolylineOptions(Linea linea) {
         String url = getRequestUrl(linea.getRecorrido());
         TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
         taskRequestDirections.setLinea(linea);

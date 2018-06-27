@@ -1,4 +1,5 @@
 <resources>
+    <string name="SERVIDOR_LOCAL">http://192.168.0.70/login/consumirPosicion.php?</string>
     <string name="app_name">¿Donde esta mi Bondi?</string>
     <string name="navigation_drawer_open">Abrir</string>
     <string name="navigation_drawer_close">Cerrar</string>
@@ -40,4 +41,6 @@
     ]
   }
 ]</string>
+
+
 </resources>

@@ -12,10 +12,19 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/bt_demo"
+        android:layout_marginTop="82dp"
+        android:text="Animate" />
+
+    <Button
+        android:id="@+id/bt_demo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="27dp"
         android:layout_marginTop="22dp"
-        android:text="Animate" />
+        android:text="DEMO" />
 
 </RelativeLayout>

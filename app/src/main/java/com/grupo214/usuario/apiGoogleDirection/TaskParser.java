@@ -2,7 +2,6 @@ package com.grupo214.usuario.apiGoogleDirection;
 
 import android.os.AsyncTask;
 
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.grupo214.usuario.objetos.Linea;

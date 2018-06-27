@@ -2,7 +2,6 @@ package com.grupo214.usuario.activities;
 
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -84,13 +83,12 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case TAB_MAPA:
                         //if hay cambios:
-                        mapFragment.actualizarDibujoRutas();
+                        mapFragment.updateDrawingRoutes();
                         break;
                     case TAB_LINEA:
                         break;
                 }
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
@@ -102,11 +100,11 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
             }
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case TAB_INICIO:
+                        mapFragment.loadRoutes();
                         break;
                     case TAB_MAPA:
                         break;
@@ -126,7 +124,6 @@ public class MainActivity extends AppCompatActivity
 
         //Menu Lateral:
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
 
@@ -138,6 +135,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //  mensaje("Guardar en base de datos SQL");
+
             super.onBackPressed();
         }
     }
@@ -200,10 +198,9 @@ public class MainActivity extends AppCompatActivity
 
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
-        mLineas = cargarLista();
+        mLineas = loadArray();
         lineasFragment.setmLineas(mLineas);
         mapFragment.setmLineas(mLineas);
-
 
         adapter.addFragment(new InicioFragment(), "Inicio");
         adapter.addFragment(mapFragment, "Mapa");
@@ -240,7 +237,7 @@ public class MainActivity extends AppCompatActivity
 
     //esta funcion debe cargar la lista, este es el lugar final donde quedara
     //Trato de guardar all en SQL LITE.
-    private ArrayList<Linea> cargarLista() {
+    private ArrayList<Linea> loadArray() {
 
         if ( true ){
             mLineas = connSQLite.cargarLineas();
@@ -256,7 +253,7 @@ public class MainActivity extends AppCompatActivity
 
         /*
         switch (mode) {
-            case MODE_HARD:
+            case MODE_HARD:z
                 mLineas = Linea.listHardCodeTest();
                 break;
             case MODE_SQL:
@@ -271,8 +268,13 @@ public class MainActivity extends AppCompatActivity
                 break;
         }*/
 
-        GoogleMapsDirectionsAPI.cargarPolylineOptions(mLineas);
-
+        // si Alex me trae las cosas, lo que debo hacer es
+        // crear por cada polylineOptions un polyline y solo
+        // guardar esto en la clase Linea y en la base de datos el polyline
+        // esta funcion se debe llamar una vez creado el mapa, al inicio de la app,
+        // la funciones loadRoutes();
+        GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
+      //  mapFragment.loadRoutes();
         return mLineas;
     }
 

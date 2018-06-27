@@ -2,23 +2,38 @@ package com.grupo214.usuario.objetos;
 
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Linea {
     private int id;
     private String linea;
     private String ramal;
     private boolean check;
-    private Recorrido recorrido;
-    private PolylineOptions polylineOptions;
+
+    private Recorrido recorrido; //esta no
+    private PolylineOptions polylineOptions; // no deberia existir
+    private Polyline polyline; //esta si
+    private List<Marker> paradas;
+
+
     private int color;
     private int i;
     private int sentido;
 
+
+
+    public void setPolyline(Polyline polyline) {
+        this.polyline = polyline;
+    }
+
     public Linea(int id, String linea, String ramal, Recorrido recorrido, int color) {
         super();
+        this.paradas = new ArrayList<>();
         this.i = -1;
         this.sentido=1;
         this.id = id;
@@ -27,7 +42,13 @@ public class Linea {
         this.check = false;
         this.recorrido = recorrido;
         this.color = color;
+
     }
+
+    public void agregarParada(Marker mk){
+        paradas.add(mk);
+    }
+
 
     public int getId() {
         return id;
@@ -72,11 +93,19 @@ public class Linea {
 
     public LatLng getNextPoint() {
         i += sentido;
-        if (i == this.polylineOptions.getPoints().size()-1)
+        if (i == this.polyline.getPoints().size()-1)
             sentido = -1;
         if ( i == 0)
             sentido = 1;
-        return polylineOptions.getPoints().get(i);
+        return polyline.getPoints().get(i);
+    }
+    public LatLng getNextPointDemo() {
+        i += sentido;
+        if (i == this.polyline.getPoints().size()-1)
+            sentido = -1;
+        if ( i == 0)
+            sentido = 1;
+        return polyline.getPoints().get(i);
     }
 
 
@@ -111,9 +140,9 @@ public class Linea {
 
         Recorrido r3 = new Recorrido();
         r3.add(new Punto(true, new LatLng(-34.759334, -58.400633)));  //1
-        r3.add(new Punto(false, new LatLng(-34.760338, -58.402877))); //2
+        r3.add(new Punto(true, new LatLng(-34.760338, -58.402877))); //2
         r3.add(new Punto(true, new LatLng(-34.759612, -58.408275)));  //3
-        r3.add(new Punto(false, new LatLng(-34.767752, -58.410225))); //4
+        r3.add(new Punto(true, new LatLng(-34.767752, -58.410225))); //4
         r3.add(new Punto(true, new LatLng(-34.765143, -58.429020)));  //5
         r3.add(new Punto(true, new LatLng(-34.767960, -58.437517)));  //6
         r3.add(new Punto(true, new LatLng(-34.778570, -58.457853)));  //7
@@ -123,7 +152,7 @@ public class Linea {
         //        r3.add(new Punto(true, new LatLng(-34.680438, -58.551687)));
         //        r3.add(new Punto(true, new LatLng(-34.686466, -58.558697)));
         //        r3.add(new Punto(true, new LatLng(-34.682602, -58.554564)));
-        mLineas.add(new Linea(3, "406", "Lomas de Zamora", r3, cr.nextColor()));
+        mLineas.add(new Linea(3, "406", "Ramos Mejia", r3, cr.nextColor()));
 
 /*
         mLineas.add(new Linea(3,"406", "Ramos Mejia",false));
@@ -153,4 +182,16 @@ public class Linea {
     }
 
 
+    public void hide() {
+        polyline.setVisible(false);
+        for (Marker mk: paradas) {
+            mk.setVisible(false);
+        }
+    }
+    public void show(){
+        polyline.setVisible(true);
+        for (Marker mk: paradas) {
+            mk.setVisible(true);
+        }
+    }
 }

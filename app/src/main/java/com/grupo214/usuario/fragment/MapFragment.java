@@ -3,58 +3,52 @@ package com.grupo214.usuario.fragment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.apiServidor.Dibujar;
+import com.grupo214.usuario.apiServidor.DibujarDemo;
 import com.grupo214.usuario.objetos.Linea;
 import com.grupo214.usuario.objetos.Punto;
 import com.grupo214.usuario.objetos.Recorrido;
 
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class MapFragment extends Fragment {
 
-    Button bt;
+    Button bt_animar;
+    Button bt_demo;
     MapView mMapView;
     GoogleMap googleMap;
     ArrayList<Recorrido> recorridos;
     ArrayList<Linea> mLineas;
-    Marker mk;
-    Boolean flag = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        bt = (Button) rootView.findViewById(R.id.button);
+        bt_animar = (Button) rootView.findViewById(R.id.button);
+        bt_demo = (Button) rootView.findViewById(R.id.bt_demo);
+
         recorridos = new ArrayList<>();
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -83,7 +77,8 @@ public class MapFragment extends Fragment {
 
                 googleMap.getUiSettings().setZoomControlsEnabled(true);
                 googleMap.getUiSettings().setIndoorLevelPickerEnabled(false);
-                // googleMap.getUiSettings().setMapToolbarEnabled(false);
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
+
                 googleMap.setBuildingsEnabled(false);
                 googleMap.setMapStyle(new MapStyleOptions(getResources()
                         .getString(R.string.style_json)));
@@ -99,43 +94,45 @@ public class MapFragment extends Fragment {
                 googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
-                        mensaje("infoWindowsClick");
+                        if (marker.getTitle().contains("Linea")) {
+                            mensaje("Accesibilidad");
+                        } else if (marker.getTitle().contains("Servicio")) {
+                            mensaje("Comentario");
+                        }
                     }
                 });
-
-                LatLng ubicacionUniversidad = new LatLng(-34.669997, -58.563181);
-                //   googleMap.addMarker(new MarkerOptions().position(ubicacionUniversidad).title("Linea 406").snippet("Lomas de zamora"));
-                googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-                    @Override
-                    public boolean onMyLocationButtonClick() {
-                        mensaje("Button apretado");
-                        return false;
-                    }
-                });
-
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(ubicacionUniversidad).zoom(10).build()));
-
-
+                        new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(10).build()));
             }
         });
 
-        bt.setOnClickListener(new View.OnClickListener() {
+        bt_animar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (flag) {
-                    mk = googleMap.addMarker(new MarkerOptions()
-                            .position(mLineas.get(0).getNextPoint())
-                            .title("Linea  4")
-                            .snippet("Macri bus"));
-                    flag = false;
-                } else
-                    animateMarker(mk, mLineas.get(0).getNextPoint(), false);
+                Marker mk = googleMap.addMarker(new MarkerOptions()
+                        .position(mLineas.get(3).getNextPointDemo())
+                        .title("Servicio " + mLineas.get(3).getLinea())
+                        .snippet(mLineas.get(3).getRamal()));
+                Dibujar dibujar = new Dibujar(googleMap, mLineas.get(3), getContext(), mk);
+                dibujar.execute();
+            }
+        });
+        bt_demo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Marker mk = googleMap.addMarker(new MarkerOptions()
+                        .position(mLineas.get(3).getNextPointDemo())
+                        .title("Servicio " + mLineas.get(3).getLinea())
+                        .snippet(mLineas.get(3).getRamal()));
+
+                DibujarDemo dibujarDemo = new DibujarDemo(googleMap, mLineas.get(3), mk);
+                dibujarDemo.execute();
             }
         });
 
         return rootView;
     }
+
 
     private void mensaje(String msj) {
         Snackbar.make(getActivity().getWindow().getDecorView().findViewById(android.R.id.content)
@@ -148,7 +145,6 @@ public class MapFragment extends Fragment {
         super.onResume();
         mMapView.onResume();
     }
-
 
     @Override
     public void onPause() {
@@ -176,82 +172,73 @@ public class MapFragment extends Fragment {
         this.mLineas = mLineas;
     }
 
-    public void dibujarRuta(Linea linea) {
-        for (Punto punto : linea.getRecorrido()) {
+    @Deprecated
+    public void drawRoute(Linea l) {
+        for (Punto punto : l.getRecorrido()) {
             if (punto.isParada())
                 googleMap.addMarker(new MarkerOptions()
                         .position(punto.getLatLng())
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parada))
                         .anchor(0.5f, 0.5f)
                         .flat(true)
-                        .title(linea.getLinea()));
-
+                        .title(l.getLinea())
+                        .snippet(l.getRamal()));
         }
-
-        googleMap.addPolyline(linea.getPolylineOptions());
+        googleMap.addPolyline(l.getPolylineOptions());
     }
 
-    // funcion para animar que recibe puntos.
+    public void loadRoutes() {
+        BitmapDescriptor icoParada = BitmapDescriptorFactory.fromResource(R.drawable.ic_parada);
+        for (Linea l : mLineas) {
+            l.setPolyline(googleMap.addPolyline(l.getPolylineOptions()));
+            for (Punto punto : l.getRecorrido()) {
+                if (punto.isParada())
+                    l.agregarParada(googleMap.addMarker(new MarkerOptions()
+                            .position(punto.getLatLng())
+                            .icon(icoParada)
+                            .anchor(0.5f, 0.5f)
+                            .flat(true)
+                            .title("Linea " + l.getLinea())));
+            }
+
+            // si no lo personalizo por coso sacarlo de aca.
+            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+
+                public View getInfoContents(Marker marker) {
+                    View view = getLayoutInflater().inflate(R.layout.container_info_windows, null);
+                    ((TextView) view.findViewById(R.id.list_text_linea)).setText(marker.getTitle());
+                    ((TextView) view.findViewById(R.id.list_text_ramal)).setText(marker.getSnippet());
+                    return view;
+                }
+            });
+            if (l.isCheck())
+                l.show();
+            else
+                l.hide();
+        }
+    }
+
+    public void updateDrawingRoutes() {
+        for (Linea l : mLineas) {
+            if (!l.isCheck()) {
+                l.hide();
+            } else {
+                l.show();
+            }
+        }
+    }
 
     /**
-     * Borro todas las rutas y vuelvo a dibujar.
+     * Ccalcular distancia entre dos puntos.
+     *
+     * @param StartP punto de inicio.
+     * @param EndP   punto de fin.
+     * @return
      */
-    public void actualizarDibujoRutas() {
-        googleMap.clear();
-        for (int i = 0; i < mLineas.size(); i++) {
-            Linea linea = mLineas.get(i);
-            if (linea.isCheck()) {
-                //    if (linea.getPolylineOptions() == null)
-                //        cargarPolylineOptions(linea);
-                dibujarRuta(linea);
-            }
-
-        }
-    }
-
-    public void animateMarker(final Marker marker, final LatLng toPosition,
-                              final boolean hideMarker) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        Projection proj = googleMap.getProjection();
-        Point startPoint = proj.toScreenLocation(marker.getPosition());
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-        int distancia = (int) calcularDistancia(mk.getPosition(),toPosition);
-
-        distancia = distancia==0?1:distancia;
-
-        // Lo que me devuelve la funcion es la distancia en metros entre los dos puntos
-        // entonces segun yo, 100 metros lo hace en 12 segundos
-        // (distancia/100)*12 (cada doce segundos hace 100 metros)
-        // pero como la duracion esta en mili lo debo multiplicar por 1000
-        // entonces me queda (distancia*12*10) -> distancia*120
-        final long duration = distancia*120; // dependiendo la distancia entre los puntos.
-        final Interpolator interpolator = new LinearInterpolator();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-                double lng = t * toPosition.longitude + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * toPosition.latitude + (1 - t)
-                        * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                } else {
-                    if (hideMarker) {
-                        marker.setVisible(false);
-                    } else {
-                        marker.setVisible(true);
-                    }
-                }
-            }
-        });
-    }
-    private double calcularDistancia(LatLng StartP, LatLng EndP) {
+    private double calculateDistance(LatLng StartP, LatLng EndP) {
         int Radius = 6371000;// radio de la tierra en  metros.
 
         double lat1 = StartP.latitude;
@@ -265,9 +252,6 @@ public class MapFragment extends Fragment {
                 * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
                 * Math.sin(dLon / 2);
         double c = 2 * Math.asin(Math.sqrt(a));
-
-        Log.i("Radius Value", "" + Radius * c + "   Metros");
-
         return Radius * c;
     }
 }
