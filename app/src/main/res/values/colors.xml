@@ -6,4 +6,5 @@
     <color name="colorWarning">#f0ad4e</color>
     <color name="colorDanger">#f0ad4e</color>
     <color name="colorBlack">#111111</color>
+    <color name="colorBackground">#e8fce8</color>
 </resources>

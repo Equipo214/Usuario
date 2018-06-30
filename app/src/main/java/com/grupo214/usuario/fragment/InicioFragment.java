@@ -18,12 +18,12 @@ import com.grupo214.usuario.R;
 public class InicioFragment extends Fragment {
     private static final String TAG = "InicioFragment";
 
-    private Button btnTEST;
+
 
     @Nullable
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab1_fragment,container,false);
+        final View view = inflater.inflate(R.layout.tab1_fragment,container,false);
 
         return view;
     }

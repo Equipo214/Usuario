@@ -20,6 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Linea> mLineas;
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
+
+    private Button btnTEST;
     private LineasFragment lineasFragment;
     private ConexionSQLiteHelper connSQLite;
 
@@ -61,6 +65,8 @@ public class MainActivity extends AppCompatActivity
         final ViewPager mViewPager = findViewById(R.id.container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+
 
         appBarLayout.setExpanded(true,true);
 
@@ -89,6 +95,7 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
             }
+
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
@@ -104,7 +111,7 @@ public class MainActivity extends AppCompatActivity
             public void onTabReselected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case TAB_INICIO:
-                        mapFragment.loadRoutes();
+                     //   mapFragment.loadRoutes();
                         break;
                     case TAB_MAPA:
                         break;
@@ -125,7 +132,6 @@ public class MainActivity extends AppCompatActivity
         //Menu Lateral:
         navigationView.setNavigationItemSelectedListener(this);
     }
-
 
 
     @Override
@@ -274,9 +280,16 @@ public class MainActivity extends AppCompatActivity
         // esta funcion se debe llamar una vez creado el mapa, al inicio de la app,
         // la funciones loadRoutes();
         GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
-      //  mapFragment.loadRoutes();
+
+
+        //  mapFragment.loadRoutes();
+
         return mLineas;
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Thread.interrupted();
+    }
 }

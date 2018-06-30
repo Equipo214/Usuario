@@ -4,6 +4,7 @@ package com.grupo214.usuario.fragment;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -42,13 +43,13 @@ public class MapFragment extends Fragment {
     GoogleMap googleMap;
     ArrayList<Recorrido> recorridos;
     ArrayList<Linea> mLineas;
+    private boolean cargadas = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         bt_animar = (Button) rootView.findViewById(R.id.button);
         bt_demo = (Button) rootView.findViewById(R.id.bt_demo);
-
         recorridos = new ArrayList<>();
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -103,6 +104,7 @@ public class MapFragment extends Fragment {
                 });
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(10).build()));
+
             }
         });
 
@@ -117,16 +119,14 @@ public class MapFragment extends Fragment {
                 dibujar.execute();
             }
         });
+
+
         bt_demo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Marker mk = googleMap.addMarker(new MarkerOptions()
-                        .position(mLineas.get(3).getNextPointDemo())
-                        .title("Servicio " + mLineas.get(3).getLinea())
-                        .snippet(mLineas.get(3).getRamal()));
-
-                DibujarDemo dibujarDemo = new DibujarDemo(googleMap, mLineas.get(3), mk);
-                dibujarDemo.execute();
+                for (Linea l : mLineas) {
+                    new DibujarDemo(googleMap, l).ejecutar();
+                }
             }
         });
 
@@ -219,9 +219,12 @@ public class MapFragment extends Fragment {
             else
                 l.hide();
         }
+        cargadas = true;
     }
 
     public void updateDrawingRoutes() {
+        if (!cargadas)
+            loadRoutes();
         for (Linea l : mLineas) {
             if (!l.isCheck()) {
                 l.hide();
@@ -254,4 +257,6 @@ public class MapFragment extends Fragment {
         double c = 2 * Math.asin(Math.sqrt(a));
         return Radius * c;
     }
+
+
 }

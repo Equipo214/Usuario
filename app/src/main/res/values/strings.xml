@@ -8,6 +8,8 @@
     <string name="nav_header_desc">Menu</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
+    <string name="Prototipo">La aplicación mobile deberá ser capaz de mostrar un mapa con la ubicación en tiempo real del
+usuario y las ubicaciones fijas de colectivos.</string>
     <string name="nav_map">Mapa</string>
     <string name="nav_likSube">SUBE</string>
     <string name="nav_linkTarifas">Tarifas</string>
