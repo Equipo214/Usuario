@@ -20,8 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
+import android.widget.ThemedSpinnerAdapter;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity
             public void onTabReselected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case TAB_INICIO:
-                     //   mapFragment.loadRoutes();
+//                        mapFragment.loadRoutes();
                         break;
                     case TAB_MAPA:
                         break;
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //  mensaje("Guardar en base de datos SQL");
-
+            Thread.interrupted();
             super.onBackPressed();
         }
     }

@@ -23,19 +23,19 @@ public class Linea {
 
     private int color;
     private int i;
-    private int sentido;
-
-
+    private int j;
+    private int sentido_i;
+    private int sentido_j;
 
     public void setPolyline(Polyline polyline) {
         this.polyline = polyline;
+        this.j = this.polyline.getPoints().size()-1;
     }
 
     public Linea(int id, String linea, String ramal, Recorrido recorrido, int color) {
         super();
         this.paradas = new ArrayList<>();
-        this.i = -1;
-        this.sentido=1;
+        this.i = 0;
         this.id = id;
         this.linea = linea;
         this.ramal = ramal;
@@ -91,21 +91,27 @@ public class Linea {
     }
 
 
-    public LatLng getNextPoint() {
-        i += sentido;
+
+    public LatLng getNextPointDemo() {
+        i += sentido_i;
+
         if (i == this.polyline.getPoints().size()-1)
-            sentido = -1;
+            sentido_i = -1;
         if ( i == 0)
-            sentido = 1;
+            sentido_i = 1;
+
         return polyline.getPoints().get(i);
     }
-    public LatLng getNextPointDemo() {
-        i += sentido;
-        if (i == this.polyline.getPoints().size()-1)
-            sentido = -1;
-        if ( i == 0)
-            sentido = 1;
-        return polyline.getPoints().get(i);
+
+    public LatLng getPreviousPointDemo() {
+        j += sentido_j;
+
+        if (j == this.polyline.getPoints().size()-1)
+            sentido_j = -1;
+        if ( j == 0)
+            sentido_j = 1;
+
+        return polyline.getPoints().get(j);
     }
 
 

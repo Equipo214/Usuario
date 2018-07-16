@@ -16,24 +16,34 @@ import com.grupo214.usuario.objetos.Linea;
 
 public class DibujarDemo {
 
+    private final Boolean sentido;
     private long refreshTime = 1000;
     private final Marker mk;
     private Linea linea;
     private GoogleMap googleMap;
 
-    public DibujarDemo(GoogleMap googleMap, Linea linea) {
+    public DibujarDemo(GoogleMap googleMap, Linea linea, Boolean sentido) {
         this.googleMap = googleMap;
         this.linea = linea;
-        this.mk = googleMap.addMarker(new MarkerOptions()
-                .position(linea.getNextPointDemo())
-                .title("Servicio " + linea.getLinea())
-                .snippet(linea.getRamal()));
+        this.sentido = sentido;
+
+        if (sentido) {
+            this.mk = googleMap.addMarker(new MarkerOptions()
+                    .position(linea.getNextPointDemo())
+                    .title("Servicio " + linea.getLinea())
+                    .snippet(linea.getRamal()));
+        } else {
+            this.mk = googleMap.addMarker(new MarkerOptions()
+                    .position(linea.getPreviousPointDemo())
+                    .title("Servicio " + linea.getLinea())
+                    .snippet(linea.getRamal()));
+        }
+
     }
 
 
-
     public void hilo() {
-        while (System.currentTimeMillis()%refreshTime!=0);
+        while (System.currentTimeMillis() % refreshTime != 0) ;
     }
 
     public void ejecutar() {
@@ -88,15 +98,13 @@ public class DibujarDemo {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             ejecutar();
-            animateMarker(mk, linea.getNextPointDemo(), false, googleMap);
+            if (sentido)
+                animateMarker(mk, linea.getNextPointDemo(), false, googleMap);
+            else
+                animateMarker(mk, linea.getPreviousPointDemo(), false, googleMap);
         }
     }
 }
-
-
-
-
-
 
 
 

@@ -4,7 +4,6 @@ package com.grupo214.usuario.fragment;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -38,12 +37,16 @@ import java.util.ArrayList;
 public class MapFragment extends Fragment {
 
     Button bt_animar;
+
     Button bt_demo;
     MapView mMapView;
     GoogleMap googleMap;
     ArrayList<Recorrido> recorridos;
     ArrayList<Linea> mLineas;
     private boolean cargadas = false;
+    private Marker userMarkerStart;
+    private Marker userMarkerDestiny;
+    byte times = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,7 +56,9 @@ public class MapFragment extends Fragment {
         recorridos = new ArrayList<>();
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-        mMapView.onResume(); // needed to get the map to display immediately
+        mMapView.onResume();
+
+
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -84,6 +89,15 @@ public class MapFragment extends Fragment {
                 googleMap.setMapStyle(new MapStyleOptions(getResources()
                         .getString(R.string.style_json)));
 
+                userMarkerStart = googleMap.addMarker(new MarkerOptions()
+                        .title("Inicio").position(new LatLng(0,0)));
+
+                userMarkerDestiny = googleMap.addMarker(new MarkerOptions()
+                        .title("Destino").position(new LatLng(0,0))
+                );
+
+                userMarkerStart.setVisible(false);
+                userMarkerDestiny.setVisible(false);
 
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
@@ -102,8 +116,54 @@ public class MapFragment extends Fragment {
                         }
                     }
                 });
+                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+                        if (times == 2)
+                            cleanUserMarkers();
+
+                        if (times == 0)
+                            updateUserMarker(userMarkerStart, latLng);
+
+                        if (times == 1)
+                            updateUserMarker(userMarkerDestiny, latLng);
+
+                        if (++times == 2)
+                            mensaje("aca no se que hacer pero algo tengo que hacer :v");
+                    }
+                });
+
+                googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                    @Override
+                    public boolean onMyLocationButtonClick() {
+                        // validar gps. (creo que si no activo no aparece el boton quizas safo=
+                        if (times < 2){
+                            LatLng ubicacionActual = new LatLng(0,0);
+                            asd(ubicacionActual);
+                        }
+                        return true;
+                    }
+                });
+                /*
+                * NET BUTTON {
+                *
+                *       cleanUserMarkers();
+                *
+                *
+                * }
+                *
+                *
+                *
+                *
+                *
+                * */
+
+
+
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(10).build()));
+
+
 
             }
         });
@@ -125,12 +185,38 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 for (Linea l : mLineas) {
-                    new DibujarDemo(googleMap, l).ejecutar();
+                    if (l.isCheck()) {
+                        new DibujarDemo(googleMap, l,true).ejecutar();
+                        new DibujarDemo(googleMap, l,false).ejecutar();
+                    }
                 }
             }
         });
 
         return rootView;
+    }
+
+    private void asd(LatLng latLng){
+        if (times == 2)
+            cleanUserMarkers();
+        if (times == 0)
+            updateUserMarker(userMarkerStart, latLng);
+        if (times == 1)
+            updateUserMarker(userMarkerDestiny, latLng);
+        if (++times == 2)
+            mensaje("Aca no se que hacer pero algo tengo que hacer :v");
+    }
+
+
+    private void updateUserMarker(Marker userMarker, LatLng latLng) {
+        userMarker.setPosition(latLng);
+        userMarker.setVisible(true);
+    }
+
+    private void cleanUserMarkers() {
+        times = 0;
+        userMarkerDestiny.setVisible(false);
+        userMarkerStart.setVisible(false);
     }
 
 
