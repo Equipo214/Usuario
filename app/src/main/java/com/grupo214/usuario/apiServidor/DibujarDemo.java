@@ -13,32 +13,51 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.objetos.Punto;
 
 public class DibujarDemo {
 
     private final Boolean sentido;
-    private long refreshTime = 1000;
     private final Marker mk;
+    private long refreshTime = 1000;
     private Linea linea;
     private GoogleMap googleMap;
+    private Boolean visible;
+    private LatLng paradaInicio;
+    private LatLng userDestiny;
 
-    public DibujarDemo(GoogleMap googleMap, Linea linea, Boolean sentido) {
+    public DibujarDemo(GoogleMap googleMap, Linea linea, Boolean sentido, LatLng userStart, LatLng userDestiny) {
         this.googleMap = googleMap;
         this.linea = linea;
         this.sentido = sentido;
 
-        if (sentido) {
-            this.mk = googleMap.addMarker(new MarkerOptions()
-                    .position(linea.getNextPointDemo())
-                    .title("Servicio " + linea.getLinea())
-                    .snippet(linea.getRamal()));
-        } else {
-            this.mk = googleMap.addMarker(new MarkerOptions()
-                    .position(linea.getPreviousPointDemo())
-                    .title("Servicio " + linea.getLinea())
-                    .snippet(linea.getRamal()));
-        }
 
+        this.paradaInicio = paraMasCercana(userStart);
+
+        this.userDestiny = userDestiny;
+        LatLng inicio;
+
+        if (sentido)
+            inicio = linea.getNextPointDemo();
+        else
+            inicio = linea.getPreviousPointDemo();
+
+        this.mk = googleMap.addMarker(new MarkerOptions()
+                .position(inicio)
+                .title("Servicio " + linea.getLinea())
+                .snippet(linea.getRamal()));
+    }
+
+    private LatLng paraMasCercana(LatLng userStart) {
+        LatLng parada = linea.getRecorrido().get(0).getLatLng();
+        double distancia = calculateDistance(userStart,parada);
+
+        for (Punto punto: linea.getRecorrido() ){
+            if ( calculateDistance(userStart,punto.getLatLng()) < distancia){
+                parada = punto.getLatLng();
+            }
+        }
+        return  parada;
     }
 
 
@@ -54,6 +73,7 @@ public class DibujarDemo {
 
     public void animateMarker(final Marker marker, final LatLng toPosition,
                               final boolean hideMarker, GoogleMap googleMap) {
+
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();
@@ -61,6 +81,7 @@ public class DibujarDemo {
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
 
         final Interpolator interpolator = new LinearInterpolator();
+
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -75,11 +96,7 @@ public class DibujarDemo {
                 if (t < 1.0) {
                     handler.postDelayed(this, 16);
                 } else {
-                    if (hideMarker) {
-                        marker.setVisible(false);
-                    } else {
-                        marker.setVisible(true);
-                    }
+                    marker.setVisible(hideMarker);
                 }
             }
         });
@@ -98,11 +115,39 @@ public class DibujarDemo {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             ejecutar();
+            LatLng siguiente;
             if (sentido)
-                animateMarker(mk, linea.getNextPointDemo(), false, googleMap);
+                siguiente = linea.getNextPointDemo();
             else
-                animateMarker(mk, linea.getPreviousPointDemo(), false, googleMap);
+                siguiente = linea.getPreviousPointDemo();
+
+            visible = (calculateDistance(siguiente, paradaInicio) < 600);
+
+            animateMarker(mk, siguiente, visible, googleMap);
         }
+    }
+    /**
+     * Ccalcular distancia entre dos puntos.
+     *
+     * @param StartP punto de inicio.
+     * @param EndP   punto de fin.
+     * @return
+     */
+    private double calculateDistance(LatLng StartP, LatLng EndP) {
+        int Radius = 6371000;// radio de la tierra en  metros.
+
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        return Radius * c;
     }
 }
 

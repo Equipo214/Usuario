@@ -43,21 +43,20 @@ public class MapFragment extends Fragment {
     GoogleMap googleMap;
     ArrayList<Recorrido> recorridos;
     ArrayList<Linea> mLineas;
+    byte times = 0;
     private boolean cargadas = false;
     private Marker userMarkerStart;
     private Marker userMarkerDestiny;
-    byte times = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         bt_animar = (Button) rootView.findViewById(R.id.button);
-        bt_demo = (Button) rootView.findViewById(R.id.bt_demo);
+        //     bt_demo = (Button) rootView.findViewById(R.id.bt_demo);
         recorridos = new ArrayList<>();
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
-
 
 
         try {
@@ -90,10 +89,10 @@ public class MapFragment extends Fragment {
                         .getString(R.string.style_json)));
 
                 userMarkerStart = googleMap.addMarker(new MarkerOptions()
-                        .title("Inicio").position(new LatLng(0,0)));
+                        .title("Inicio").position(new LatLng(0, 0)));
 
                 userMarkerDestiny = googleMap.addMarker(new MarkerOptions()
-                        .title("Destino").position(new LatLng(0,0))
+                        .title("Destino").position(new LatLng(0, 0))
                 );
 
                 userMarkerStart.setVisible(false);
@@ -119,8 +118,10 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
                     public void onMapLongClick(LatLng latLng) {
-                        if (times == 2)
+                        if (times == 2) {
                             cleanUserMarkers();
+
+                        }
 
                         if (times == 0)
                             updateUserMarker(userMarkerStart, latLng);
@@ -128,8 +129,20 @@ public class MapFragment extends Fragment {
                         if (times == 1)
                             updateUserMarker(userMarkerDestiny, latLng);
 
-                        if (++times == 2)
-                            mensaje("aca no se que hacer pero algo tengo que hacer :v");
+                        if (++times == 2) {
+                            Boolean flag = false;
+                            for (Linea l : mLineas) {
+                                if (l.isCheck()) {
+                                    new DibujarDemo(googleMap, l, true,
+                                            userMarkerStart.getPosition(), userMarkerDestiny.getPosition()).ejecutar();
+                                    new DibujarDemo(googleMap, l, false,
+                                            userMarkerStart.getPosition(), userMarkerDestiny.getPosition()).ejecutar();
+                                    flag = true;
+                                }
+                            }
+                            if (!flag)
+                                mensaje("marca alguna gil");
+                        }
                     }
                 });
 
@@ -137,32 +150,30 @@ public class MapFragment extends Fragment {
                     @Override
                     public boolean onMyLocationButtonClick() {
                         // validar gps. (creo que si no activo no aparece el boton quizas safo=
-                        if (times < 2){
-                            LatLng ubicacionActual = new LatLng(0,0);
+                        if (times < 2) {
+                            LatLng ubicacionActual = new LatLng(0, 0);
                             asd(ubicacionActual);
                         }
                         return true;
                     }
                 });
                 /*
-                * NET BUTTON {
-                *
-                *       cleanUserMarkers();
-                *
-                *
-                * }
-                *
-                *
-                *
-                *
-                *
-                * */
-
+                 * NET BUTTON {
+                 *
+                 *       cleanUserMarkers();
+                 *
+                 *
+                 * }
+                 *
+                 *
+                 *
+                 *
+                 *
+                 * */
 
 
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(10).build()));
-
 
 
             }
@@ -181,6 +192,8 @@ public class MapFragment extends Fragment {
         });
 
 
+        /*
+
         bt_demo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,11 +205,11 @@ public class MapFragment extends Fragment {
                 }
             }
         });
-
+            */
         return rootView;
     }
 
-    private void asd(LatLng latLng){
+    private void asd(LatLng latLng) {
         if (times == 2)
             cleanUserMarkers();
         if (times == 0)
@@ -320,29 +333,7 @@ public class MapFragment extends Fragment {
         }
     }
 
-    /**
-     * Ccalcular distancia entre dos puntos.
-     *
-     * @param StartP punto de inicio.
-     * @param EndP   punto de fin.
-     * @return
-     */
-    private double calculateDistance(LatLng StartP, LatLng EndP) {
-        int Radius = 6371000;// radio de la tierra en  metros.
 
-        double lat1 = StartP.latitude;
-        double lat2 = EndP.latitude;
-        double lon1 = StartP.longitude;
-        double lon2 = EndP.longitude;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                * Math.sin(dLon / 2);
-        double c = 2 * Math.asin(Math.sqrt(a));
-        return Radius * c;
-    }
 
 
 }
