@@ -15,7 +15,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/bt_demo"
         android:layout_marginTop="82dp"
-        android:text="Animate" />
+        android:text="Animate"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/bt_demo"
@@ -25,6 +26,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="27dp"
         android:layout_marginTop="22dp"
-        android:text="DEMO" />
+        android:text="DEMO"
+        android:visibility="invisible" />
 
 </RelativeLayout>

@@ -7,12 +7,12 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,18 +21,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.ThemedSpinnerAdapter;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.SettingsActivity;
+import com.grupo214.usuario.adapters.SectionsPageAdapter;
 import com.grupo214.usuario.apiGoogleDirection.GoogleMapsDirectionsAPI;
+import com.grupo214.usuario.fragment.InicioFragment;
+import com.grupo214.usuario.fragment.LineasFragment;
+import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.objetos.Linea;
 import com.grupo214.usuario.sqlite.ConexionSQLiteHelper;
-import com.grupo214.usuario.fragment.LineasFragment;
-import com.grupo214.usuario.adapters.SectionsPageAdapter;
-import com.grupo214.usuario.fragment.InicioFragment;
-import com.grupo214.usuario.fragment.MapFragment;
 
 import java.util.ArrayList;
 
@@ -67,8 +67,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
 
-
-        appBarLayout.setExpanded(true,true);
+        appBarLayout.setExpanded(true, true);
 
         //Levantar Datos
         connSQLite = new ConexionSQLiteHelper(this, "db_lineas", null, 1);
@@ -107,6 +106,7 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
             }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
@@ -184,6 +184,8 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.nav_ajustes:
                 mensaje("Ajustes");
+
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
 
             case R.id.nav_comentario:
@@ -208,11 +210,12 @@ public class MainActivity extends AppCompatActivity
         lineasFragment.setmLineas(mLineas);
         mapFragment.setmLineas(mLineas);
 
-        adapter.addFragment(new InicioFragment(), "Inicio");
-        adapter.addFragment(mapFragment, "Mapa");
         adapter.addFragment(lineasFragment, "Lineas");
+        adapter.addFragment(mapFragment, "Mapa");
+        adapter.addFragment(new InicioFragment(), "Alarmas");
 
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(1); // para que inicie la tab de Mapas
     }
 
     private void mensaje(String msj) {
@@ -245,15 +248,15 @@ public class MainActivity extends AppCompatActivity
     //Trato de guardar all en SQL LITE.
     private ArrayList<Linea> loadArray() {
 
-        if ( true ){
+        if (true) {
             mLineas = connSQLite.cargarLineas();
-            Log.d("SQLite","cantidad de lineas " +  mLineas.size());
-        }else{
+            mensaje( "cantidad de lineas " + mLineas.size());
+        } else {
 
         }
 
         mLineas = Linea.listHardCodeTest();
- //       for (Linea l:mLineas) {
+        //       for (Linea l:mLineas) {
 //            connSQLite.insertarLinea(l);
 //        }
 

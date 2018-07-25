@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.grupo214.usuario.Util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +28,6 @@ public class Linea {
     private int sentido_i;
     private int sentido_j;
 
-    public void setPolyline(Polyline polyline) {
-        this.polyline = polyline;
-        this.j = this.polyline.getPoints().size()-1;
-    }
-
     public Linea(int id, String linea, String ramal, Recorrido recorrido, int color) {
         super();
         this.paradas = new ArrayList<>();
@@ -44,76 +40,6 @@ public class Linea {
         this.color = color;
 
     }
-
-    public void agregarParada(Marker mk){
-        paradas.add(mk);
-    }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public String getLinea() {
-        return linea;
-    }
-
-    public String getRamal() {
-        return ramal;
-    }
-
-    public Recorrido getRecorrido() {
-        return recorrido;
-    }
-
-    public boolean isCheck() {
-        return check;
-    }
-
-    public void setCheck(boolean check) {
-        this.check = check;
-    }
-
-    public int getColor() {
-        return color;
-    }
-
-    public PolylineOptions getPolylineOptions() {
-        return polylineOptions;
-    }
-
-    public void setPolylineOptions(PolylineOptions polylineOptions) {
-        this.polylineOptions = polylineOptions;
-    }
-
-    public int getColorRuta() {
-        return color;
-    }
-
-
-
-    public LatLng getNextPointDemo() {
-        i += sentido_i;
-
-        if (i == this.polyline.getPoints().size()-1)
-            sentido_i = -1;
-        if ( i == 0)
-            sentido_i = 1;
-
-        return polyline.getPoints().get(i);
-    }
-
-    public LatLng getPreviousPointDemo() {
-        j += sentido_j;
-
-        if (j == this.polyline.getPoints().size()-1)
-            sentido_j = -1;
-        if ( j == 0)
-            sentido_j = 1;
-
-        return polyline.getPoints().get(j);
-    }
-
 
     public static ArrayList<Linea> listHardCodeTest() {
         ArrayList<Linea> mLineas = new ArrayList<>();
@@ -187,17 +113,100 @@ public class Linea {
         return mLineas;
     }
 
+    public void setPolyline(Polyline polyline) {
+        this.polyline = polyline;
+        this.j = this.polyline.getPoints().size() - 1;
+    }
+
+    public void agregarParada(Marker mk) {
+        paradas.add(mk);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getLinea() {
+        return linea;
+    }
+
+    public String getRamal() {
+        return ramal;
+    }
+
+    public Recorrido getRecorrido() {
+        return recorrido;
+    }
+
+    public boolean isCheck() {
+        return check;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public PolylineOptions getPolylineOptions() {
+        return polylineOptions;
+    }
+
+    public void setPolylineOptions(PolylineOptions polylineOptions) {
+        this.polylineOptions = polylineOptions;
+    }
+
+    public int getColorRuta() {
+        return color;
+    }
+
+    public LatLng getNextPointDemo() {
+        i += sentido_i;
+
+        if (i == this.polyline.getPoints().size() - 1)
+            sentido_i = -1;
+        if (i == 0)
+            sentido_i = 1;
+
+        return polyline.getPoints().get(i);
+    }
+
+    public LatLng getPreviousPointDemo() {
+        j += sentido_j;
+
+        if (j == this.polyline.getPoints().size() - 1)
+            sentido_j = -1;
+        if (j == 0)
+            sentido_j = 1;
+
+        return polyline.getPoints().get(j);
+    }
 
     public void hide() {
         polyline.setVisible(false);
-        for (Marker mk: paradas) {
+        for (Marker mk : paradas) {
             mk.setVisible(false);
         }
     }
-    public void show(){
+
+    public void show() {
         polyline.setVisible(true);
-        for (Marker mk: paradas) {
+        for (Marker mk : paradas) {
             mk.setVisible(true);
         }
+    }
+
+    public LatLng paraMasCercana(LatLng userStart) {
+        LatLng parada = recorrido.get(0).getLatLng(); // guardo el primero como minimo
+        double distancia = Util.calculateDistance(userStart, parada);
+
+        for (Punto punto : recorrido) {
+            if (Util.calculateDistance(userStart, punto.getLatLng()) < distancia) { // si no hay otro minimo es este
+                parada = punto.getLatLng();
+            }
+        }
+        return parada;
     }
 }

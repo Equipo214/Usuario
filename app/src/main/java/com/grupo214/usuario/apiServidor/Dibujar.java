@@ -105,6 +105,7 @@ public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorLis
 
     public void animateMarker(final Marker marker, final LatLng toPosition,
                               final boolean hideMarker, GoogleMap googleMap) {
+
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();

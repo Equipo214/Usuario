@@ -38,10 +38,9 @@ public class LineasFragment extends Fragment {
         recyclerLineas.setLayoutManager(new LinearLayoutManager(getContext()));
        // EditText busqueda = rootView.findViewById(R.id.busqueda);
 
-        if (GoogleMapsDirectionsAPI.checkNull(mLineas)) {
+        if ( GoogleMapsDirectionsAPI.checkNull(mLineas)) {
             GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
         }
-
 
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,12 +49,14 @@ public class LineasFragment extends Fragment {
                 CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_checkBox);
                 checkBox.setChecked(!checkBox.isChecked());
                 l.setCheck(!l.isCheck());
+
                 //por si las moscas que no tire null :v
                 if (l.isCheck()) {
                     if (l.getPolylineOptions() == null) {
                         GoogleMapsDirectionsAPI.loadPolylineOptions(l);
                     }
                 }
+
             }
         });
 

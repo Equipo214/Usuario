@@ -150,6 +150,7 @@ public class MapFragment extends Fragment {
                     @Override
                     public boolean onMyLocationButtonClick() {
                         // validar gps. (creo que si no activo no aparece el boton quizas safo=
+
                         if (times < 2) {
                             LatLng ubicacionActual = new LatLng(0, 0);
                             asd(ubicacionActual);
