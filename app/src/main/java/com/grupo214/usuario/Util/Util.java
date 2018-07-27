@@ -38,13 +38,13 @@ public class Util {
         return Radius * c;
     }
 
-    public static void animateMarker(final Marker marker, final LatLng toPosition,
-                              final boolean hideMarker, GoogleMap googleMap ,final long refreshTime) {
+    public static void animateMarker(final Marker mk, final LatLng toPosition,
+                              final boolean visible, GoogleMap googleMap ,final long refreshTime) {
 
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();
-        Point startPoint = proj.toScreenLocation(marker.getPosition());
+        Point startPoint = proj.toScreenLocation(mk.getPosition());
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
 
         final Interpolator interpolator = new LinearInterpolator();
@@ -59,11 +59,11 @@ public class Util {
                         * startLatLng.longitude;
                 double lat = t * toPosition.latitude + (1 - t)
                         * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
+                mk.setPosition(new LatLng(lat, lng));
                 if (t < 1.0) {
                     handler.postDelayed(this, 16);
                 } else {
-                    marker.setVisible(hideMarker);
+                    mk.setVisible(visible);
                 }
             }
         });

@@ -1,6 +1,8 @@
 package com.grupo214.usuario.objetos;
 
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
@@ -164,7 +166,7 @@ public class Linea {
 
     public LatLng getNextPointDemo() {
         i += sentido_i;
-
+        Log.d("Mi bsas ", "i: " + i );
         if (i == this.polyline.getPoints().size() - 1)
             sentido_i = -1;
         if (i == 0)
@@ -202,11 +204,15 @@ public class Linea {
         LatLng parada = recorrido.get(0).getLatLng(); // guardo el primero como minimo
         double distancia = Util.calculateDistance(userStart, parada);
 
+        double aux;
         for (Punto punto : recorrido) {
-            if (Util.calculateDistance(userStart, punto.getLatLng()) < distancia) { // si no hay otro minimo es este
+            aux = Util.calculateDistance(userStart, punto.getLatLng());
+            if ( aux < distancia) { // si no hay otro minimo es este
                 parada = punto.getLatLng();
+                distancia = aux;
             }
         }
+
         return parada;
     }
 }

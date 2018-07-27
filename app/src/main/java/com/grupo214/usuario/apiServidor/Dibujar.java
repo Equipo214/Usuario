@@ -29,6 +29,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+
+// Cuando tenga todas las lineas lo que puedo hacer , es solo animar las que estan dentro del radio
+// Sino estan dentro del radio simplemente cambiarle la ubicacion. con eso optimizo bastante la app
+//
+
+
+
+
+
 public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorListener {
 
     private final static long REFRESH_TIME = 1000;

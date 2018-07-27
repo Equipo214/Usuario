@@ -118,7 +118,7 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
                     public void onMapLongClick(LatLng latLng) {
-                        if (times == 2) {
+                        if (times == 1) {
                             cleanUserMarkers();
 
                         }
@@ -126,10 +126,10 @@ public class MapFragment extends Fragment {
                         if (times == 0)
                             updateUserMarker(userMarkerStart, latLng);
 
-                        if (times == 1)
-                            updateUserMarker(userMarkerDestiny, latLng);
+//                        if (times == 1)
+//                            updateUserMarker(userMarkerDestiny, latLng);
 
-                        if (++times == 2) {
+                        if (++times == 1) {
                             Boolean flag = false;
                             for (Linea l : mLineas) {
                                 if (l.isCheck()) {
