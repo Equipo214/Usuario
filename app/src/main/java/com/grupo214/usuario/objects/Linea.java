@@ -1,4 +1,4 @@
-package com.grupo214.usuario.objetos;
+package com.grupo214.usuario.objects;
 
 
 import android.util.Log;
@@ -7,11 +7,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.grupo214.usuario.Util.Util;
+import com.grupo214.usuario.Util.UtilMap;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase de objeto de negocio, Linea de colectivo.
+ * @author  Daniel Boullon
+ */
 public class Linea {
     private int id;
     private String linea;
@@ -202,11 +206,11 @@ public class Linea {
 
     public LatLng paraMasCercana(LatLng userStart) {
         LatLng parada = recorrido.get(0).getLatLng(); // guardo el primero como minimo
-        double distancia = Util.calculateDistance(userStart, parada);
+        double distancia = UtilMap.calculateDistance(userStart, parada);
 
         double aux;
         for (Punto punto : recorrido) {
-            aux = Util.calculateDistance(userStart, punto.getLatLng());
+            aux = UtilMap.calculateDistance(userStart, punto.getLatLng());
             if ( aux < distancia) { // si no hay otro minimo es este
                 parada = punto.getLatLng();
                 distancia = aux;

@@ -10,9 +10,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.grupo214.usuario.objetos.Punto;
 
-public class Util {
+/**
+ * Clase con metodos de apoyo para el map.
+ * @author  Daniel Boullon
+ */
+public class UtilMap {
 
     /**
      * Ccalcular distancia entre dos puntos.

@@ -7,6 +7,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ *  Adaptador para las pestañas principales
+ * @author  Daniel Boullon
+ */
 public class SectionsPageAdapter extends FragmentPagerAdapter {
 
     private final List<Fragment> mFragmentList = new ArrayList<>();

@@ -1,9 +1,10 @@
 package com.grupo214.usuario.sqlite;
 
-import com.grupo214.usuario.objetos.Linea;
 
-import java.util.ArrayList;
-
+/**
+ * Clase beta para guardar contenido de la app. quizas muera como ella.
+ * @author  Daniel Boullon
+ */
 public class UtilSQLite {
 
     final static public String CAMPO_ID = "id";

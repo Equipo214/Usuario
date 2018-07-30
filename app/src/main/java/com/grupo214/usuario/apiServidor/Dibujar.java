@@ -23,7 +23,7 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.objects.Linea;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,9 +36,10 @@ import org.json.JSONObject;
 //
 
 
-
-
-
+/**
+ * Clase que se conecta al servidor para dibujar en tiempo real la ubicacion del colectivo.
+ * @author  Daniel Boullon
+ */
 public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorListener {
 
     private final static long REFRESH_TIME = 1000;

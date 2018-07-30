@@ -6,10 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.objects.Linea;
 
 import java.util.ArrayList;
 
+/**
+ * Clase beta para guardar contenido de la app. quizas muera como ella.
+ * @author  Daniel Boullon
+ */
 public class ConexionSQLiteHelper extends SQLiteOpenHelper {
 
 

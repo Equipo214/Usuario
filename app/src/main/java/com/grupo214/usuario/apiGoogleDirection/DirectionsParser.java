@@ -11,7 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 
 
-
+/**
+ * Clase para gestionar el parseo de Json a objeto
+ * de las respuesta de la API de google para obtener rutas.
+ * @author  Daniel Boullon
+ */
 public class DirectionsParser {
     /**
      * Returns a list of lists containing latitude and longitude from a JSONObject

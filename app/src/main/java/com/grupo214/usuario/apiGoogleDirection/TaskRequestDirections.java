@@ -2,7 +2,7 @@ package com.grupo214.usuario.apiGoogleDirection;
 
 import android.os.AsyncTask;
 
-import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.objects.Linea;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +11,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+
+/**
+ * Clase asincronica que envia el endpoint y gestiona el JSON de respuesta.
+ * @author  Daniel Boullon
+ */
 public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
     private Linea linea;

@@ -2,19 +2,22 @@ package com.grupo214.usuario.apiGoogleDirection;
 
 import android.util.Log;
 
-import com.grupo214.usuario.objetos.Linea;
-import com.grupo214.usuario.objetos.Recorrido;
+import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.Recorrido;
 
 import java.util.List;
 
-
-
+/**
+ * Clase para armar endpoint para obtener
+ * rutas desde la API de google
+ * (no deberia usarla en la version final para cargar rutas sino para caminos a pie hasta la parada).
+ * @author  Daniel Boullon
+ */
 public class  GoogleMapsDirectionsAPI {
 
 
-
     /**
-     *
+     * Obtener todas las rutas de google teniendo solo puntos.
      */
     public static void loadPolylineOptions(List<Linea> lineas){
         for (Linea l : lineas) {
