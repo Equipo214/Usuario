@@ -22,7 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.WebActivity" />
+
+        <activity
+            android:name=".activities.WebActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.grupo214.usuario.activities.MainActivity" />
+
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -30,7 +37,7 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

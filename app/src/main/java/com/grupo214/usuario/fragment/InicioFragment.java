@@ -12,9 +12,9 @@ import android.widget.Toast;
 import com.grupo214.usuario.R;
 
 /**
- * Created by User on 2/28/2017.
+ * Clase gestiona la pestaña "inicio" quizas esto muera como los sentimientos de ella hacia mi.
+ * @author  Daniel Boullon
  */
-
 public class InicioFragment extends Fragment {
     private static final String TAG = "InicioFragment";
 

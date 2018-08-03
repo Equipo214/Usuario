@@ -13,10 +13,15 @@ import android.widget.CheckBox;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.adapters.LineasAdapter;
 import com.grupo214.usuario.apiGoogleDirection.GoogleMapsDirectionsAPI;
-import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.objects.Linea;
 
 import java.util.ArrayList;
 
+
+/**
+ * Clase gestiona la pestaña con el listado de listas para seleccionar.
+ * @author  Daniel Boullon
+ */
 public class LineasFragment extends Fragment {
 
     private RecyclerView recyclerLineas;

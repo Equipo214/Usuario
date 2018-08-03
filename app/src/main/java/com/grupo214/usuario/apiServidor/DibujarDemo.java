@@ -6,9 +6,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.grupo214.usuario.Util.Util;
-import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.Util.UtilMap;
+import com.grupo214.usuario.objects.Linea;
 
+
+/**
+ * Clase demo para dibujar la ubicacion del colectivo simulada.
+ * @author  Daniel Boullon
+ */
 public class DibujarDemo extends Thread {
 
     private static final double DISTANCIA = 1000;
@@ -40,7 +45,7 @@ public class DibujarDemo extends Thread {
                 .snippet(linea.getRamal())
                 .visible(
 
-                        Util.calculateDistance(this.userStart,inicio) < DISTANCIA
+                        UtilMap.calculateDistance(this.userStart,inicio) < DISTANCIA
 
                 ));
 
@@ -48,7 +53,7 @@ public class DibujarDemo extends Thread {
         this.paradaInicio = googleMap.addMarker(new MarkerOptions()
                     .position(this.userStart)
                     .title("Parada mas cercana")
-                    .snippet( String.format("%.2f",( Util.calculateDistance(userStart,this.userStart) / 1000) ) + " Km."));
+                    .snippet( String.format("%.2f",( UtilMap.calculateDistance(userStart,this.userStart) / 1000) ) + " Km."));
 
         paradaInicio.showInfoWindow();
     }
@@ -89,10 +94,10 @@ public class DibujarDemo extends Thread {
             siguiente = linea.getNextPointDemo();
         else
             siguiente = linea.getPreviousPointDemo();
-        double distancia = Util.calculateDistance(siguiente, userStart);
+        double distancia = UtilMap.calculateDistance(siguiente, userStart);
 
         if(distancia < DISTANCIA ){
-            Util.animateMarker(mk, siguiente, true, googleMap, refreshTime);
+            UtilMap.animateMarker(mk, siguiente, true, googleMap, refreshTime);
         }else{
             mk.setPosition(siguiente);
             mk.setVisible(false);

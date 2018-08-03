@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.objects.Linea;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
+/**
+ * Clase asicronica para armar la ruta para dibujar
+ * desde un JSON.
+ * @author  Daniel Boullon
+ */
 public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
 
     private Linea linea;

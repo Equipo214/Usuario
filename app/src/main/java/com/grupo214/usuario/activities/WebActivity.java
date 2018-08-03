@@ -10,6 +10,12 @@ import android.webkit.WebViewClient;
 
 import com.grupo214.usuario.R;
 
+/**
+ * Clase actividad donde se gestiona
+ * los links a paginas web y se muestra.
+ * @author  [nombre del autor de la función]
+ */
+
 public class WebActivity extends AppCompatActivity {
 
 

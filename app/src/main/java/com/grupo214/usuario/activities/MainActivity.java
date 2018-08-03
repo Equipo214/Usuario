@@ -1,6 +1,5 @@
 package com.grupo214.usuario.activities;
 
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,11 +15,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,38 +30,56 @@ import com.grupo214.usuario.apiGoogleDirection.GoogleMapsDirectionsAPI;
 import com.grupo214.usuario.fragment.InicioFragment;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
-import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.sqlite.ConexionSQLiteHelper;
 
 import java.util.ArrayList;
 
-
+/**
+ *  Clase Main donde se gestiona toda la app.
+ *  tambien se gestiona el menu lateral,
+ *  el boton de ubicacion inicial
+ *  y la interacion de cada pestaña.
+ *
+ * @author  Daniel Boullon
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final static int TAB_INICIO = 0;
+    /** Constante que representa la pestaña LINEA*/
+    private final static int TAB_LINEA = 0;
+    /** Constante que representa la pestaña MAPA*/
     private final static int TAB_MAPA = 1;
-    private final static int TAB_LINEA = 2;
+    /** Constante que representa la pestaña ? */
+    private final static int TAB_INICIO = 2; // esto despues tengo que revisar.
 
-    private final static String LINK_TARIFAS = "https://www.argentina.gob.ar/redsube/tarifas-de-transporte-publico-amba-2018";
+    /** Constante con el link hacia la pagina de tarifas del gobierno */
+    private final static String LINK_TARIFAS
+            = "https://www.argentina.gob.ar/redsube/tarifas-de-transporte-publico-amba-2018";
+
+    /** Constante con el link hacia la pagina SUBE */
     private final static String LINK_SUBE = "https://www.argentina.gob.ar/sube";
 
+    /** Variable que contiene todas las lineas traidas desde el servidor o que esten guardadas
+     * en el telefono (si no hay actualizacion) */
     private ArrayList<Linea> mLineas;
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
 
-    private Button btnTEST;
     private LineasFragment lineasFragment;
     private ConexionSQLiteHelper connSQLite;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Seteo de variables:
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        final ViewPager mViewPager = findViewById(R.id.container);
+        final ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
@@ -80,6 +97,8 @@ public class MainActivity extends AppCompatActivity
 
         tabLayout.setupWithViewPager(mViewPager);
 
+
+        // Acciones al tocar las pestañas.
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -94,7 +113,6 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
@@ -106,12 +124,10 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
             }
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case TAB_INICIO:
-//                        mapFragment.loadRoutes();
                         break;
                     case TAB_MAPA:
                         break;
@@ -121,19 +137,34 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
-        //barra superior
+        //Barra superior
         setSupportActionBar(toolbar);
 
+        //Menu Lateral:
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        //Menu Lateral:
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_item, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -146,25 +177,6 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -216,9 +228,14 @@ public class MainActivity extends AppCompatActivity
         adapter.addFragment(new InicioFragment(), "Alarmas");
 
         viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(1); // para que inicie la tab de Mapas
+        viewPager.setCurrentItem(TAB_MAPA); // para que inicie la tab de Mapas
     }
 
+    /**
+     * Muestra un mensaje en pantalla
+     *
+     * @param msj
+     */
     private void mensaje(String msj) {
         Snackbar.make(getWindow().getDecorView().findViewById(android.R.id.content)
                 , msj, Snackbar.LENGTH_LONG)
@@ -229,9 +246,6 @@ public class MainActivity extends AppCompatActivity
     // primera vez que pide permisos, para que active la location.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Snackbar.make(getWindow().getDecorView().findViewById(android.R.id.content)
-                , "El codigo es: " + requestCode, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
         mapFragment.getmMapView().getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -251,7 +265,7 @@ public class MainActivity extends AppCompatActivity
 
         if (true) {
             mLineas = connSQLite.cargarLineas();
-            mensaje( "cantidad de lineas " + mLineas.size());
+            mensaje("cantidad de lineas " + mLineas.size());
         } else {
 
         }

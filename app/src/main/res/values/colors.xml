@@ -7,4 +7,5 @@
     <color name="colorDanger">#f0ad4e</color>
     <color name="colorBlack">#111111</color>
     <color name="colorBackground">#595b5d</color>
+    <color name="white">#FFFFFF</color>
 </resources>

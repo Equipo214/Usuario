@@ -11,9 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.objetos.Linea;
+import com.grupo214.usuario.objects.Linea;
 
 import java.util.ArrayList;
+
+
+
+/**
+ * Adaptador para crear una lista de lineas de colectivos.
+ * @author  Daniel Boullon
+ */
 
 public class LineasAdapter extends Adapter<LineasAdapter.ViewHolderLineas>
         implements View.OnClickListener {
@@ -63,6 +70,9 @@ public class LineasAdapter extends Adapter<LineasAdapter.ViewHolderLineas>
             listener.onClick(v);
     }
 
+    /**
+     * Clase para crear vista de una linea.
+     */
     public class ViewHolderLineas extends RecyclerView.ViewHolder {
 
         TextView linea;

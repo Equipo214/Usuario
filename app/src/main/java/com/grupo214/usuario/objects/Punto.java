@@ -1,9 +1,12 @@
-package com.grupo214.usuario.objetos;
+package com.grupo214.usuario.objects;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.sql.Time;
-
+/**
+ * Clase que define un punto de una ruta de colectivo.
+ * define si es parada o es un punto de la ruta.
+ * @author  Daniel Boullon
+ */
 public class Punto {
 
     private Boolean parada;

@@ -28,12 +28,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.apiServidor.Dibujar;
 import com.grupo214.usuario.apiServidor.DibujarDemo;
-import com.grupo214.usuario.objetos.Linea;
-import com.grupo214.usuario.objetos.Punto;
-import com.grupo214.usuario.objetos.Recorrido;
+import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.Punto;
+import com.grupo214.usuario.objects.Recorrido;
 
 import java.util.ArrayList;
 
+
+/**
+ * Clase gestiona la pestaña con el mapa.
+ * @author  Daniel Boullon
+ */
 public class MapFragment extends Fragment {
 
     Button bt_animar;

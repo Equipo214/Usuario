@@ -1,12 +1,11 @@
-package com.grupo214.usuario.objetos;
+package com.grupo214.usuario.objects;
 
 import android.graphics.Color;
 
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.grupo214.usuario.R;
-
-
+/**
+ * Clase para obtener colores para pintar rutas.
+ * @author  Daniel Boullon
+ */
 public class ColorRuta {
 
     public static final int[] coloresRuta = {
