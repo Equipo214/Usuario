@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,10 +21,10 @@ import java.util.List;
  */
 public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
 
-    private Linea linea;
+    private LineaDemo lineaDemo;
 
-    public void setLinea(Linea linea) {
-        this.linea = linea;
+    public void setLineaDemo(LineaDemo lineaDemo) {
+        this.lineaDemo = lineaDemo;
     }
 
     @Override
@@ -60,13 +60,13 @@ public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String
 
             polylineOptions.addAll(points);
             polylineOptions.width(15);
-            polylineOptions.color(linea.getColorRuta());
+            polylineOptions.color(lineaDemo.getColorRuta());
             polylineOptions.geodesic(true);
 
         }
 
         if (polylineOptions != null) {
-            linea.setPolylineOptions(polylineOptions);
+            lineaDemo.setPolylineOptions(polylineOptions);
         }
     }
 }

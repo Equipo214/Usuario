@@ -23,7 +23,7 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,15 +47,15 @@ public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorLis
 
     private Double lat;
     private Double log;
-    private Linea linea;
+    private LineaDemo lineaDemo;
     private RequestQueue rq;
     private Context context;
     private JsonRequest jrq;
     private GoogleMap googleMap;
 
-    public Dibujar(GoogleMap googleMap, Linea linea, Context context, Marker mk) {
+    public Dibujar(GoogleMap googleMap, LineaDemo lineaDemo, Context context, Marker mk) {
         this.googleMap = googleMap;
-        this.linea = linea;
+        this.lineaDemo = lineaDemo;
         this.rq = Volley.newRequestQueue(context);
         this.context = context;
         this.mk = mk;

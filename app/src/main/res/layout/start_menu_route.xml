@@ -18,7 +18,7 @@
         android:textSize="21sp" />
 
     <TextView
-        android:id="@+id/list_text_map"
+        android:id="@+id/list_text_map2"
         android:layout_width="258dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -31,17 +31,17 @@
         android:id="@+id/icoLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/list_text_location"
-        android:layout_alignStart="@+id/icoMap"
+        android:layout_alignStart="@+id/icoPlace"
+        android:layout_alignTop="@+id/list_text_location"
         android:src="@drawable/ic_my_location_light_blue_24dp" />
 
     <ImageView
-        android:id="@+id/icoMap"
+        android:id="@+id/icoPlace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/list_text_map"
+        android:layout_alignBottom="@+id/list_text_map2"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="17dp"
+        android:layout_marginStart="16dp"
         android:src="@drawable/ic_pin_drop_black_24dp" />
 
 

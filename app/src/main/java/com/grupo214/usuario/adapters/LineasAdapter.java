@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 
 import java.util.ArrayList;
 
@@ -25,12 +25,12 @@ import java.util.ArrayList;
 public class LineasAdapter extends Adapter<LineasAdapter.ViewHolderLineas>
         implements View.OnClickListener {
 
-    private ArrayList<Linea> listasLineas;
+    private ArrayList<LineaDemo> listasLineaDemos;
     private View.OnClickListener listener;
 
 
-    public LineasAdapter(ArrayList<Linea> lineas) {
-        this.listasLineas = lineas;
+    public LineasAdapter(ArrayList<LineaDemo> lineaDemos) {
+        this.listasLineaDemos = lineaDemos;
     }
 
     @NonNull
@@ -46,18 +46,18 @@ public class LineasAdapter extends Adapter<LineasAdapter.ViewHolderLineas>
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderLineas holder, int position) {
-        Linea l = listasLineas.get(position);
+        LineaDemo l = listasLineaDemos.get(position);
         holder.linea.setText(l.getLinea());
         holder.ramal.setText(l.getRamal());
         holder.checkBox.setChecked(l.isCheck());
         holder.ico.setColorFilter(l.getColor());
-        //holder.icono.setImageResource(listasLineas.get(position).getIcono());
+        //holder.icono.setImageResource(listasLineaDemos.get(position).getIcono());
 
     }
 
     @Override
     public int getItemCount() {
-        return listasLineas.size();
+        return listasLineaDemos.size();
     }
 
     public void setOnClickListener(View.OnClickListener listener) {

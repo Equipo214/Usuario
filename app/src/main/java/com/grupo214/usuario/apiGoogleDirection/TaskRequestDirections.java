@@ -2,7 +2,7 @@ package com.grupo214.usuario.apiGoogleDirection;
 
 import android.os.AsyncTask;
 
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,10 +18,10 @@ import java.net.URL;
  */
 public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
-    private Linea linea;
+    private LineaDemo lineaDemo;
 
-    public void setLinea(Linea linea) {
-        this.linea = linea;
+    public void setLineaDemo(LineaDemo lineaDemo) {
+        this.lineaDemo = lineaDemo;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class TaskRequestDirections extends AsyncTask<String, Void, String> {
         super.onPostExecute(s);
         //Parse json
         TaskParser taskParser = new TaskParser();
-        taskParser.setLinea(linea);
+        taskParser.setLineaDemo(lineaDemo);
         taskParser.execute(s);
     }
 

@@ -28,7 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.apiServidor.Dibujar;
 import com.grupo214.usuario.apiServidor.DibujarDemo;
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 import com.grupo214.usuario.objects.Punto;
 import com.grupo214.usuario.objects.Recorrido;
 
@@ -47,7 +47,7 @@ public class MapFragment extends Fragment {
     MapView mMapView;
     GoogleMap googleMap;
     ArrayList<Recorrido> recorridos;
-    ArrayList<Linea> mLineas;
+    ArrayList<LineaDemo> mLineaDemos;
     byte times = 0;
     private boolean cargadas = false;
     private Marker userMarkerStart;
@@ -113,7 +113,7 @@ public class MapFragment extends Fragment {
                 googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
-                        if (marker.getTitle().contains("Linea")) {
+                        if (marker.getTitle().contains("LineaDemo")) {
                             mensaje("Accesibilidad");
                         } else if (marker.getTitle().contains("Servicio")) {
                             mensaje("Comentario");
@@ -136,7 +136,7 @@ public class MapFragment extends Fragment {
 
                         if (++times == 1) {
                             Boolean flag = false;
-                            for (Linea l : mLineas) {
+                            for (LineaDemo l : mLineaDemos) {
                                 if (l.isCheck()) {
                                     new DibujarDemo(googleMap, l, true,
                                             userMarkerStart.getPosition(), userMarkerDestiny.getPosition()).ejecutar();
@@ -189,10 +189,10 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Marker mk = googleMap.addMarker(new MarkerOptions()
-                        .position(mLineas.get(3).getNextPointDemo())
-                        .title("Servicio " + mLineas.get(3).getLinea())
-                        .snippet(mLineas.get(3).getRamal()));
-                Dibujar dibujar = new Dibujar(googleMap, mLineas.get(3), getContext(), mk);
+                        .position(mLineaDemos.get(3).getNextPointDemo())
+                        .title("Servicio " + mLineaDemos.get(3).getLinea())
+                        .snippet(mLineaDemos.get(3).getRamal()));
+                Dibujar dibujar = new Dibujar(googleMap, mLineaDemos.get(3), getContext(), mk);
                 dibujar.execute();
             }
         });
@@ -203,7 +203,7 @@ public class MapFragment extends Fragment {
         bt_demo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (Linea l : mLineas) {
+                for (LineaDemo l : mLineaDemos) {
                     if (l.isCheck()) {
                         new DibujarDemo(googleMap, l,true).ejecutar();
                         new DibujarDemo(googleMap, l,false).ejecutar();
@@ -273,12 +273,12 @@ public class MapFragment extends Fragment {
         return mMapView;
     }
 
-    public void setmLineas(ArrayList<Linea> mLineas) {
-        this.mLineas = mLineas;
+    public void setmLineaDemos(ArrayList<LineaDemo> mLineaDemos) {
+        this.mLineaDemos = mLineaDemos;
     }
 
     @Deprecated
-    public void drawRoute(Linea l) {
+    public void drawRoute(LineaDemo l) {
         for (Punto punto : l.getRecorrido()) {
             if (punto.isParada())
                 googleMap.addMarker(new MarkerOptions()
@@ -294,7 +294,7 @@ public class MapFragment extends Fragment {
 
     public void loadRoutes() {
         BitmapDescriptor icoParada = BitmapDescriptorFactory.fromResource(R.drawable.ic_parada);
-        for (Linea l : mLineas) {
+        for (LineaDemo l : mLineaDemos) {
             l.setPolyline(googleMap.addPolyline(l.getPolylineOptions()));
             for (Punto punto : l.getRecorrido()) {
                 if (punto.isParada())
@@ -303,7 +303,7 @@ public class MapFragment extends Fragment {
                             .icon(icoParada)
                             .anchor(0.5f, 0.5f)
                             .flat(true)
-                            .title("Linea " + l.getLinea())));
+                            .title("LineaDemo " + l.getLinea())));
             }
 
             // si no lo personalizo por coso sacarlo de aca.
@@ -330,7 +330,7 @@ public class MapFragment extends Fragment {
     public void updateDrawingRoutes() {
         if (!cargadas)
             loadRoutes();
-        for (Linea l : mLineas) {
+        for (LineaDemo l : mLineaDemos) {
             if (!l.isCheck()) {
                 l.hide();
             } else {

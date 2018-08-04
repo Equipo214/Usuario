@@ -42,7 +42,7 @@
     ]
   }
 ]</string>
-    
+
     <string name="title_activity_settings">Ajustes</string>
 
     <!-- Strings related to Settings -->
@@ -82,6 +82,24 @@
         <item>6 hours</item>
         <item>Never</item>
     </string-array>
+    <string-array name="pref_time_titles">
+        <item>3 minutos</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>15 minutos</item>
+    </string-array>
+    <string-array name="pref_distance_titles">
+        <item>Cerca (100 metros)</item>
+        <item>Media distancia (300 metros)</item>
+        <item>Lejos (500 metros)</item>
+    </string-array>
+    <string-array name="pref_parametre_titles">
+        <item>Distancia</item>
+        <item>Tiempo estimado</item>
+    </string-array>
+
+
+
     <string-array name="pref_sync_frequency_values">
         <item>15</item>
         <item>30</item>
@@ -108,14 +126,15 @@
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notificaciones</string>
+    <string name="pref_header_notifications">Alarmas</string>
 
     <string name="pref_title_new_message_notifications">Activar notificaciones</string>
 
     <string name="pref_title_ringtone">Tono de alarma</string>
     <string name="pref_ringtone_silent">Silent</string>
-
     <string name="pref_title_vibrate">Vibrar</string>
+    <string name="pref_title_distance">Distancia</string>
+    <string name="pref_title_time">Tiempo</string>
 
 
 </resources>

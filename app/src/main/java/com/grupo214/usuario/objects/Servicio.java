@@ -12,7 +12,7 @@ public class Servicio {
 
     private LatLng ubicacionActual;
     private ArrayList<LatLng> recorrido;
-    private Linea linea;
+    private LineaDemo lineaDemo;
 
     public LatLng actualizarUbicacionActual(){
         recorrido.add(ubicacionActual); // guardo

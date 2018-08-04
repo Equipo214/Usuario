@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Clase de objeto de negocio, Linea de colectivo.
- * @author  Daniel Boullon
+ * Clase de objeto de negocio, LineaDemo de colectivo.
+ * Esta clase es ayuda para el desarrollo.
+ *
+ * @author Daniel Boullon
  */
-public class Linea {
+public class LineaDemo {
     private int id;
     private String linea;
     private String ramal;
@@ -34,7 +36,7 @@ public class Linea {
     private int sentido_i;
     private int sentido_j;
 
-    public Linea(int id, String linea, String ramal, Recorrido recorrido, int color) {
+    public LineaDemo(int id, String linea, String ramal, Recorrido recorrido, int color) {
         super();
         this.paradas = new ArrayList<>();
         this.i = 0;
@@ -47,8 +49,8 @@ public class Linea {
 
     }
 
-    public static ArrayList<Linea> listHardCodeTest() {
-        ArrayList<Linea> mLineas = new ArrayList<>();
+    public static ArrayList<LineaDemo> listHardCodeTest() {
+        ArrayList<LineaDemo> mLineaDemos = new ArrayList<>();
         Recorrido r = new Recorrido();
         ColorRuta cr = new ColorRuta();
 
@@ -59,14 +61,14 @@ public class Linea {
         r.add(new Punto(true, new LatLng(-34.628788, -58.454536)));
         r.add(new Punto(true, new LatLng(-34.638853, -58.482724)));
         r.add(new Punto(true, new LatLng(-34.640636, -58.564095)));
-        mLineas.add(new Linea(1, "4", "ramal 1", r, cr.nextColor()));
+        mLineaDemos.add(new LineaDemo(1, "4", "ramal 1", r, cr.nextColor()));
         Recorrido r1 = new Recorrido();
         r1.add(new Punto(true, new LatLng(-34.607313, -58.363046)));
         r1.add(new Punto(false, new LatLng(-34.611779, -58.362380)));
         r1.add(new Punto(true, new LatLng(-34.621185, -58.361426)));
         r1.add(new Punto(true, new LatLng(-34.698222, -58.391971)));
         r1.add(new Punto(true, new LatLng(-34.758188, -58.409164)));
-        mLineas.add(new Linea(2, "4", "ramal 2", r1, cr.nextColor()));
+        mLineaDemos.add(new LineaDemo(2, "4", "ramal 2", r1, cr.nextColor()));
 
         Recorrido r2 = new Recorrido();
         r2.add(new Punto(true, new LatLng(-34.603435, -58.370056)));
@@ -74,7 +76,7 @@ public class Linea {
         r2.add(new Punto(true, new LatLng(-34.617771, -58.368680)));
         r2.add(new Punto(false, new LatLng(-34.620578, -58.368439)));
         r2.add(new Punto(true, new LatLng(-34.687849, -58.475321)));
-        mLineas.add(new Linea(2, "4", "ramal 3", r2, cr.nextColor()));
+        mLineaDemos.add(new LineaDemo(2, "4", "ramal 3", r2, cr.nextColor()));
 
         Recorrido r3 = new Recorrido();
         r3.add(new Punto(true, new LatLng(-34.759334, -58.400633)));  //1
@@ -90,33 +92,33 @@ public class Linea {
         //        r3.add(new Punto(true, new LatLng(-34.680438, -58.551687)));
         //        r3.add(new Punto(true, new LatLng(-34.686466, -58.558697)));
         //        r3.add(new Punto(true, new LatLng(-34.682602, -58.554564)));
-        mLineas.add(new Linea(3, "406", "Ramos Mejia", r3, cr.nextColor()));
+        mLineaDemos.add(new LineaDemo(3, "406", "Ramos Mejia", r3, cr.nextColor()));
 
 /*
-        mLineas.add(new Linea(3,"406", "Ramos Mejia",false));
-        mLineas.add(new Linea(4,"406", "San Justo",false));
-        mLineas.add(new Linea(5,"338", "que se yo",false));
-        mLineas.add(new Linea(6,"338", "ramal",false));
-        mLineas.add(new Linea(7,"338", "asdqwe",false));
-        mLineas.add(new Linea(8,"96", "San Justo",false));
-        mLineas.add(new Linea(9,"66", "Centro",false));
-        mLineas.add(new Linea(10,"46", "Constitucion",false));
-        mLineas.add(new Linea(11,"113", "asdsaq",false));
-        mLineas.add(new Linea(12,"51", "que se yo",false));
-        mLineas.add(new Linea(13,"16", "Lomas de Zamora",false));
-        mLineas.add(new Linea(14,"14", "Burzaco",false));
-        mLineas.add(new Linea(15,"4", "Ramos Mejia",false));
-        mLineas.add(new Linea(16,"7", "San Justo",false));
-        mLineas.add(new Linea(17,"143", "que se yo",false));
-        mLineas.add(new Linea(18,"123", "ramal",false));
-        mLineas.add(new Linea(19,"132", "asdqwe",false));
-        mLineas.add(new Linea(20,"52", "San Justo",false));
-        mLineas.add(new Linea(21,"78", "Centro",false));
-        mLineas.add(new Linea(22,"87", "Constitucion",false));
-        mLineas.add(new Linea(23,"83", "asdsaq",false));
-        mLineas.add(new Linea(24,"91", "que se yo",false));
+        mLineaDemos.add(new LineaDemo(3,"406", "Ramos Mejia",false));
+        mLineaDemos.add(new LineaDemo(4,"406", "San Justo",false));
+        mLineaDemos.add(new LineaDemo(5,"338", "que se yo",false));
+        mLineaDemos.add(new LineaDemo(6,"338", "ramal",false));
+        mLineaDemos.add(new LineaDemo(7,"338", "asdqwe",false));
+        mLineaDemos.add(new LineaDemo(8,"96", "San Justo",false));
+        mLineaDemos.add(new LineaDemo(9,"66", "Centro",false));
+        mLineaDemos.add(new LineaDemo(10,"46", "Constitucion",false));
+        mLineaDemos.add(new LineaDemo(11,"113", "asdsaq",false));
+        mLineaDemos.add(new LineaDemo(12,"51", "que se yo",false));
+        mLineaDemos.add(new LineaDemo(13,"16", "Lomas de Zamora",false));
+        mLineaDemos.add(new LineaDemo(14,"14", "Burzaco",false));
+        mLineaDemos.add(new LineaDemo(15,"4", "Ramos Mejia",false));
+        mLineaDemos.add(new LineaDemo(16,"7", "San Justo",false));
+        mLineaDemos.add(new LineaDemo(17,"143", "que se yo",false));
+        mLineaDemos.add(new LineaDemo(18,"123", "ramal",false));
+        mLineaDemos.add(new LineaDemo(19,"132", "asdqwe",false));
+        mLineaDemos.add(new LineaDemo(20,"52", "San Justo",false));
+        mLineaDemos.add(new LineaDemo(21,"78", "Centro",false));
+        mLineaDemos.add(new LineaDemo(22,"87", "Constitucion",false));
+        mLineaDemos.add(new LineaDemo(23,"83", "asdsaq",false));
+        mLineaDemos.add(new LineaDemo(24,"91", "que se yo",false));
         */
-        return mLineas;
+        return mLineaDemos;
     }
 
     public void setPolyline(Polyline polyline) {
@@ -170,7 +172,7 @@ public class Linea {
 
     public LatLng getNextPointDemo() {
         i += sentido_i;
-        Log.d("Mi bsas ", "i: " + i );
+        Log.d("Mi bsas ", "i: " + i);
         if (i == this.polyline.getPoints().size() - 1)
             sentido_i = -1;
         if (i == 0)
@@ -210,10 +212,12 @@ public class Linea {
 
         double aux;
         for (Punto punto : recorrido) {
-            aux = UtilMap.calculateDistance(userStart, punto.getLatLng());
-            if ( aux < distancia) { // si no hay otro minimo es este
-                parada = punto.getLatLng();
-                distancia = aux;
+            if (punto.isParada()) {
+                aux = UtilMap.calculateDistance(userStart, punto.getLatLng());
+                if (aux < distancia) { // si no hay otro minimo es este
+                    parada = punto.getLatLng();
+                    distancia = aux;
+                }
             }
         }
 

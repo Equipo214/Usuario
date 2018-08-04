@@ -8,13 +8,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.UtilMap;
 import com.grupo214.usuario.adapters.LineasAdapter;
 import com.grupo214.usuario.apiGoogleDirection.GoogleMapsDirectionsAPI;
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 
@@ -25,11 +28,11 @@ import java.util.ArrayList;
 public class LineasFragment extends Fragment {
 
     private RecyclerView recyclerLineas;
-    private ArrayList<Linea> mLineas;
+    private ArrayList<LineaDemo> mLineaDemos;
     private LineasAdapter adapter;
-
-    public void setmLineas(ArrayList<Linea> mLineas) {
-        this.mLineas = mLineas;
+    private Button bt_dondeEstaMiBondi;
+    public void setmLineaDemos(ArrayList<LineaDemo> mLineaDemos) {
+        this.mLineaDemos = mLineaDemos;
     }
 
 
@@ -37,20 +40,21 @@ public class LineasFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_lineas, container, false);
-        adapter = new LineasAdapter(mLineas);
+        View rootView = inflater.inflate(R.layout.fragment_lineas, container, false);
+        adapter = new LineasAdapter(mLineaDemos);
         recyclerLineas = (RecyclerView) rootView.findViewById(R.id.recyclerViewLineas);
         recyclerLineas.setLayoutManager(new LinearLayoutManager(getContext()));
+        bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
        // EditText busqueda = rootView.findViewById(R.id.busqueda);
 
-        if ( GoogleMapsDirectionsAPI.checkNull(mLineas)) {
-            GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
+        if ( GoogleMapsDirectionsAPI.checkNull(mLineaDemos)) {
+            GoogleMapsDirectionsAPI.loadPolylineOptions(mLineaDemos);
         }
 
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Linea l = mLineas.get(recyclerLineas.getChildAdapterPosition(v));
+                LineaDemo l = mLineaDemos.get(recyclerLineas.getChildAdapterPosition(v));
                 CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_checkBox);
                 checkBox.setChecked(!checkBox.isChecked());
                 l.setCheck(!l.isCheck());

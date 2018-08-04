@@ -2,7 +2,7 @@ package com.grupo214.usuario.apiGoogleDirection;
 
 import android.util.Log;
 
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 import com.grupo214.usuario.objects.Recorrido;
 
 import java.util.List;
@@ -19,14 +19,14 @@ public class  GoogleMapsDirectionsAPI {
     /**
      * Obtener todas las rutas de google teniendo solo puntos.
      */
-    public static void loadPolylineOptions(List<Linea> lineas){
-        for (Linea l : lineas) {
+    public static void loadPolylineOptions(List<LineaDemo> lineaDemos){
+        for (LineaDemo l : lineaDemos) {
                 loadPolylineOptions(l);
         }
     }
 
-    public static boolean checkNull(List<Linea> lineas){
-        for (Linea l : lineas){
+    public static boolean checkNull(List<LineaDemo> lineaDemos){
+        for (LineaDemo l : lineaDemos){
             if(l.getPolylineOptions() == null)
                 return true;
         }
@@ -35,12 +35,12 @@ public class  GoogleMapsDirectionsAPI {
 
     /**
      * Disparar el evento asyncronico para obtener las rutas de google.
-     * @param linea
+     * @param lineaDemo
      */
-    public static void loadPolylineOptions(Linea linea) {
-        String url = getRequestUrl(linea.getRecorrido());
+    public static void loadPolylineOptions(LineaDemo lineaDemo) {
+        String url = getRequestUrl(lineaDemo.getRecorrido());
         TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-        taskRequestDirections.setLinea(linea);
+        taskRequestDirections.setLineaDemo(lineaDemo);
         taskRequestDirections.execute(url);
     }
 

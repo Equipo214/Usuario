@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.Util.UtilMap;
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 
 
 /**
@@ -20,29 +20,29 @@ public class DibujarDemo extends Thread {
     private final Boolean sentido;
     private final Marker mk;
     private long refreshTime = 1000;
-    private Linea linea;
+    private LineaDemo lineaDemo;
     private GoogleMap googleMap;
     private Marker paradaInicio;
     private LatLng userStart;
     private LatLng userDestiny;
 
-    public DibujarDemo(GoogleMap googleMap, Linea linea, Boolean sentido, LatLng userStart, LatLng userDestiny)  {
+    public DibujarDemo(GoogleMap googleMap, LineaDemo lineaDemo, Boolean sentido, LatLng userStart, LatLng userDestiny)  {
         this.googleMap = googleMap;
-        this.linea = linea;
+        this.lineaDemo = lineaDemo;
         this.sentido = sentido;
-        this.userStart = linea.paraMasCercana(userStart);
+        this.userStart = lineaDemo.paraMasCercana(userStart);
         this.userDestiny = userDestiny;
         LatLng inicio;
 
         if (sentido)
-            inicio = linea.getNextPointDemo();
+            inicio = lineaDemo.getNextPointDemo();
         else
-            inicio = linea.getPreviousPointDemo();
+            inicio = lineaDemo.getPreviousPointDemo();
 
         this.mk = googleMap.addMarker(new MarkerOptions()
                 .position(inicio)
-                .title("Servicio " + linea.getLinea())
-                .snippet(linea.getRamal())
+                .title("Servicio " + lineaDemo.getLinea())
+                .snippet(lineaDemo.getRamal())
                 .visible(
 
                         UtilMap.calculateDistance(this.userStart,inicio) < DISTANCIA
@@ -91,9 +91,9 @@ public class DibujarDemo extends Thread {
     private void avanzarUnPunto() {
         LatLng siguiente;
         if (sentido)
-            siguiente = linea.getNextPointDemo();
+            siguiente = lineaDemo.getNextPointDemo();
         else
-            siguiente = linea.getPreviousPointDemo();
+            siguiente = lineaDemo.getPreviousPointDemo();
         double distancia = UtilMap.calculateDistance(siguiente, userStart);
 
         if(distancia < DISTANCIA ){

@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 
 import java.util.ArrayList;
 
@@ -33,18 +33,18 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Cargar una Linea a la base de datos local.
-     * @param linea
+     * Cargar una LineaDemo a la base de datos local.
+     * @param lineaDemo
      * @return
      */
-    public Long insertarLinea(Linea linea) {
+    public Long insertarLinea(LineaDemo lineaDemo) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(UtilSQLite.CAMPO_ID, linea.getId());
-        values.put(UtilSQLite.CAMPOS_LINEA, linea.getLinea());
-        values.put(UtilSQLite.CAMPO_RAMAL, linea.getRamal());
-        values.put(UtilSQLite.CAMPO_CHECKED, linea.isCheck()?1:0);
+        values.put(UtilSQLite.CAMPO_ID, lineaDemo.getId());
+        values.put(UtilSQLite.CAMPOS_LINEA, lineaDemo.getLinea());
+        values.put(UtilSQLite.CAMPO_RAMAL, lineaDemo.getRamal());
+        values.put(UtilSQLite.CAMPO_CHECKED, lineaDemo.isCheck()?1:0);
 
         Long idLite = db.insert(UtilSQLite.TABLA_LINEA, UtilSQLite.CAMPO_ID, values);
         db.close();
@@ -55,10 +55,10 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
     /**
      * No esta terminada
      * @param id
-     * @param lineas
+     * @param lineaDemos
      * @return
      */
-    public Linea consultarLineaByID(int id, ArrayList<Linea> lineas) {
+    public LineaDemo consultarLineaByID(int id, ArrayList<LineaDemo> lineaDemos) {
         SQLiteDatabase db = getReadableDatabase();
         String[] campos = {UtilSQLite.CAMPOS_LINEA, UtilSQLite.CAMPO_RAMAL};
         String[] parametros = {Integer.toString(id)};
@@ -67,23 +67,23 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         db.close();
 
-        return lineas.get(id);
+        return lineaDemos.get(id);
     }
 
-    public ArrayList<Linea> cargarLineas(){
-         ArrayList<Linea> mLineas = new ArrayList<>();
+    public ArrayList<LineaDemo> cargarLineas(){
+         ArrayList<LineaDemo> mLineaDemos = new ArrayList<>();
         /*
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor;
         cursor = db.rawQuery("SELECT * FROM "+ UtilSQLite.TABLA_LINEA,null);
         while( cursor.moveToNext()){
-            mLineas.add( new Linea(cursor.getInt(0),
+            mLineaDemos.add( new LineaDemo(cursor.getInt(0),
                     cursor.getString(1)
                     ,cursor.getString(2),
                     cursor.getInt(3)==1));
         }
         db.close();*/
-        return mLineas;
+        return mLineaDemos;
     }
 
 }

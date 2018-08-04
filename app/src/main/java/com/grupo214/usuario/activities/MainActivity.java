@@ -27,10 +27,9 @@ import com.grupo214.usuario.R;
 import com.grupo214.usuario.SettingsActivity;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
 import com.grupo214.usuario.apiGoogleDirection.GoogleMapsDirectionsAPI;
-import com.grupo214.usuario.fragment.InicioFragment;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
-import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.LineaDemo;
 import com.grupo214.usuario.sqlite.ConexionSQLiteHelper;
 
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ public class MainActivity extends AppCompatActivity
 
     /** Variable que contiene todas las lineas traidas desde el servidor o que esten guardadas
      * en el telefono (si no hay actualizacion) */
-    private ArrayList<Linea> mLineas;
+    private ArrayList<LineaDemo> mLineaDemos;
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
 
@@ -108,6 +107,7 @@ public class MainActivity extends AppCompatActivity
                     case TAB_MAPA:
                         //if hay cambios:
                         mapFragment.updateDrawingRoutes();
+                            // LISTA DE LINEAS, ABRE VENTANA EMERGENTE CON LOS RAMALES,
                         break;
                     case TAB_LINEA:
                         break;
@@ -219,13 +219,13 @@ public class MainActivity extends AppCompatActivity
 
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
-        mLineas = loadArray();
-        lineasFragment.setmLineas(mLineas);
-        mapFragment.setmLineas(mLineas);
+        mLineaDemos = loadArray();
+        lineasFragment.setmLineaDemos(mLineaDemos);
+        mapFragment.setmLineaDemos(mLineaDemos);
 
         adapter.addFragment(lineasFragment, "Lineas");
         adapter.addFragment(mapFragment, "Mapa");
-        adapter.addFragment(new InicioFragment(), "Alarmas");
+       // adapter.addFragment(new InicioFragment(), "Alarmas");
 
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(TAB_MAPA); // para que inicie la tab de Mapas
@@ -261,48 +261,48 @@ public class MainActivity extends AppCompatActivity
 
     //esta funcion debe cargar la lista, este es el lugar final donde quedara
     //Trato de guardar all en SQL LITE.
-    private ArrayList<Linea> loadArray() {
+    private ArrayList<LineaDemo> loadArray() {
 
         if (true) {
-            mLineas = connSQLite.cargarLineas();
-            mensaje("cantidad de lineas " + mLineas.size());
+            mLineaDemos = connSQLite.cargarLineas();
+            mensaje("cantidad de lineas " + mLineaDemos.size());
         } else {
 
         }
 
-        mLineas = Linea.listHardCodeTest();
-        //       for (Linea l:mLineas) {
+        mLineaDemos = LineaDemo.listHardCodeTest();
+        //       for (LineaDemo l:mLineaDemos) {
 //            connSQLite.insertarLinea(l);
 //        }
 
         /*
         switch (mode) {
             case MODE_HARD:z
-                mLineas = Linea.listHardCodeTest();
+                mLineaDemos = LineaDemo.listHardCodeTest();
                 break;
             case MODE_SQL:
                 // delay hasta que termine
-                // mLineas = connSQL.cargarLineas();
+                // mLineaDemos = connSQL.cargarLineas();
                 // API GOOGLE CARGAR Rutas.
-                // UtilSQLite.guardar(mLineas);
+                // UtilSQLite.guardar(mLineaDemos);
                 break;
             case MODE_SQLite:
                 // pequeño delay.
-                mLineas = connSQLite.cargarLineas();
+                mLineaDemos = connSQLite.cargarLineas();
                 break;
         }*/
 
         // si Alex me trae las cosas, lo que debo hacer es
         // crear por cada polylineOptions un polyline y solo
-        // guardar esto en la clase Linea y en la base de datos el polyline
+        // guardar esto en la clase LineaDemo y en la base de datos el polyline
         // esta funcion se debe llamar una vez creado el mapa, al inicio de la app,
         // la funciones loadRoutes();
-        GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
+        GoogleMapsDirectionsAPI.loadPolylineOptions(mLineaDemos);
 
 
         //  mapFragment.loadRoutes();
 
-        return mLineas;
+        return mLineaDemos;
     }
 
     @Override
