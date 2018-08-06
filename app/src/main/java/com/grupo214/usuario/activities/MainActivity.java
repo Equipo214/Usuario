@@ -29,6 +29,7 @@ import com.grupo214.usuario.adapters.SectionsPageAdapter;
 import com.grupo214.usuario.apiGoogleDirection.GoogleMapsDirectionsAPI;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
+import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.LineaDemo;
 import com.grupo214.usuario.sqlite.ConexionSQLiteHelper;
 
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity
 
     /** Variable que contiene todas las lineas traidas desde el servidor o que esten guardadas
      * en el telefono (si no hay actualizacion) */
-    private ArrayList<LineaDemo> mLineaDemos;
+    private ArrayList<Linea> mLineas;
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
 
@@ -219,9 +220,9 @@ public class MainActivity extends AppCompatActivity
 
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
-        mLineaDemos = loadArray();
-        lineasFragment.setmLineaDemos(mLineaDemos);
-        mapFragment.setmLineaDemos(mLineaDemos);
+        mLineas = loadArray();
+        lineasFragment.setmLineas(mLineas);
+        mapFragment.setmLineaDemos(mLineas);
 
         adapter.addFragment(lineasFragment, "Lineas");
         adapter.addFragment(mapFragment, "Mapa");
@@ -263,32 +264,25 @@ public class MainActivity extends AppCompatActivity
     //Trato de guardar all en SQL LITE.
     private ArrayList<LineaDemo> loadArray() {
 
-        if (true) {
-            mLineaDemos = connSQLite.cargarLineas();
-            mensaje("cantidad de lineas " + mLineaDemos.size());
-        } else {
-
-        }
-
-        mLineaDemos = LineaDemo.listHardCodeTest();
-        //       for (LineaDemo l:mLineaDemos) {
+        mLineas = Linea.listHardCodeTest();
+        //       for (LineaDemo l:mLineas) {
 //            connSQLite.insertarLinea(l);
 //        }
 
         /*
         switch (mode) {
             case MODE_HARD:z
-                mLineaDemos = LineaDemo.listHardCodeTest();
+                mLineas = LineaDemo.listHardCodeTest();
                 break;
             case MODE_SQL:
                 // delay hasta que termine
-                // mLineaDemos = connSQL.cargarLineas();
+                // mLineas = connSQL.cargarLineas();
                 // API GOOGLE CARGAR Rutas.
-                // UtilSQLite.guardar(mLineaDemos);
+                // UtilSQLite.guardar(mLineas);
                 break;
             case MODE_SQLite:
                 // pequeño delay.
-                mLineaDemos = connSQLite.cargarLineas();
+                mLineas = connSQLite.cargarLineas();
                 break;
         }*/
 
@@ -297,12 +291,12 @@ public class MainActivity extends AppCompatActivity
         // guardar esto en la clase LineaDemo y en la base de datos el polyline
         // esta funcion se debe llamar una vez creado el mapa, al inicio de la app,
         // la funciones loadRoutes();
-        GoogleMapsDirectionsAPI.loadPolylineOptions(mLineaDemos);
+        GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
 
 
         //  mapFragment.loadRoutes();
 
-        return mLineaDemos;
+        return mLineas;
     }
 
     @Override

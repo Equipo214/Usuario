@@ -1,93 +1,114 @@
 package com.grupo214.usuario.adapters;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.Adapter;
+import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.objects.LineaDemo;
+import com.grupo214.usuario.objects.Linea;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+public class LineasAdapter extends BaseExpandableListAdapter {
 
+    private Context _context;
+    private List<String> _listDataHeader; // header titles
+    // child data in format of header title, child title
+    private HashMap<String, List<String>> _listDataChild;
 
-/**
- * Adaptador para crear una lista de lineas de colectivos.
- * @author  Daniel Boullon
- */
-
-public class LineasAdapter extends Adapter<LineasAdapter.ViewHolderLineas>
-        implements View.OnClickListener {
-
-    private ArrayList<LineaDemo> listasLineaDemos;
-    private View.OnClickListener listener;
-
-
-    public LineasAdapter(ArrayList<LineaDemo> lineaDemos) {
-        this.listasLineaDemos = lineaDemos;
-    }
-
-    @NonNull
-    @Override
-    public ViewHolderLineas onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.linea_fila, null, false);
-
-        view.setOnClickListener(this);
-
-        return new ViewHolderLineas(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolderLineas holder, int position) {
-        LineaDemo l = listasLineaDemos.get(position);
-        holder.linea.setText(l.getLinea());
-        holder.ramal.setText(l.getRamal());
-        holder.checkBox.setChecked(l.isCheck());
-        holder.ico.setColorFilter(l.getColor());
-        //holder.icono.setImageResource(listasLineaDemos.get(position).getIcono());
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return listasLineaDemos.size();
-    }
-
-    public void setOnClickListener(View.OnClickListener listener) {
-        this.listener = listener;
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (listener != null)
-            listener.onClick(v);
-    }
-
-    /**
-     * Clase para crear vista de una linea.
-     */
-    public class ViewHolderLineas extends RecyclerView.ViewHolder {
-
-        TextView linea;
-        TextView ramal;
-        ImageView ico;
-        CheckBox checkBox;
-
-        public ViewHolderLineas(View itemView) {
-            super(itemView);
-            linea = itemView.findViewById(R.id.list_text_linea);
-            ramal = itemView.findViewById(R.id.list_text_ramal);
-            ico = itemView.findViewById(R.id.icoColorColectivo);
-            checkBox = itemView.findViewById(R.id.list_checkBox);
+    public LineasAdapter(Context context, List<Linea> mLineas) {
+        this._context = context;
+        this._listDataHeader = new ArrayList<>();
+        this._listDataChild = new HashMap<>();
+        for (Linea l : mLineas) {
+            this._listDataHeader.add(l.getLinea());
+            this._listDataChild.put(l.getLinea(), l.getRamalesNombres());
         }
     }
 
+    @Override
+    public Object getChild(int groupPosition, int childPosititon) {
+        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
+                .get(childPosititon);
+    }
+
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+        return childPosition;
+    }
+
+    @Override
+    public View getChildView(int groupPosition, final int childPosition,
+                             boolean isLastChild, View convertView, ViewGroup parent) {
+
+        final String childText = (String) getChild(groupPosition, childPosition);
+
+        if (convertView == null) {
+            LayoutInflater infalInflater = (LayoutInflater) this._context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = infalInflater.inflate(R.layout.ramal_fila, null);
+        }
+
+        TextView tx_ramal = (TextView) convertView
+                .findViewById(R.id.list_text_ramal);
+
+        tx_ramal.setText(childText);
+        return convertView;
+    }
+
+    @Override
+    public int getChildrenCount(int groupPosition) {
+        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
+                .size();
+    }
+
+    @Override
+    public Object getGroup(int groupPosition) {
+        return this._listDataHeader.get(groupPosition);
+    }
+
+    @Override
+    public int getGroupCount() {
+        return this._listDataHeader.size();
+    }
+
+    @Override
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
+    }
+
+    @Override
+    public View getGroupView(int groupPosition, boolean isExpanded,
+                             View convertView, ViewGroup parent) {
+        String headerTitle = (String) getGroup(groupPosition);
+        if (convertView == null) {
+            LayoutInflater infalInflater = (LayoutInflater) this._context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = infalInflater.inflate(R.layout.linea_fila, null);
+        }
+
+        TextView tx_linea = (TextView) convertView
+                .findViewById(R.id.list_text_linea);
+        tx_linea.setTypeface(null, Typeface.BOLD);
+        tx_linea.setText(headerTitle);
+
+        return convertView;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return false;
+    }
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return true;
+    }
 
 }
