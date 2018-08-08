@@ -56,8 +56,6 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        bt_animar = (Button) rootView.findViewById(R.id.button);
-        //     bt_demo = (Button) rootView.findViewById(R.id.bt_demo);
         recorridos = new ArrayList<>();
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -185,7 +183,7 @@ public class MapFragment extends Fragment {
             }
         });
 
-        bt_animar.setOnClickListener(new View.OnClickListener() {
+        /*bt_animar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Marker mk = googleMap.addMarker(new MarkerOptions()
@@ -195,7 +193,7 @@ public class MapFragment extends Fragment {
                 Dibujar dibujar = new Dibujar(googleMap, mLineaDemos.get(3), getContext(), mk);
                 dibujar.execute();
             }
-        });
+        });*/
 
 
         /*
@@ -303,7 +301,7 @@ public class MapFragment extends Fragment {
                             .icon(icoParada)
                             .anchor(0.5f, 0.5f)
                             .flat(true)
-                            .title("LineaDemo " + l.getLinea())));
+                            .title("Linea " + l.getLinea())));
             }
 
             // si no lo personalizo por coso sacarlo de aca.

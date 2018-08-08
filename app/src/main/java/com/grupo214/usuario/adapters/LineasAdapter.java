@@ -94,7 +94,7 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         }
 
         TextView tx_linea = (TextView) convertView
-                .findViewById(R.id.list_text_linea);
+                .findViewById(R.id.header_text_linea);
         tx_linea.setTypeface(null, Typeface.BOLD);
         tx_linea.setText(headerTitle);
 

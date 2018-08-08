@@ -3,13 +3,14 @@ package com.grupo214.usuario.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +18,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 
@@ -26,11 +26,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.SettingsActivity;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
-import com.grupo214.usuario.apiGoogleDirection.GoogleMapsDirectionsAPI;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.objects.Linea;
-import com.grupo214.usuario.objects.LineaDemo;
 import com.grupo214.usuario.sqlite.ConexionSQLiteHelper;
 
 import java.util.ArrayList;
@@ -77,53 +75,39 @@ public class MainActivity extends AppCompatActivity
 
         //Seteo de variables:
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+       // final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         final ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-
-        appBarLayout.setExpanded(true, true);
+        //appBarLayout.setExpanded(true, true);
 
         //Levantar Datos
         connSQLite = new ConexionSQLiteHelper(this, "db_lineas", null, 1);
 
         //Set Tab:
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-
-        // SI hay cambio true, sino false;
         setupViewPager(mSectionsPageAdapter, mViewPager);
-
         tabLayout.setupWithViewPager(mViewPager);
-
+        tabLayout.getTabAt(TAB_LINEA).setIcon(R.drawable.ic_directions_bus_unselect_24dp);
+        tabLayout.getTabAt(TAB_MAPA).setIcon(R.drawable.ic_map_unselect_24dp);
+        int tabIconColor = ContextCompat.getColor(getApplicationContext(),R.color.tabSelect);
+        tabLayout.getTabAt(TAB_MAPA).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
 
         // Acciones al tocar las pestañas.
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case TAB_INICIO:
-                        break;
-                    case TAB_MAPA:
-                        //if hay cambios:
-                        mapFragment.updateDrawingRoutes();
-                            // LISTA DE LINEAS, ABRE VENTANA EMERGENTE CON LOS RAMALES,
-                        break;
-                    case TAB_LINEA:
-                        break;
-                }
+                int tabIconColor = ContextCompat.getColor(getApplicationContext(),R.color.tabSelect);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case TAB_INICIO:
-                        break;
-                    case TAB_MAPA:
-                        break;
-                    case TAB_LINEA:
-                        break;
-                }
+                int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabUnSelect);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+
             }
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
@@ -140,6 +124,7 @@ public class MainActivity extends AppCompatActivity
 
         //Barra superior
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         //Menu Lateral:
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -149,12 +134,15 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+
+
+    /* Boton superior derecho.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_item, menu);
 
         return super.onCreateOptionsMenu(menu);
-    }
+    } */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -222,10 +210,13 @@ public class MainActivity extends AppCompatActivity
         lineasFragment = new LineasFragment();
         mLineas = loadArray();
         lineasFragment.setmLineas(mLineas);
-        mapFragment.setmLineaDemos(mLineas);
 
-        adapter.addFragment(lineasFragment, "Lineas");
-        adapter.addFragment(mapFragment, "Mapa");
+        // Esto va ser un dolor de cabeza
+        // mapFragment.setmLineaDemos(mLineas);
+
+        adapter.addFragment(lineasFragment, "Lineas");   // 0
+        adapter.addFragment(mapFragment, "Mapa");        // 1
+
        // adapter.addFragment(new InicioFragment(), "Alarmas");
 
         viewPager.setAdapter(adapter);
@@ -262,9 +253,10 @@ public class MainActivity extends AppCompatActivity
 
     //esta funcion debe cargar la lista, este es el lugar final donde quedara
     //Trato de guardar all en SQL LITE.
-    private ArrayList<LineaDemo> loadArray() {
+    private ArrayList<Linea> loadArray() {
 
         mLineas = Linea.listHardCodeTest();
+
         //       for (LineaDemo l:mLineas) {
 //            connSQLite.insertarLinea(l);
 //        }
@@ -291,7 +283,10 @@ public class MainActivity extends AppCompatActivity
         // guardar esto en la clase LineaDemo y en la base de datos el polyline
         // esta funcion se debe llamar una vez creado el mapa, al inicio de la app,
         // la funciones loadRoutes();
-        GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
+
+
+
+      //  GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
 
 
         //  mapFragment.loadRoutes();
@@ -304,4 +299,5 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
         Thread.interrupted();
     }
+
 }

@@ -2,29 +2,29 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light">
 
 
     <TextView
         android:id="@+id/list_text_ramal"
-        android:layout_width="270dp"
-        android:layout_height="32dp"
-        android:layout_alignBottom="@+id/list_checkBox"
+        android:layout_width="262dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/icoColectivo2"
         android:layout_centerHorizontal="true"
         android:text="Ramal"
         android:textAppearance="@android:style/TextAppearance.Holo.Widget" />
 
     <ImageView
         android:id="@+id/icoColorColectivo"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="17dp"
-        android:adjustViewBounds="true"
+        android:layout_width="12dp"
+        android:layout_height="15dp"
+        android:layout_alignStart="@+id/icoColectivo2"
+        android:layout_alignTop="@+id/list_text_ramal"
+        android:layout_marginStart="6dp"
+        android:adjustViewBounds="false"
         android:cropToPadding="false"
         android:maxHeight="35dp"
         android:maxWidth="74dp"
@@ -32,27 +32,25 @@
 
     <ImageView
         android:id="@+id/icoColectivo2"
-        android:layout_width="45dp"
-        android:layout_height="39dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="9dp"
-        android:adjustViewBounds="true"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="11dp"
+        android:adjustViewBounds="false"
         android:cropToPadding="false"
         android:maxHeight="35dp"
         android:maxWidth="74dp"
-        android:src="@drawable/ic_directions_bus_black_24dp" />
+        app:srcCompat="@drawable/ic_directions_bus_black_24dp" />
 
     <CheckBox
         android:id="@+id/list_checkBox"
-        android:focusable="false"
-        android:clickable="false"
         android:layout_width="wrap_content"
-        android:layout_height="47dp"
+        android:layout_height="22dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="24dp" />
+        android:layout_alignTop="@+id/list_text_ramal"
+        android:layout_marginEnd="15dp"
+    />
 
 </RelativeLayout>

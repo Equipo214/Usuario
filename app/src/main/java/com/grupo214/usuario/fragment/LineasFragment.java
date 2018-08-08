@@ -3,13 +3,11 @@ package com.grupo214.usuario.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 
@@ -41,6 +39,7 @@ public class LineasFragment extends Fragment {
 
         // Obtener el ExpandableListView y setearle el adaptador
         expandableListView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
+
         adapter = new LineasAdapter(getContext(), mLineas);
         expandableListView.setAdapter(adapter);
 
@@ -54,15 +53,41 @@ public class LineasFragment extends Fragment {
             GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
         }*/
 
+        final Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, android.view.animation.Transformation t) {
+                expandableListView.getLayoutParams().height = interpolatedTime == 1
+                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+                        : (int) (expandableListView.getHeight() * interpolatedTime);
+                expandableListView.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+
+        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                for (int i = 0; i < mLineas.size(); i++)
+                    if (i != groupPosition)
+                        expandableListView.collapseGroup(i);
+
+            }
+        });
+
 
         expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                Snackbar.make( getActivity().getWindow().getDecorView().findViewById(android.R.id.content)
-                        , "pos: " +parent.getId() , Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+
                 return false;
             }
         });
