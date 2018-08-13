@@ -3,6 +3,9 @@ package com.grupo214.usuario.objects;
 import android.support.annotation.NonNull;
 
 
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,20 +17,18 @@ import java.util.Collection;
  */
 public class Recorrido extends ArrayList<Punto> {
 
-    private Boolean  checked;
 
-    public Recorrido( @NonNull Collection<? extends Punto> c) {
+
+
+    public Recorrido(@NonNull Collection<? extends Punto> c) {
         super(c);
-        checked = false;
     }
 
     public Recorrido(){
         super();
     }
 
-    public void setChecked(Boolean checked) {
-        this.checked = checked;
-    }
+
 
     @Override
     public String toString() {
@@ -37,5 +38,8 @@ public class Recorrido extends ArrayList<Punto> {
         }
         return aux;
     }
+
+
+
 }
 

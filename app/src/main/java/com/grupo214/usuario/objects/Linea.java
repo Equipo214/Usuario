@@ -1,17 +1,22 @@
 package com.grupo214.usuario.objects;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.grupo214.usuario.Util.UtilMap;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Linea {
 
-    private int idLinea;
+    private String idLinea;
     private String linea;
     private ArrayList<Ramal> ramales;
 
-    public Linea(int idLinea, String linea, ArrayList<Ramal> ramales) {
+    public String getIdLinea() {
+        return idLinea;
+    }
+
+    public Linea(String idLinea, String linea, ArrayList<Ramal> ramales) {
         this.idLinea = idLinea;
         this.linea = linea;
         this.ramales = ramales;
@@ -29,13 +34,30 @@ public class Linea {
         ArrayList<String> ramalesNombres = new ArrayList<>();
 
         for ( Ramal r: ramales)
-            ramalesNombres.add(r.getRamal());
+            ramalesNombres.add(r.getDescripcion());
 
         return ramalesNombres;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder ramales_string = new StringBuilder("[ ");
+
+        for (Ramal r : ramales)
+            ramales_string.append(r.toString()).append(" , ");
+
+        ramales_string.append(" ]");
+
+        return "idLinea: " + idLinea +" linea: " + linea + ramales_string;
+    }
+
+
+
+
+
+    /*
     public static ArrayList<Linea> listHardCodeTest() {
-        ArrayList<Linea> mLinea = new ArrayList<>();
+        ArrayList<Linea> mLineas = new ArrayList<>();
         ColorRuta cr = new ColorRuta();
         ArrayList<Ramal> ra1 = new ArrayList<>();
         Recorrido r0 = new Recorrido();
@@ -56,11 +78,11 @@ public class Linea {
         r1.add(new Punto(true, new LatLng(-34.758188, -58.409164)));
 
 
-        ra1.add( new Ramal(1,"Lomas de Zamora",r0) );
-        ra1.add( new Ramal( 2,"Burzaco",r1) );
-        ra1.add( new Ramal( 3,"Ramos Mejia",r0) );
+        ra1.add( new Ramal("10","Lomas de Zamora",r0) );
+        ra1.add( new Ramal( "20","Burzaco",r1) );
+        ra1.add( new Ramal( "3","Ramos Mejia",r0) );
 
-        mLinea.add(new Linea(1,"406",ra1));
+        mLineas.add(new Linea("1","406",ra1));
 
 
         ArrayList<Ramal> ra2 = new ArrayList<>();
@@ -72,11 +94,11 @@ public class Linea {
         r2.add(new Punto(true, new LatLng(-34.687849, -58.475321)));
 
 
-        ra2.add(new Ramal(4,"Correo Central",r2));
-        ra2.add(new Ramal(5,"Constitucion",r2));
-        ra2.add(new Ramal(9,"Balnearo",r2));
+        ra2.add(new Ramal("4","Correo Central",r2));
+        ra2.add(new Ramal("5","Constitucion",r2));
+        ra2.add(new Ramal("9","Balnearo",r2));
 
-        mLinea.add(new Linea(2,"4",ra2));
+        mLineas.add(new Linea("2","4",ra2));
 
         Recorrido r3 = new Recorrido();
         r3.add(new Punto(true, new LatLng(-34.759334, -58.400633)));  //1
@@ -90,12 +112,19 @@ public class Linea {
         r3.add(new Punto(true, new LatLng(-34.640636, -58.564095)));  //9
 
         ArrayList<Ramal> ra3 = new ArrayList<>();
-        ra3.add(new Ramal(6,"5 - Lomas de Zamora",r3));
-        ra3.add(new Ramal(7,"5 - Burzaco",r3));
-        ra3.add(new Ramal(8,"4 - Temperley",r3));
-        mLinea.add(new Linea(3, "266",ra3));
+        ra3.add(new Ramal("6","5 - Lomas de Zamora",r3));
+        ra3.add(new Ramal("7","5 - Burzaco",r3));
+        ra3.add(new Ramal("8","4 - Temperley",r3));
+        mLineas.add(new Linea("3", "266",ra3));
 
+        return mLineas;
+    }*/
 
-        return mLinea;
+    public static Linea getByID(ArrayList<Linea> mLinea, String idLinea) {
+        for(Linea l : mLinea){
+            if(l.getIdLinea().equals(idLinea))
+                return l;
+        }
+        return null;
     }
 }

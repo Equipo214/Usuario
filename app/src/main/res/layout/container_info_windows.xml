@@ -14,7 +14,7 @@
         android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/icoColectivo"
         android:layout_toRightOf="@+id/icoColectivo"
-        android:text="Linea"
+        android:text="@string/linea"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#f65034"
         android:textSize="21sp" />
@@ -26,7 +26,7 @@
         android:layout_below="@+id/list_text_linea"
         android:layout_toEndOf="@+id/icoColectivo"
         android:layout_toRightOf="@+id/icoColectivo"
-        android:text="Ramal" />
+        android:text="@string/ramal" />
 
     <ImageView
         android:id="@+id/icoColorColectivo"

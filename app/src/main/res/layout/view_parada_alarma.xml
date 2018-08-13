@@ -12,27 +12,16 @@
         android:id="@+id/list_text_ramal"
         android:layout_width="172dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/icoColectivo2"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@+id/icoColectivo2"
-        android:text="Ramal"
+        android:layout_alignBottom="@+id/icoParadaAlarma"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="66dp"
+        android:text="@string/alarma_en_parada"
         android:textAppearance="@android:style/TextAppearance.Holo.Widget" />
 
-    <ImageView
-        android:id="@+id/icoColorColectivo"
-        android:layout_width="12dp"
-        android:layout_height="15dp"
-        android:layout_alignStart="@+id/icoColectivo2"
-        android:layout_alignTop="@+id/list_text_ramal"
-        android:layout_marginStart="6dp"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:maxHeight="35dp"
-        android:maxWidth="74dp"
-        android:src="@color/colorPrimary" />
 
+    <!--Cambiar por icono de parada -->
     <ImageView
-        android:id="@+id/icoColectivo2"
+        android:id="@+id/icoParadaAlarma"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -45,7 +34,7 @@
         android:maxWidth="74dp"
         app:srcCompat="@drawable/ic_directions_bus_black_24dp" />
 
-    <CheckBox
+    <Switch
         android:id="@+id/list_checkBox"
         android:layout_width="wrap_content"
         android:layout_height="22dp"

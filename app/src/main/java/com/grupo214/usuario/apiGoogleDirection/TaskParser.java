@@ -1,10 +1,13 @@
 package com.grupo214.usuario.apiGoogleDirection;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.grupo214.usuario.R;
 import com.grupo214.usuario.objects.LineaDemo;
+import com.grupo214.usuario.objects.Ramal;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,10 +24,10 @@ import java.util.List;
  */
 public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
 
-    private LineaDemo lineaDemo;
+    private Ramal ramal;
 
-    public void setLineaDemo(LineaDemo lineaDemo) {
-        this.lineaDemo = lineaDemo;
+    public void setRamal(Ramal ramal) {
+        this.ramal = ramal;
     }
 
     @Override
@@ -60,13 +63,13 @@ public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String
 
             polylineOptions.addAll(points);
             polylineOptions.width(15);
-            polylineOptions.color(lineaDemo.getColorRuta());
+            polylineOptions.color(R.color.colorDanger); //COLOR
             polylineOptions.geodesic(true);
 
         }
 
         if (polylineOptions != null) {
-            lineaDemo.setPolylineOptions(polylineOptions);
+            ramal.getDibujo().setPolylineOptions(polylineOptions);
         }
     }
 }

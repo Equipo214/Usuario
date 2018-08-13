@@ -111,4 +111,9 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+    public void setMlineas(ArrayList<Linea> mLineas) {
+        for (Linea l : mLineas) {
+            this._listDataHeader.add(l.getLinea());
+            this._listDataChild.put(l.getLinea(), l.getRamalesNombres());
+        }    }
 }

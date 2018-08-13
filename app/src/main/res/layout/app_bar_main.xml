@@ -47,7 +47,6 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        app:tabGravity="center"
         app:tabIndicatorHeight="0dp"
         app:tabIndicatorColor="#00000000"
         android:elevation="15dp"/>

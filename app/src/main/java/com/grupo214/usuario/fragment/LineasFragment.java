@@ -3,19 +3,27 @@ package com.grupo214.usuario.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.LineasAdapter;
 import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.Ramal;
 
+import java.io.LineNumberReader;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -29,10 +37,13 @@ public class LineasFragment extends Fragment {
     private ArrayList<Linea> mLineas;
     private LineasAdapter adapter;
     private Button bt_dondeEstaMiBondi;
+    private TabLayout tabLayout;
 
 
     @Nullable
-
+    void setAdapter(ArrayList<Linea> mLineas){
+        this.adapter.setMlineas(mLineas);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_lineas, container, false);
@@ -45,6 +56,13 @@ public class LineasFragment extends Fragment {
 
         // ¿ DONDE ESTA MI BONDI ?
         bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
+        bt_dondeEstaMiBondi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tabLayout.getTabAt(MainActivity.TAB_MAPA).select();
+
+            }
+        });
         // EditText busqueda = rootView.findViewById(R.id.busqueda);
 
 
@@ -53,20 +71,6 @@ public class LineasFragment extends Fragment {
             GoogleMapsDirectionsAPI.loadPolylineOptions(mLineas);
         }*/
 
-        final Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, android.view.animation.Transformation t) {
-                expandableListView.getLayoutParams().height = interpolatedTime == 1
-                        ? ViewGroup.LayoutParams.WRAP_CONTENT
-                        : (int) (expandableListView.getHeight() * interpolatedTime);
-                expandableListView.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
 
 
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
@@ -77,22 +81,22 @@ public class LineasFragment extends Fragment {
                 for (int i = 0; i < mLineas.size(); i++)
                     if (i != groupPosition)
                         expandableListView.collapseGroup(i);
-
             }
         });
 
 
-        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onGroupClick(ExpandableListView parent, View v,
-                                        int groupPosition, long id) {
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //Linea l = mLineas.get(expandableListView.getFlatListPosition(id));
 
-
+                Ramal r = mLineas.get(groupPosition).getRamales().get(childPosition);
+                CheckBox checkBox = v.findViewById(R.id.list_checkBox);
+                r.setChecked(!r.isCheck());
+                checkBox.setChecked(!r.isCheck());
                 return false;
             }
         });
-
-
 
 
 
@@ -120,8 +124,18 @@ public class LineasFragment extends Fragment {
         return rootView;
     }
 
+    private void mensaje(String msj) {
+        Snackbar.make( getActivity().findViewById(android.R.id.content)
+                , msj , Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
+    }
+
     public void setmLineas(ArrayList<Linea> mLineas) {
         this.mLineas = mLineas;
     }
 
+    public void setTabLayout(TabLayout tabLayout) {
+        this.tabLayout = tabLayout;
+    }
 }
