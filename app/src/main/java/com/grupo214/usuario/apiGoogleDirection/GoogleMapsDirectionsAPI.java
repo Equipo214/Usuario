@@ -26,14 +26,6 @@ public class  GoogleMapsDirectionsAPI {
         }
     }
 
-    public static boolean checkNull(List<Linea> lineas){
-        for (Linea l : lineas){
-            for (Ramal r : l.getRamales())
-                if(r.getDibujo().getPolylineOptions() == null)
-                    return true;
-        }
-        return false;
-    }
 
     /**
      * Disparar el evento asyncronico para obtener las rutas de google.

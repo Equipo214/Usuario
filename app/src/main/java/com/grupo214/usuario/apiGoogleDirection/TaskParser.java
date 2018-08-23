@@ -67,9 +67,5 @@ public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String
             polylineOptions.geodesic(true);
 
         }
-
-        if (polylineOptions != null) {
-            ramal.getDibujo().setPolylineOptions(polylineOptions);
-        }
     }
 }

@@ -107,7 +107,8 @@ public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorLis
 
     private void consumirPosicion() {
 
-        String url = context.getString(R.string.SERVIDOR_LOCAL);
+        String url = context.getString(R.string.GET_UBICACION);
+
         Log.d("url1", url);
         jrq = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         Log.d("url2", url);

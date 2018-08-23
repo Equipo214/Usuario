@@ -33,6 +33,10 @@ public class Ramal {
         this.checked = false;
     }
 
+    public String getCode_recorrido() {
+        return code_recorrido;
+    }
+
     public String getIdRamal() {
         return idRamal;
     }

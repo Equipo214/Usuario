@@ -2,14 +2,18 @@ package com.grupo214.usuario.fragment;
 
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,6 +29,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.LineaDemo;
@@ -40,14 +45,14 @@ import java.util.ArrayList;
  *
  * @author Daniel Boullon
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment{
 
-    MapView mMapView;
-    GoogleMap googleMap;
-    ArrayList<Recorrido> recorridos;
-    ArrayList<Linea> mLinea;
-    byte times = 0;
-    private boolean cargadas = false;
+    private MapView mMapView;
+    private GoogleMap googleMap;
+    private ArrayList<Recorrido> recorridos;
+    private ArrayList<Linea> mLinea;
+    private byte times = 0;
+
     private Marker userMarkerStart;
     private Marker userMarkerDestiny;
 
@@ -58,7 +63,6 @@ public class MapFragment extends Fragment {
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
-
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -101,8 +105,22 @@ public class MapFragment extends Fragment {
 
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        mensaje("markerClick");
+                    public boolean onMarkerClick(final Marker marker) {
+                        //ONMARKERCLICK
+                        Snackbar mySnackbar = Snackbar.make(rootView,
+                                "wachin", Snackbar.LENGTH_SHORT);
+                        mySnackbar.setAction("Activar Alarma", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                marker.setIcon(BitmapDescriptorFactory
+                                        .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                                marker.setFlat(false);
+                            }
+                        });
+                        mySnackbar.show();
+
+
+                 //       desplegarMenuAlarma(marker);
                         return false;
                     }
                 });
@@ -110,9 +128,9 @@ public class MapFragment extends Fragment {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
                         if (marker.getTitle().contains(getString(R.string.linea))) {
-                            mensaje("Alarma");
+                            mensaje("2");
                         } else if (marker.getTitle().contains("Servicio")) {
-                            mensaje("Comentario");
+                            mensaje("3");
                         }
                     }
                 });
@@ -158,11 +176,12 @@ public class MapFragment extends Fragment {
                     }
                 });
 
-                //                List<LatLng> decoded = PolyUtil.decode("bn_rEjrtcJEJrBrBTVMZeAxB[n@oApCqDhI{B`FqBfF[z@k@pAqAnDeAfC_AhCiBpEHJX\\JlHqKrToDnHuC`CpEdJb@|@RBzCNPJRGXAf@FRDb@VVRcAtD`ClFjIpReFdEoDvCjBxDjFtKjBbE@u@At@nBdE~EhKrHnO~CpGvAvCqEdHcBbC{GbK}GpJoC`EqAdBWZcAf@[R{DbDiGjFWVgEnDiK`JYVp@pBh@|ArCzF|BvEtB`FvDtIfEvJxJbU~TuPnFaEvDpIzGeJjCuDfAwArAgB`EiGlEeG`CyCbGkHbCwCxBmC`B}AxDqDjAiAhD{CjBgBhCiClAiAr@pAdAlBzEdJjC~ERVpCtCjAfBl@hAv@zAz@tBh@jBn@~A|@vBbBpDr@pAtInPx@vAnAbClCmBdBeAbKeH|CuBf@]p@c@jAy@FNvC~FvAtCJRTQnB_BfDsCbEkDvKeJbLkJtE}DfGmEtKcIdCtFd@hAwBvCq@|@cA_CeCuFgB_EwAcDk@wAfCmBjGsErK}HpNoKlHoFb@g@HCLCx@o@|EoDdAw@rA~CdAhCVp@pAnE|FoB`DkAlFmBnFoBw@{EkBqLwBiMoDeQmDaPwAwGyAsHsAaGsAyEiAiEiByHiC}JqC{KeDyMoGcR}DyLcA`@oCrAoAn@yB`A?KG]Km@w@_D_F|BaCbAmAh@iAoDiBkGyBaIeAyDs@cCq@gC`EsCvE{C^OfC_AlAa@hA[r@MhEMP@Ae@A_A@yEnC{@bA@hIwC~EeBzFeAvA]i@kI]oKuA}^QmFwFn@gFd@o@eQ_A_WIoD_ANsB\\iC^?CCGOQCCG{DScIc@sQy@e\\_@cGy@wLa@GOuHo@mXhJWf@C@{GgGZ~@tG\\hDh@dFaMd@gMl@}ER@Nc@?qGJ_LXmJRwTn@kDHZsGxDMGiF{@BqFN[dFWtDu@nByBlFc@GyIoBuCq@qB`GaBzDyFdMiA~CKd@AN[`C{@vGUhBUt@g@hA}AxCSRqAbBiAzAeApAsB|CmC~DOE_@UeDeE}IeLuBoCyBoCsEq@gCc@cEo@}Ac@EqANo@sBoD@e@eDkCoDgDiDgDDQ|C_Gt@kBJ]NuA");
-                //     googleMap.addPolyline(new PolylineOptions().addAll(decoded));
+
+
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(13).build()));
 
+                loadRoutes();
 
             }
         });
@@ -197,6 +216,8 @@ public class MapFragment extends Fragment {
 
         return rootView;
     }
+
+    private void desplegarMenuAlarma(Marker marker) {}
 
     private void asd(LatLng latLng) {
         if (times == 2)
@@ -262,9 +283,8 @@ public class MapFragment extends Fragment {
             if (punto.isParada())
                 googleMap.addMarker(new MarkerOptions()
                         .position(punto.getLatLng())
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parada))
-                        .anchor(0.5f, 0.5f)
-                        .flat(true)
+                        .icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_RED))
                         .title(l.getLinea())
                         .snippet(l.getRamal()));
         }
@@ -272,8 +292,6 @@ public class MapFragment extends Fragment {
     }
 
     public void updateDrawingRoutes() {
-        if (!cargadas)
-            loadRoutes();
         for (Linea l : mLinea) {
             for (Ramal r : l.getRamales())
                 if (r.isCheck())
@@ -288,23 +306,18 @@ public class MapFragment extends Fragment {
 
         for (Linea l : mLinea) {
             for (Ramal r : l.getRamales()) {
-
-                PolylineOptions p = r.getDibujo().getPolylineOptions();
-                Polyline pp = googleMap.addPolyline(p);
-                r.getDibujo().setPolyline(pp);
+                Polyline p = googleMap.addPolyline(new PolylineOptions().addAll(PolyUtil.decode(r.getCode_recorrido())));
+                r.getDibujo().setPolyline(p);
 
                 for (LatLng parada : r.getParadas()) {
-                    r.getDibujo().agregarParada(googleMap.addMarker(new MarkerOptions()
+                    Marker mk = googleMap.addMarker(new MarkerOptions()
                             .position(parada)
-                            .anchor(0.5f, 0.5f)
-                            .flat(true)
-                            .title("Linea " + l.getLinea())));
+                            .icon(BitmapDescriptorFactory
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                            .title("Linea " + l.getLinea())
+                            .snippet(r.getDescripcion()));
+                    r.getDibujo().agregarParada(mk);
                 }
-
-                if (r.isCheck())
-                    r.getDibujo().show();
-                else
-                    r.getDibujo().hide();
 
                 googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                     public View getInfoWindow(Marker marker) {
@@ -320,7 +333,8 @@ public class MapFragment extends Fragment {
                 });
             }
         }
-        cargadas = true;
+
+        updateDrawingRoutes();
     }
 
     public ArrayList<Linea> getmLinea() {
@@ -330,4 +344,5 @@ public class MapFragment extends Fragment {
     public void setmLinea(ArrayList<Linea> mLinea) {
         this.mLinea = mLinea;
     }
+
 }

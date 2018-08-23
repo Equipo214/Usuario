@@ -18,17 +18,20 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.PointerIcon;
+import android.widget.ImageButton;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.SettingsActivity;
-import com.grupo214.usuario.connserver.ConnectServer;
+import com.grupo214.usuario.SplashScreen;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
 import com.grupo214.usuario.alarma.Alarma;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.objects.Linea;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
     private LineasFragment lineasFragment;
-    private TabLayout tabLayout;
+    private SmartTabLayout tabLayout;
     private int flagg = 0;
     private Alarma alarma;
 
@@ -82,13 +85,14 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Bundle objetoSeralizado = getIntent().getExtras();
 
         alarma = new Alarma(this);
 
         //Seteo de variables:
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (SmartTabLayout) findViewById(R.id.tabs);
         final ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -100,51 +104,29 @@ public class MainActivity extends AppCompatActivity
         mSectionsPageAdapter.addFragment(lineasFragment, "Lineas");   // 0
         mSectionsPageAdapter.addFragment(mapFragment, "Mapa");        // 1
         mViewPager.setAdapter(mSectionsPageAdapter);
-        mViewPager.setCurrentItem(TAB_MAPA); // para que inicie la tab de Mapas
-        tabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setCurrentItem(TAB_LINEA); // para que inicie la tab de Mapas --> temporalmente cambiado.
+        tabLayout.setViewPager(mViewPager);
 
+  //      tabLayout.getTabAt(TAB_LINEA).setPointerIcon(new PointerIcon());
+  //      tabLayout.getTabAt(TAB_MAPA).setIcon(R.drawable.ic_map_unselect_24dp);
+     //   int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelect);
+     //   tabLayout.getTabAt(TAB_MAPA).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
 
-        tabLayout.getTabAt(TAB_LINEA).setIcon(R.drawable.ic_directions_bus_unselect_24dp);
-        tabLayout.getTabAt(TAB_MAPA).setIcon(R.drawable.ic_map_unselect_24dp);
-        int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelect);
-        tabLayout.getTabAt(TAB_MAPA).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-
-        // Acciones al tocar las pestañas // estetica.
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.setOnTabClickListener(new SmartTabLayout.OnTabClickListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelect);
-                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabUnSelect);
-                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
+            public void onTabClicked(int position) {
+                switch (position) {
                     case TAB_MAPA:
-                        lineasFragment.setmLineas(mLineas);
-                      //  mensaje(alarma.getParametro());
-                        /*
-
-                        if (flagg == 0) {
-                            mapFragment.loadRoutes();
-                            flagg++;
-                        } else
-                            mapFragment.updateDrawingRoutes();
-                        */
+                        mapFragment.updateDrawingRoutes();
+                        //   mensaje("Re loco");
+                        // mapFragment.updateDrawingRoutes();
                         break;
                     case TAB_LINEA:
                         break;
                 }
             }
         });
+
 
         //Barra superior
         setSupportActionBar(toolbar);
@@ -159,9 +141,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void cargarLineas() {
-        mLineas = new ArrayList<>();
-        new ConnectServer(this,mLineas).execute();
-
+        mLineas = SplashScreen.mLineas; // ALTA NEGRADA :(
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
         lineasFragment.setmLineas(mLineas);
@@ -177,8 +157,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //  mensaje("Guardar en base de datos SQL");
-            Thread.interrupted();
-            super.onBackPressed();
+            
         }
     }
 

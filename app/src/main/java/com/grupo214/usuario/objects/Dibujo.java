@@ -4,21 +4,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Dibujo {
-    private PolylineOptions polylineOptions;
     private Polyline polyline;
     private List<Marker> paradas;
 
-    public PolylineOptions getPolylineOptions() {
-        return polylineOptions;
-    }
+    public  Dibujo(){
+        paradas = new ArrayList<Marker>();
 
-    public void setPolylineOptions(PolylineOptions polylineOptions) {
-        this.polylineOptions = polylineOptions;
     }
-
     public void setPolyline(Polyline polyline) {
         this.polyline = polyline;
     }
@@ -39,5 +35,9 @@ public class Dibujo {
         for (Marker mk : paradas) {
             mk.setVisible(true);
         }
+    }
+
+    public Polyline getPolyline() {
+        return polyline;
     }
 }

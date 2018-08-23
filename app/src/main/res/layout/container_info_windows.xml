@@ -24,38 +24,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/list_text_linea"
+        android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/icoColectivo"
         android:layout_toRightOf="@+id/icoColectivo"
         android:text="@string/ramal" />
 
-    <ImageView
-        android:id="@+id/icoColorColectivo"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="12dp"
-        android:adjustViewBounds="true"
-        android:cropToPadding="false"
-        android:maxHeight="35dp"
-        android:maxWidth="74dp"
-        android:src="@color/colorPrimary" />
-
-    <ImageView
-        android:id="@+id/icoColectivo"
-        android:layout_width="45dp"
+    <TextView
+        android:id="@+id/list_text_tiempo"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/list_text_ramal"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="2dp"
-        android:adjustViewBounds="true"
-        android:cropToPadding="false"
-        android:maxHeight="35dp"
-        android:maxWidth="74dp"
-        android:src="@drawable/ic_directions_bus_black_24dp" />
+        android:layout_alignStart="@+id/list_text_linea"
+        android:layout_below="@+id/list_text_ramal"
+        android:text="@string/ramal" />
 
 </RelativeLayout>

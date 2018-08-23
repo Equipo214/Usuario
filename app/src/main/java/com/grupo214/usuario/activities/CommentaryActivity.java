@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.SplashScreen;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 
@@ -70,12 +71,7 @@ public class CommentaryActivity extends AppCompatActivity {
     }
 
     private void cargarDatos() {
-        mLinea = new ArrayList<Linea>();
-        /* ALTO HARCODEO FAST NO CRASH NEVER PONY **/
-        ArrayList<Ramal> r = new ArrayList<Ramal>();
-        r.add(new Ramal("2","Lomas de Zamora","",null));
-        mLinea.add(new Linea("1","405",r));
-
+        mLinea = SplashScreen.mLineas; // <-- esta negrada si se puede ver.
 
         lineas_nombres = new ArrayList<>();
         lineas_id_nombres = new ArrayList<>();

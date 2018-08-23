@@ -157,6 +157,8 @@
     <string name="linea">Linea</string>
     <string name="ramal">Ramal</string>
     <string name="serverRestBase">https://virginal-way.000webhostapp.com</string>
+    <string name="GET_UBICACION">https://virginal-way.000webhostapp.com/appPasajero/getUbicacionServicios.php</string>
+    <string name="GET_RECORRIDOS">https://virginal-way.000webhostapp.com/appPasajero/getRecorridos.php</string>
 
 
 </resources>
