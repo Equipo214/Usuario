@@ -2,20 +2,22 @@ package com.grupo214.usuario.fragment;
 
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -31,11 +33,16 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.connserver.Dibujar;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.LineaDemo;
 import com.grupo214.usuario.objects.Punto;
 import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Recorrido;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -45,19 +52,22 @@ import java.util.ArrayList;
  *
  * @author Daniel Boullon
  */
-public class MapFragment extends Fragment{
+public class MapFragment extends Fragment {
 
     private MapView mMapView;
     private GoogleMap googleMap;
     private ArrayList<Recorrido> recorridos;
     private ArrayList<Linea> mLinea;
     private byte times = 0;
-
+    private int contarClicks = 0;
     private Marker userMarkerStart;
     private Marker userMarkerDestiny;
+    private Marker mkInicio;
+    private Marker mkDestino;
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         recorridos = new ArrayList<>();
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
@@ -120,7 +130,7 @@ public class MapFragment extends Fragment{
                         mySnackbar.show();
 
 
-                 //       desplegarMenuAlarma(marker);
+                        //       desplegarMenuAlarma(marker);
                         return false;
                     }
                 });
@@ -134,6 +144,32 @@ public class MapFragment extends Fragment{
                         }
                     }
                 });
+
+
+                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+
+                        if (++contarClicks == 1) {
+                            mkInicio = googleMap.addMarker(new MarkerOptions()
+                                    .title("Inicio")
+                                    .position(latLng)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                        } else if (contarClicks == 2) {
+                            mkDestino = googleMap.addMarker(new MarkerOptions()
+                                    .title("Destino")
+                                    .position(latLng)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                            calcularTiempo(mkInicio,mkDestino);
+                        } else if (contarClicks == 3) {
+                            contarClicks = 0;
+                        }
+
+                    }
+                });
+
+
+                /*
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
                     public void onMapLongClick(LatLng latLng) {
@@ -161,7 +197,7 @@ public class MapFragment extends Fragment{
                                 mensaje("marca alguna gil");
                         }
                     }
-                });
+                }); */
 
                 googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
@@ -175,7 +211,6 @@ public class MapFragment extends Fragment{
                         return true;
                     }
                 });
-
 
 
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
@@ -214,10 +249,43 @@ public class MapFragment extends Fragment{
         });
             */
 
+        Dibujar d = new Dibujar(googleMap, getContext());
+        d.consumirPosicion(); //<- cambiar nombre y pasar por parametro la array de lineas y ramales. _:)
         return rootView;
     }
 
-    private void desplegarMenuAlarma(Marker marker) {}
+    private void calcularTiempo(Marker mkInicio, final Marker mkDestino) {
+
+        String outputFormat = "origins=" +mkInicio.getPosition().latitude +"," + mkInicio.getPosition().longitude+
+                "&destinations="+ mkDestino.getPosition().latitude +"," + mkDestino.getPosition().longitude;
+        String parameters = ""; // añadir ?
+        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?"+outputFormat+parameters + "&key=" + getString(R.string.google_maps_key);
+        Log.d("MapFragment URL: ", url);
+
+        final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONArray rows = response.optJSONArray("rows");
+                        try {
+                            mkDestino.setSnippet(rows.getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text"));
+                        } catch (JSONException e) {
+                            Log.d("Json Error", e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("JSON:ERROR", error.toString());
+            }
+        });
+        Volley.newRequestQueue(getContext()).add(jsonRequest);
+
+    }
+
+    private void desplegarMenuAlarma(Marker marker) {
+    }
 
     private void asd(LatLng latLng) {
         if (times == 2)

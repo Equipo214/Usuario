@@ -29,12 +29,4 @@
         android:layout_toRightOf="@+id/icoColectivo"
         android:text="@string/ramal" />
 
-    <TextView
-        android:id="@+id/list_text_tiempo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/list_text_linea"
-        android:layout_below="@+id/list_text_ramal"
-        android:text="@string/ramal" />
-
 </RelativeLayout>

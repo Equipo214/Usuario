@@ -86,12 +86,12 @@ public class SplashScreen extends AppCompatActivity {
                                     code = code.replace("\\\\","\\");
 
                                     ramales.add(new Ramal(ramal.getString("idRamal"),
-                                    ramal.getString("descripcion"),
-                                    code, paradas));
+                                            ramal.getString("descripcion"),
+                                            code, paradas));
 
                                 }
                                 listaLinea.add(new Linea(lineaJson.getString("idLinea"),
-                                lineaJson.getString("linea"),
+                                        lineaJson.getString("linea"),
                                         ramales));
                             }
                         } catch (JSONException e) {

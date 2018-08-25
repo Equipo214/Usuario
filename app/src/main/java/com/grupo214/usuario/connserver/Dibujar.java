@@ -23,12 +23,15 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.LineaDemo;
+import com.grupo214.usuario.objects.Ramal;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 
 
 // Cuando tenga todas las lineas lo que puedo hacer , es solo animar las que estan dentro del radio
@@ -43,7 +46,6 @@ import org.json.JSONObject;
 public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorListener {
 
     private final static long REFRESH_TIME = 1000;
-    private final Marker mk;
 
     private Double lat;
     private Double log;
@@ -53,20 +55,20 @@ public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorLis
     private JsonRequest jrq;
     private GoogleMap googleMap;
 
-    public Dibujar(GoogleMap googleMap, LineaDemo lineaDemo, Context context, Marker mk) {
+
+    public Dibujar(GoogleMap googleMap,Context context){
         this.googleMap = googleMap;
-        this.lineaDemo = lineaDemo;
-        this.rq = Volley.newRequestQueue(context);
         this.context = context;
-        this.mk = mk;
     }
+
 
     @Override
     public void onResponse(JSONObject response) {
 
-        JSONArray jsonArray = response.optJSONArray("coordenadas");
+        JSONArray jsonArray = response.optJSONArray("servicios");
+        Log.d("DIBUJAR.JAVA",jsonArray.toString());
         JSONObject jsonObject = null;
-        try {
+        /*try {
 
             jsonObject = jsonArray.getJSONObject(0);
             lat = (jsonObject.optDouble("latitud"));
@@ -75,8 +77,7 @@ public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorLis
             animateMarker(mk, new LatLng(lat, log), false, googleMap);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-
+        }*/
         Toast.makeText(context, "OK", Toast.LENGTH_SHORT).show();
 
     }
@@ -86,33 +87,31 @@ public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorLis
         Toast.makeText(context, "Error: " + error.toString(), Toast.LENGTH_LONG).show();
     }
 
-    public void execute() {
-        Time time = new Time();
-        time.execute();
-    }
 
-    public void hilo() {
-        try {
-            Thread.sleep(REFRESH_TIME);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void ejecutar() {
-        Time time = new Time();
-        Log.d("Time: ", "adentro de Time");
-        time.execute();
-    }
-
-    private void consumirPosicion() {
-
+    public void consumirPosicion() {
         String url = context.getString(R.string.GET_UBICACION);
 
-        Log.d("url1", url);
-        jrq = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
-        Log.d("url2", url);
-        rq.add(jrq);
+        final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONArray lineasJson = response.optJSONArray("servicios");
+                        Log.d("Dibujar.java",lineasJson.toString());
+                        /*try {
+                        } catch (JSONException e) {
+                            Log.d("Json Error", e.toString());
+                        }*/
+
+                        //ANIMAR
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("JSON:ERROR", error.toString());
+            }
+        });
+
+        Volley.newRequestQueue(context).add(jsonRequest);
     }
 
     public void animateMarker(final Marker marker, final LatLng toPosition,
@@ -147,21 +146,5 @@ public class Dibujar implements Response.Listener<JSONObject>, Response.ErrorLis
                 }
             }
         });
-    }
-
-    public class Time extends AsyncTask<Void, Integer, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            hilo();
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            ejecutar();
-            consumirPosicion();
-            Toast.makeText(context, "consumiendo..", Toast.LENGTH_SHORT).show();
-        }
     }
 }

@@ -28,8 +28,10 @@ import com.grupo214.usuario.SettingsActivity;
 import com.grupo214.usuario.SplashScreen;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
 import com.grupo214.usuario.alarma.Alarma;
+import com.grupo214.usuario.connserver.Dibujar;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
+import com.grupo214.usuario.objects.Dibujo;
 import com.grupo214.usuario.objects.Linea;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     private void cargarLineas() {
