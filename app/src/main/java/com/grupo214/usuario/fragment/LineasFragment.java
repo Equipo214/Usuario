@@ -22,6 +22,7 @@ import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -35,6 +36,7 @@ public class LineasFragment extends Fragment {
     Dialog startMenuDialog;
     private ExpandableListView expandableListView;
     private ArrayList<Linea> mLineas;
+    private ArrayList<Linea> lineas_seleccionadas;
     private LineasAdapter adapter;
     private Button bt_dondeEstaMiBondi;
     private SmartTabLayout tabLayout;
@@ -58,6 +60,7 @@ public class LineasFragment extends Fragment {
             public void onClick(View view) {
                 startMenuDialog.dismiss();
                 Toast.makeText(getContext(), "Ubicacion", Toast.LENGTH_SHORT).show();
+
 
             }
         });
@@ -83,9 +86,10 @@ public class LineasFragment extends Fragment {
         bt_dondeEstaMiBondi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startMenuDialog.show();
+                // setTab Change Tab algo con tab
                 tabLayout.getTabAt(MainActivity.TAB_MAPA).setSelected(true);
-
+                //
+                startMenuDialog.show();
             }
         });
 
@@ -109,7 +113,11 @@ public class LineasFragment extends Fragment {
                 Ramal r = mLineas.get(groupPosition).getRamales().get(childPosition);
                 CheckBox checkBox = v.findViewById(R.id.list_checkBox);
 
+
+
                 r.setChecked(!r.isCheck());
+
+
                 checkBox.setChecked(r.isCheck());
 
                 return false;
@@ -126,8 +134,9 @@ public class LineasFragment extends Fragment {
 
     }
 
-    public void setmLineas(ArrayList<Linea> mLineas) {
+    public void setLineas(ArrayList<Linea> mLineas, ArrayList<Linea> lineas_seleccionadas) {
         this.mLineas = mLineas;
+        this.lineas_seleccionadas = lineas_seleccionadas;
 
     }
 

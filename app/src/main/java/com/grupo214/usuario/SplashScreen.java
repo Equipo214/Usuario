@@ -48,8 +48,8 @@ public class SplashScreen extends AppCompatActivity {
 
     public void starttt() {
         Intent main = new Intent(SplashScreen.this, MainActivity.class);
-
         startActivity(main);
+        finish();
     }
 
 
@@ -85,7 +85,7 @@ public class SplashScreen extends AppCompatActivity {
                                     // Fix \\ -> \
                                     code = code.replace("\\\\","\\");
 
-                                    ramales.add(new Ramal(ramal.getString("idRamal"),
+                                    ramales.add(new Ramal(lineaJson.getString("idLinea"),ramal.getString("idRamal"),
                                             ramal.getString("descripcion"),
                                             code, paradas));
 

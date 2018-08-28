@@ -37,6 +37,7 @@ public class CommentaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_commentary);
 
         ImageButton bt_enviar = (ImageButton) findViewById(R.id.bt_enviar);
+        ImageButton bt_backComm = (ImageButton) findViewById(R.id.bt_backComm);
         tx_comentario = findViewById(R.id.tx_comentario);
 
         spinner_linea = findViewById(R.id.spinner_linea);
@@ -44,7 +45,12 @@ public class CommentaryActivity extends AppCompatActivity {
 
         cargarDatos();
 
-
+        bt_backComm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommentaryActivity.super.onBackPressed();
+            }
+        });
         bt_enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

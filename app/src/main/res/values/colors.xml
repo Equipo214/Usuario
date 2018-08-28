@@ -4,7 +4,7 @@
     <color name="colorPrimary">#ffffff</color>
     <color name="colorAccent">#97e17f</color>
     <color name="colorWarning">#f0ad4e</color>
-    <color name="colorDanger">#f0ad4e</color>
+    <color name="colorDanger">#d1000e</color>
     <color name="colorBlack">#111111</color>
     <color name="tabSelect">#4688f4</color>
     <color name="tabUnSelect">#999999</color>

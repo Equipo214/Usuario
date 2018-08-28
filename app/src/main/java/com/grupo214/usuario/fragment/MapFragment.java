@@ -7,17 +7,11 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -33,18 +27,15 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.alarma.Alarma;
 import com.grupo214.usuario.connserver.Dibujar;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.LineaDemo;
 import com.grupo214.usuario.objects.Punto;
 import com.grupo214.usuario.objects.Ramal;
-import com.grupo214.usuario.objects.Recorrido;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -54,26 +45,21 @@ import java.util.ArrayList;
  */
 public class MapFragment extends Fragment {
 
+    HashMap<String, Marker> paradasConAlarmas;
     private MapView mMapView;
     private GoogleMap googleMap;
-    private ArrayList<Recorrido> recorridos;
     private ArrayList<Linea> mLinea;
-    private byte times = 0;
-    private int contarClicks = 0;
-    private Marker userMarkerStart;
-    private Marker userMarkerDestiny;
-    private Marker mkInicio;
-    private Marker mkDestino;
+    private ArrayList<Linea> lineas_seleccionadas;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        recorridos = new ArrayList<>();
+
+        paradasConAlarmas = new HashMap<>();
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
-
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -103,34 +89,49 @@ public class MapFragment extends Fragment {
                 googleMap.setMapStyle(new MapStyleOptions(getResources()
                         .getString(R.string.style_json)));
 
-                userMarkerStart = googleMap.addMarker(new MarkerOptions()
-                        .title("Inicio").position(new LatLng(0, 0)));
-
-                userMarkerDestiny = googleMap.addMarker(new MarkerOptions()
-                        .title("Destino").position(new LatLng(0, 0))
-                );
-
-                userMarkerStart.setVisible(false);
-                userMarkerDestiny.setVisible(false);
 
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(final Marker marker) {
+                        // tiempo estimado al abrir el info view
+                        // if( Servicio ) calcular tiempo return ;
+                        // if( paradaMasCercana ) menu accecibilidad.
+                        if (marker.getTitle().contains("cercana")) {
+                            mensaje("cercana");
+                        }
                         //ONMARKERCLICK
-                        Snackbar mySnackbar = Snackbar.make(rootView,
-                                "wachin", Snackbar.LENGTH_SHORT);
-                        mySnackbar.setAction("Activar Alarma", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                marker.setIcon(BitmapDescriptorFactory
-                                        .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                                marker.setFlat(false);
+                        if (marker.getTitle().contains("Servicio")) {
+                            mensaje("Servicio");
+                        }
+                        if (marker.getTitle().contains("Parada")) {
+                            Snackbar mySnackbar;
+                            if (paradasConAlarmas.get(marker.getId()) == null) {
+                                mySnackbar = Snackbar.make(rootView,
+                                        "", Snackbar.LENGTH_LONG);
+                                mySnackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
+                                mySnackbar.setAction("¿Desea activar la alarma?", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        marker.setIcon(BitmapDescriptorFactory
+                                                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)); // ICONO ALARMA
+                                        paradasConAlarmas.put(marker.getId(), marker);
+                                    }
+                                });
+                            } else {
+                                mySnackbar = Snackbar.make(rootView,
+                                        "", Snackbar.LENGTH_SHORT);
+                                mySnackbar.setActionTextColor(getResources().getColor(R.color.colorWarning));
+                                mySnackbar.setAction("¿Desea desactivar la alarma?", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        marker.setIcon(BitmapDescriptorFactory
+                                                .defaultMarker(BitmapDescriptorFactory.HUE_RED)); // ICONO COMUN
+                                        paradasConAlarmas.remove(marker.getId());
+                                    }
+                                });
                             }
-                        });
-                        mySnackbar.show();
-
-
-                        //       desplegarMenuAlarma(marker);
+                            mySnackbar.show();
+                        }
                         return false;
                     }
                 });
@@ -146,72 +147,25 @@ public class MapFragment extends Fragment {
                 });
 
 
-                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                    @Override
-                    public void onMapLongClick(LatLng latLng) {
-
-                        if (++contarClicks == 1) {
-                            mkInicio = googleMap.addMarker(new MarkerOptions()
-                                    .title("Inicio")
-                                    .position(latLng)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                        } else if (contarClicks == 2) {
-                            mkDestino = googleMap.addMarker(new MarkerOptions()
-                                    .title("Destino")
-                                    .position(latLng)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                            calcularTiempo(mkInicio,mkDestino);
-                        } else if (contarClicks == 3) {
-                            contarClicks = 0;
-                        }
-
-                    }
-                });
-
-
-                /*
-                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                    @Override
-                    public void onMapLongClick(LatLng latLng) {
-                        if (times == 1) {
-                            cleanUserMarkers();
-
-                        }
-
-                        if (times == 0)
-                            updateUserMarker(userMarkerStart, latLng);
-
-//                        if (times == 1)
-//                            updateUserMarker(userMarkerDestiny, latLng);
-
-                        if (++times == 1) {
-                            Boolean flag = false;
-                            for (Linea l : mLinea) {
-                                for (Ramal r : l.getRamales()) {
-                                    if (r.isCheck()) {
-                                        flag = true;
-                                    }
-                                }
-                            }
-                            if (!flag)
-                                mensaje("marca alguna gil");
-                        }
-                    }
-                }); */
-
+                // prueba de alarma :) (solo deberia sonar)
+                // despues hacer distancia de ( ubicacion y paradaCercana) < distancia predefinida.
                 googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
-                        // validar gps. (creo que si no activo no aparece el boton quizas safo=
-
-                        if (times < 2) {
-                            LatLng ubicacionActual = new LatLng(0, 0);
-                            asd(ubicacionActual);
-                        }
-                        return true;
+                        new Alarma(getContext(), paradasConAlarmas).run();
+                        return false;
                     }
                 });
 
+                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+                        googleMap.addMarker(new MarkerOptions()
+                                .title("Inicio")
+                                .position(latLng)
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    }
+                });
 
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(13).build()));
@@ -221,97 +175,13 @@ public class MapFragment extends Fragment {
             }
         });
 
-        /*bt_animar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Marker mk = googleMap.addMarker(new MarkerOptions()
-                        .position(mLineaDemos.get(3).getNextPointDemo())
-                        .title("Servicio " + mLineaDemos.get(3).getLinea())
-                        .snippet(mLineaDemos.get(3).getDescripcion()));
-                Dibujar dibujar = new Dibujar(googleMap, mLineaDemos.get(3), getContext(), mk);
-                dibujar.execute();
-            }
-        });*/
-
-
-        /*
-
-        bt_demo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (LineaDemo l : mLineaDemos) {
-                    if (l.isCheck()) {
-                        new DibujarDemo(googleMap, l,true).ejecutar();
-                        new DibujarDemo(googleMap, l,false).ejecutar();
-                    }
-                }
-            }
-        });
-            */
-
-        Dibujar d = new Dibujar(googleMap, getContext());
-        d.consumirPosicion(); //<- cambiar nombre y pasar por parametro la array de lineas y ramales. _:)
+        Dibujar d = new Dibujar(googleMap, getContext(), mLinea);
+        d.consumirPosicion();
         return rootView;
     }
 
-    private void calcularTiempo(Marker mkInicio, final Marker mkDestino) {
 
-        String outputFormat = "origins=" +mkInicio.getPosition().latitude +"," + mkInicio.getPosition().longitude+
-                "&destinations="+ mkDestino.getPosition().latitude +"," + mkDestino.getPosition().longitude;
-        String parameters = ""; // añadir ?
-        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?"+outputFormat+parameters + "&key=" + getString(R.string.google_maps_key);
-        Log.d("MapFragment URL: ", url);
-
-        final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        JSONArray rows = response.optJSONArray("rows");
-                        try {
-                            mkDestino.setSnippet(rows.getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text"));
-                        } catch (JSONException e) {
-                            Log.d("Json Error", e.toString());
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("JSON:ERROR", error.toString());
-            }
-        });
-        Volley.newRequestQueue(getContext()).add(jsonRequest);
-
-    }
-
-    private void desplegarMenuAlarma(Marker marker) {
-    }
-
-    private void asd(LatLng latLng) {
-        if (times == 2)
-            cleanUserMarkers();
-        if (times == 0)
-            updateUserMarker(userMarkerStart, latLng);
-        if (times == 1)
-            updateUserMarker(userMarkerDestiny, latLng);
-        if (++times == 2)
-            mensaje("Aca no se que hacer pero algo tengo que hacer :v");
-    }
-
-
-    private void updateUserMarker(Marker userMarker, LatLng latLng) {
-        userMarker.setPosition(latLng);
-        userMarker.setVisible(true);
-    }
-
-    private void cleanUserMarkers() {
-        times = 0;
-        userMarkerDestiny.setVisible(false);
-        userMarkerStart.setVisible(false);
-    }
-
-
-    private void mensaje(String msj) {
+    void mensaje(String msj) {
         Snackbar.make(getActivity().getWindow().getDecorView().findViewById(android.R.id.content)
                 , msj, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
@@ -382,8 +252,8 @@ public class MapFragment extends Fragment {
                             .position(parada)
                             .icon(BitmapDescriptorFactory
                                     .defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                            .title("Linea " + l.getLinea())
-                            .snippet(r.getDescripcion()));
+                            .title("Parada de la linea" + l.getLinea())
+                            .snippet("Ramal: " + r.getDescripcion()));
                     r.getDibujo().agregarParada(mk);
                 }
 
@@ -409,8 +279,9 @@ public class MapFragment extends Fragment {
         return mLinea;
     }
 
-    public void setmLinea(ArrayList<Linea> mLinea) {
+    public void setLineas(ArrayList<Linea> mLinea, ArrayList<Linea> lineas_seleccionadas) {
         this.mLinea = mLinea;
+        this.lineas_seleccionadas = lineas_seleccionadas;
     }
 
 }

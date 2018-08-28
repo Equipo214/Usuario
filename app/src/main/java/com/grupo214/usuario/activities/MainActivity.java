@@ -3,14 +3,11 @@ package com.grupo214.usuario.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -18,8 +15,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.PointerIcon;
-import android.widget.ImageButton;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,10 +23,8 @@ import com.grupo214.usuario.SettingsActivity;
 import com.grupo214.usuario.SplashScreen;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
 import com.grupo214.usuario.alarma.Alarma;
-import com.grupo214.usuario.connserver.Dibujar;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
-import com.grupo214.usuario.objects.Dibujo;
 import com.grupo214.usuario.objects.Linea;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
@@ -76,20 +69,18 @@ public class MainActivity extends AppCompatActivity
      * en el telefono (si no hay actualizacion)
      */
     private ArrayList<Linea> mLineas;
+    private ArrayList<Linea> lineas_seleccionadas;
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
     private LineasFragment lineasFragment;
     private SmartTabLayout tabLayout;
     private int flagg = 0;
-    private Alarma alarma;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Bundle objetoSeralizado = getIntent().getExtras();
-
-        alarma = new Alarma(this);
 
         //Seteo de variables:
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -144,13 +135,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void cargarLineas() {
+        lineas_seleccionadas = new ArrayList<>();
         mLineas = SplashScreen.mLineas; // ALTA NEGRADA :(
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
-        lineasFragment.setmLineas(mLineas);
+        lineasFragment.setLineas(mLineas,lineas_seleccionadas);
         lineasFragment.setTabLayout(tabLayout);
 
-        mapFragment.setmLinea(mLineas);
+        mapFragment.setLineas(mLineas,lineas_seleccionadas);
     }
 
     @Override
@@ -160,7 +152,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //  mensaje("Guardar en base de datos SQL");
-            
+            super.onBackPressed();
         }
     }
 
