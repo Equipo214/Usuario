@@ -22,13 +22,14 @@ import com.grupo214.usuario.R;
 import com.grupo214.usuario.SettingsActivity;
 import com.grupo214.usuario.SplashScreen;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
-import com.grupo214.usuario.alarma.Alarma;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.Ramal;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Clase Main donde se gestiona toda la app.
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity
      * en el telefono (si no hay actualizacion)
      */
     private ArrayList<Linea> mLineas;
-    private ArrayList<Linea> lineas_seleccionadas;
+    private HashMap<String,Ramal> ramales_seleccionados;
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
     private LineasFragment lineasFragment;
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity
             public void onTabClicked(int position) {
                 switch (position) {
                     case TAB_MAPA:
-                        mapFragment.updateDrawingRoutes();
+                        // mapFragment.updateDrawingRoutes();
                         //   mensaje("Re loco");
                         // mapFragment.updateDrawingRoutes();
                         break;
@@ -135,14 +136,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void cargarLineas() {
-        lineas_seleccionadas = new ArrayList<>();
+        ramales_seleccionados = new HashMap<>();
         mLineas = SplashScreen.mLineas; // ALTA NEGRADA :(
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
-        lineasFragment.setLineas(mLineas,lineas_seleccionadas);
+        lineasFragment.setLineas(mLineas, ramales_seleccionados);
         lineasFragment.setTabLayout(tabLayout);
-
-        mapFragment.setLineas(mLineas,lineas_seleccionadas);
+        mapFragment.setLineas(mLineas, ramales_seleccionados);
     }
 
     @Override

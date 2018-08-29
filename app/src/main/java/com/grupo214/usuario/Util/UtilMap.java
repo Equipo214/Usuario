@@ -18,7 +18,7 @@ import com.google.android.gms.maps.model.Marker;
 public class UtilMap {
 
     /**
-     * Ccalcular distancia entre dos puntos.
+     * Ccalcular distancia entre dos puntos en metros.
      *
      * @param StartP punto de inicio.
      * @param EndP   punto de fin.

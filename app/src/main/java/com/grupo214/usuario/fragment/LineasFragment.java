@@ -4,7 +4,6 @@ package com.grupo214.usuario.fragment;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +21,8 @@ import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -36,7 +35,7 @@ public class LineasFragment extends Fragment {
     Dialog startMenuDialog;
     private ExpandableListView expandableListView;
     private ArrayList<Linea> mLineas;
-    private ArrayList<Linea> lineas_seleccionadas;
+    private HashMap<String,Ramal> ramales_seleccionados;
     private LineasAdapter adapter;
     private Button bt_dondeEstaMiBondi;
     private SmartTabLayout tabLayout;
@@ -114,9 +113,15 @@ public class LineasFragment extends Fragment {
                 CheckBox checkBox = v.findViewById(R.id.list_checkBox);
 
 
-
                 r.setChecked(!r.isCheck());
-
+                if(r.isCheck()){
+                    r.getDibujo().show();
+                    ramales_seleccionados.put(r.getIdLinea(),r);
+                }
+                else{
+                    r.getDibujo().hide();
+                    ramales_seleccionados.remove(r.getIdLinea());
+                }
 
                 checkBox.setChecked(r.isCheck());
 
@@ -134,9 +139,9 @@ public class LineasFragment extends Fragment {
 
     }
 
-    public void setLineas(ArrayList<Linea> mLineas, ArrayList<Linea> lineas_seleccionadas) {
+    public void setLineas(ArrayList<Linea> mLineas, HashMap<String,Ramal> lineas_seleccionadas) {
         this.mLineas = mLineas;
-        this.lineas_seleccionadas = lineas_seleccionadas;
+        this.ramales_seleccionados = lineas_seleccionadas;
 
     }
 

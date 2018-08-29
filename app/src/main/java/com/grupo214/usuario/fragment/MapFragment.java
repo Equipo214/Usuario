@@ -30,8 +30,6 @@ import com.grupo214.usuario.R;
 import com.grupo214.usuario.alarma.Alarma;
 import com.grupo214.usuario.connserver.Dibujar;
 import com.grupo214.usuario.objects.Linea;
-import com.grupo214.usuario.objects.LineaDemo;
-import com.grupo214.usuario.objects.Punto;
 import com.grupo214.usuario.objects.Ramal;
 
 import java.util.ArrayList;
@@ -45,11 +43,13 @@ import java.util.HashMap;
  */
 public class MapFragment extends Fragment {
 
-    HashMap<String, Marker> paradasConAlarmas;
+    HashMap<String, LatLng> paradasConAlarmas;
+    Dibujar dibujar;
     private MapView mMapView;
     private GoogleMap googleMap;
     private ArrayList<Linea> mLinea;
-    private ArrayList<Linea> lineas_seleccionadas;
+    private Alarma alarma;
+    private HashMap<String, Ramal> ramales_seleccionados;
 
 
     @Override
@@ -57,6 +57,9 @@ public class MapFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         paradasConAlarmas = new HashMap<>();
+        alarma = new Alarma(getContext(), paradasConAlarmas);
+        dibujar = new Dibujar(googleMap, getContext(), mLinea, ramales_seleccionados);
+
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
@@ -114,7 +117,7 @@ public class MapFragment extends Fragment {
                                     public void onClick(View v) {
                                         marker.setIcon(BitmapDescriptorFactory
                                                 .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)); // ICONO ALARMA
-                                        paradasConAlarmas.put(marker.getId(), marker);
+                                        paradasConAlarmas.put(marker.getId(), marker.getPosition());
                                     }
                                 });
                             } else {
@@ -152,7 +155,7 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
-                        new Alarma(getContext(), paradasConAlarmas).run();
+                        mensaje("botton ubicacion");
                         return false;
                     }
                 });
@@ -174,9 +177,8 @@ public class MapFragment extends Fragment {
 
             }
         });
-
-        Dibujar d = new Dibujar(googleMap, getContext(), mLinea);
-        d.consumirPosicion();
+        alarma.run();
+        dibujar.run();
         return rootView;
     }
 
@@ -215,19 +217,6 @@ public class MapFragment extends Fragment {
         return mMapView;
     }
 
-    @Deprecated
-    public void drawRoute(LineaDemo l) {
-        for (Punto punto : l.getRecorrido()) {
-            if (punto.isParada())
-                googleMap.addMarker(new MarkerOptions()
-                        .position(punto.getLatLng())
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                        .title(l.getLinea())
-                        .snippet(l.getRamal()));
-        }
-        googleMap.addPolyline(l.getPolylineOptions());
-    }
 
     public void updateDrawingRoutes() {
         for (Linea l : mLinea) {
@@ -236,7 +225,6 @@ public class MapFragment extends Fragment {
                     r.getDibujo().show();
                 else
                     r.getDibujo().hide();
-
         }
     }
 
@@ -271,7 +259,6 @@ public class MapFragment extends Fragment {
                 });
             }
         }
-
         updateDrawingRoutes();
     }
 
@@ -279,9 +266,9 @@ public class MapFragment extends Fragment {
         return mLinea;
     }
 
-    public void setLineas(ArrayList<Linea> mLinea, ArrayList<Linea> lineas_seleccionadas) {
+    public void setLineas(ArrayList<Linea> mLinea, HashMap<String, Ramal> ramales_seleccionados) {
         this.mLinea = mLinea;
-        this.lineas_seleccionadas = lineas_seleccionadas;
+        this.ramales_seleccionados = ramales_seleccionados;
     }
 
 }

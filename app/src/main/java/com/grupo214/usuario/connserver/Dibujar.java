@@ -48,30 +48,34 @@ public class Dibujar implements Runnable {
 
     private final static long REFRESH_TIME = 1000;
     private final ArrayList<Linea> mLinea;
-    HashMap<String, Marker> servicioss;
+    private HashMap<String, Marker> servicioss;
+    private HashMap<String, Ramal> ramales_seleccionados;
     private Context context;
     private GoogleMap googleMap;
 
 
-    public Dibujar(GoogleMap googleMap, Context context, ArrayList<Linea> mLinea) {
+    public Dibujar(GoogleMap googleMap, Context context, ArrayList<Linea> mLinea, HashMap<String,Ramal> ramales_seleccionados) {
         this.googleMap = googleMap;
         this.context = context;
         this.servicioss = new HashMap<>();
         this.mLinea = mLinea;
+        this.ramales_seleccionados = ramales_seleccionados;
     }
 
 
     public void consumirPosicion() {
         String parameters = "";
+        if(ramales_seleccionados.size() == 0)
+            return;
 
         //OPTIMIZAR ESTO con lineas_seleccionadas.
-        for (Linea l : mLinea) {
-            for (Ramal r : l.getRamales()) {
+            for (Ramal r : ramales_seleccionados.values() ) {
                 if (r.isCheck()) {
-                    parameters += "&lineas%5B%5D=" + l.getIdLinea() + "&ramales%5B%5D=" + r.getIdRamal();
+                    parameters += "&lineas%5B%5D=" + r.getIdLinea() + "&ramales%5B%5D=" + r.getIdRamal();
                 }
             }
-        }
+
+
         parameters = parameters.replace("?&", "?");
 
         // https://virginal-way.000webhostapp.com/appPasajero/getUbicacionServicios.php?
@@ -86,6 +90,7 @@ public class Dibujar implements Runnable {
                     @Override
                     public void onResponse(JSONObject response) {
                         JSONArray servicios = response.optJSONArray("servicios");
+                        Log.d("Dibujar",response.toString());
                         try {
                             for (int i = 0; i < servicios.length(); i++) {
                                 String idLinea = servicios.getJSONObject(i).getString("idLinea");
@@ -166,6 +171,7 @@ public class Dibujar implements Runnable {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d("Dibujar",response.toString() +" :><: " + response.length());
                         if (response.length() == 2) { //<- no esta funcionando bien :(
                             Log.d("Dibujar", "Sin servicios disponibles");
                         } else {
@@ -194,10 +200,8 @@ public class Dibujar implements Runnable {
             @Override
             public void run() {
                 consumirPosicion();
-                Log.d("Dibujar","5 segundos.");
-
             }
-        }, 5000);
+        }, 0,2000);
     }
 
 }
