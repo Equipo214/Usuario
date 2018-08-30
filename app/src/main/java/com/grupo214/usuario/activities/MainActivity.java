@@ -1,6 +1,7 @@
 package com.grupo214.usuario.activities;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -70,12 +71,13 @@ public class MainActivity extends AppCompatActivity
      * en el telefono (si no hay actualizacion)
      */
     private ArrayList<Linea> mLineas;
-    private HashMap<String,Ramal> ramales_seleccionados;
+    private HashMap<String, Ramal> ramales_seleccionados;
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
     private LineasFragment lineasFragment;
     private SmartTabLayout tabLayout;
-    private int flagg = 0;
+    private ViewPager mViewPager;
+    private Dialog startMenuDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +89,7 @@ public class MainActivity extends AppCompatActivity
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         tabLayout = (SmartTabLayout) findViewById(R.id.tabs);
-        final ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager) findViewById(R.id.container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
@@ -101,28 +103,13 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setCurrentItem(TAB_LINEA); // para que inicie la tab de Mapas --> temporalmente cambiado.
         tabLayout.setViewPager(mViewPager);
 
-  //      tabLayout.getTabAt(TAB_LINEA).setPointerIcon(new PointerIcon());
-  //      tabLayout.getTabAt(TAB_MAPA).setIcon(R.drawable.ic_map_unselect_24dp);
-     //   int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelect);
-     //   tabLayout.getTabAt(TAB_MAPA).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-
-        tabLayout.setOnTabClickListener(new SmartTabLayout.OnTabClickListener() {
-            @Override
-            public void onTabClicked(int position) {
-                switch (position) {
-                    case TAB_MAPA:
-                        // mapFragment.updateDrawingRoutes();
-                        //   mensaje("Re loco");
-                        // mapFragment.updateDrawingRoutes();
-                        break;
-                    case TAB_LINEA:
-                        break;
-                }
-            }
-        });
-
+        //      tabLayout.getTabAt(TAB_LINEA).setPointerIcon(new PointerIcon());
+        //      tabLayout.getTabAt(TAB_MAPA).setIcon(R.drawable.ic_map_unselect_24dp);
+        //   int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelect);
+        //   tabLayout.getTabAt(TAB_MAPA).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
 
         //Barra superior
+        toolbar.setNavigationIcon(R.drawable.ic_parada); //cambiar  
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -136,12 +123,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void cargarLineas() {
-        ramales_seleccionados = new HashMap<>();
-        mLineas = SplashScreen.mLineas; // ALTA NEGRADA :(
+        // con este tema personalizado evitamos los bordes por defecto
+        startMenuDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         mapFragment = new MapFragment();
+
+        ramales_seleccionados = new HashMap<>();
         lineasFragment = new LineasFragment();
+        mLineas = SplashScreen.mLineas; // ALTA NEGRADA :(
+
+        lineasFragment.setStartMenuDialog(startMenuDialog);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);
-        lineasFragment.setTabLayout(tabLayout);
+        lineasFragment.setTabViewPager(mViewPager);
+        mapFragment.setStartMenuDialog(startMenuDialog);
         mapFragment.setLineas(mLineas, ramales_seleccionados);
     }
 

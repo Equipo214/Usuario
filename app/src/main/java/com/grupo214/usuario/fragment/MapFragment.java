@@ -2,6 +2,7 @@ package com.grupo214.usuario.fragment;
 
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -10,8 +11,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -43,13 +48,15 @@ import java.util.HashMap;
  */
 public class MapFragment extends Fragment {
 
-    HashMap<String, LatLng> paradasConAlarmas;
-    Dibujar dibujar;
+    private HashMap<String, LatLng> paradasConAlarmas;
+    private HashMap<String, Ramal> ramales_seleccionados;
+    private Dialog startMenuDialog;
+    private Dibujar dibujar;
     private MapView mMapView;
     private GoogleMap googleMap;
     private ArrayList<Linea> mLinea;
     private Alarma alarma;
-    private HashMap<String, Ramal> ramales_seleccionados;
+    private boolean selecionar = false; // por si las moscas.
 
 
     @Override
@@ -58,7 +65,6 @@ public class MapFragment extends Fragment {
 
         paradasConAlarmas = new HashMap<>();
         alarma = new Alarma(getContext(), paradasConAlarmas);
-        dibujar = new Dibujar(googleMap, getContext(), mLinea, ramales_seleccionados);
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -74,7 +80,8 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
-
+                // Probar esto.
+                dibujar = new Dibujar(googleMap, getContext(), mLinea, ramales_seleccionados);
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -97,15 +104,16 @@ public class MapFragment extends Fragment {
                     @Override
                     public boolean onMarkerClick(final Marker marker) {
                         // tiempo estimado al abrir el info view
-                        // if( Servicio ) calcular tiempo return ;
-                        // if( paradaMasCercana ) menu accecibilidad.
                         if (marker.getTitle().contains("cercana")) {
                             mensaje("cercana");
+                            return true;
                         }
-                        //ONMARKERCLICK
+
                         if (marker.getTitle().contains("Servicio")) {
                             mensaje("Servicio");
+                            return true;
                         }
+
                         if (marker.getTitle().contains("Parada")) {
                             Snackbar mySnackbar;
                             if (paradasConAlarmas.get(marker.getId()) == null) {
@@ -134,6 +142,7 @@ public class MapFragment extends Fragment {
                                 });
                             }
                             mySnackbar.show();
+                            return true;
                         }
                         return false;
                     }
@@ -160,13 +169,17 @@ public class MapFragment extends Fragment {
                     }
                 });
 
-                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
-                    public void onMapLongClick(LatLng latLng) {
-                        googleMap.addMarker(new MarkerOptions()
-                                .title("Inicio")
-                                .position(latLng)
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    public void onMapClick(LatLng latLng) {
+                        if (selecionar) {
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .title("Punto de partida"));
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                    new CameraPosition.Builder().target(latLng).zoom(2).build()));
+                            selecionar = false;
+                        }
                     }
                 });
 
@@ -177,6 +190,7 @@ public class MapFragment extends Fragment {
 
             }
         });
+        cargarDialog();
         alarma.run();
         dibujar.run();
         return rootView;
@@ -262,13 +276,43 @@ public class MapFragment extends Fragment {
         updateDrawingRoutes();
     }
 
-    public ArrayList<Linea> getmLinea() {
-        return mLinea;
-    }
-
     public void setLineas(ArrayList<Linea> mLinea, HashMap<String, Ramal> ramales_seleccionados) {
         this.mLinea = mLinea;
         this.ramales_seleccionados = ramales_seleccionados;
     }
 
+    public void cargarDialog() {
+
+        //deshabilitamos el título por defecto
+        startMenuDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //obligamos al usuario a pulsar los botones para cerrarlo
+        startMenuDialog.setCancelable(false);
+        //establecemos el contenido de nuestro dialog
+        startMenuDialog.setContentView(R.layout.start_menu_route);
+
+        ((Button) startMenuDialog.findViewById(R.id.bt_ubicacion)).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                startMenuDialog.dismiss();
+                Toast.makeText(getContext(), "Ubicacion", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        ((Button) startMenuDialog.findViewById(R.id.bt_loc_map)).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                startMenuDialog.dismiss();
+                mensaje("Seleciona el punto de partida en el mapa");
+                selecionar = true;
+            }
+        });
+
+    }
+
+    public void setStartMenuDialog(Dialog startMenuDialog) {
+        this.startMenuDialog = startMenuDialog;
+    }
 }
