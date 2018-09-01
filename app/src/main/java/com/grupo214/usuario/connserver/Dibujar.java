@@ -83,7 +83,7 @@ public class Dibujar implements Runnable {
         // &lineas%5B%5D=3&ramales%5B%5D=1
 
         String url = "https://virginal-way.000webhostapp.com/appPasajero/getUbicacionServicios.php?" + parameters;
-        Log.d("MapFragment URL: ", url);
+        Log.d("URL ubicaciones: ", url);
 
         final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {

@@ -58,7 +58,6 @@ public class MapFragment extends Fragment {
     private Alarma alarma;
     private boolean selecionar = false; // por si las moscas.
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
@@ -145,8 +144,10 @@ public class MapFragment extends Fragment {
                             return true;
                         }
                         return false;
+
                     }
                 });
+
                 googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
@@ -179,6 +180,7 @@ public class MapFragment extends Fragment {
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                                     new CameraPosition.Builder().target(latLng).zoom(2).build()));
                             selecionar = false;
+                            dondeEstaMiBondi(latLng);
                         }
                     }
                 });
@@ -187,13 +189,18 @@ public class MapFragment extends Fragment {
                         new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(13).build()));
 
                 loadRoutes();
-
+                cargarDialog();
+                alarma.run();
+                dibujar.run();
             }
         });
-        cargarDialog();
-        alarma.run();
-        dibujar.run();
+
         return rootView;
+    }
+
+    private void dondeEstaMiBondi(LatLng latLng) {
+        for(Ramal r: ramales_seleccionados.values())
+            googleMap.addMarker(new MarkerOptions().position(r.paraMasCercana(latLng)));
     }
 
 
@@ -254,7 +261,7 @@ public class MapFragment extends Fragment {
                             .position(parada)
                             .icon(BitmapDescriptorFactory
                                     .defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                            .title("Parada de la linea" + l.getLinea())
+                            .title("Parada de la linea " + l.getLinea())
                             .snippet("Ramal: " + r.getDescripcion()));
                     r.getDibujo().agregarParada(mk);
                 }
@@ -307,6 +314,7 @@ public class MapFragment extends Fragment {
                 startMenuDialog.dismiss();
                 mensaje("Seleciona el punto de partida en el mapa");
                 selecionar = true;
+                
             }
         });
 

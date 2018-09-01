@@ -1,6 +1,9 @@
 package com.grupo214.usuario;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -41,7 +44,18 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        getRecorrido();
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            // Si hay conexión a Internet en este momento
+            getRecorrido();
+        } else {
+            // No hay conexión a Internet en este momento
+            mensaje("NO HAY CONEXION A INTERNET AMIGO; NO SEAS RATA Y PAGATE LOS DATOS !");
+        }
+
 
     }
 
@@ -113,7 +127,7 @@ public class SplashScreen extends AppCompatActivity {
 
     private void mensaje(String msj) {
         Snackbar.make(getWindow().getDecorView().findViewById(android.R.id.content)
-                , msj, Snackbar.LENGTH_LONG)
+                , msj, Snackbar.LENGTH_INDEFINITE)
                 .setAction("Action", null).show();
     }
 }
