@@ -28,6 +28,17 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         this._context = context;
         this._listDataHeader = new ArrayList<>();
         this._listDataTextChild = new HashMap<>();
+
+
+        if(mLineas == null) {
+            try {
+                wait(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
         for (Linea l : mLineas) {
             this._listDataHeader.add(l.getLinea());
             this._listDataTextChild.put(l.getLinea(), l.getRamales());
@@ -123,5 +134,6 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         for (Linea l : mLineas) {
             this._listDataHeader.add(l.getLinea());
             this._listDataTextChild.put(l.getLinea(), l.getRamales());
-        }    }
+        }
+    }
 }

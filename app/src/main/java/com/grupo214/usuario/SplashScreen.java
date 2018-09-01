@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 public class SplashScreen extends AppCompatActivity {
     public static ArrayList<Linea> mLineas;
-    private Boolean cargando = true;
 
     public void setmLineas(ArrayList<Linea> mLineas) {
         SplashScreen.mLineas = mLineas;
@@ -53,7 +52,7 @@ public class SplashScreen extends AppCompatActivity {
             getRecorrido();
         } else {
             // No hay conexión a Internet en este momento
-            mensaje("NO HAY CONEXION A INTERNET AMIGO; NO SEAS RATA Y PAGATE LOS DATOS !");
+            mensaje("Sin conexion a Internet. (Conectar y reiniciar)");
         }
 
 

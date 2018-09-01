@@ -1,9 +1,6 @@
 package com.grupo214.usuario.fragment;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -15,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+
 
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.activities.MainActivity;
@@ -58,24 +56,13 @@ public class LineasFragment extends Fragment {
         bt_dondeEstaMiBondi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-                if (networkInfo != null && networkInfo.isConnected()) {
-                    // Si hay conexión a Internet en este momento
-                    // setTab Change Tab algo con tab
-                    if (ramales_seleccionados.size() == 0) {
-                        Toast.makeText(getContext(), "Seleciona por lo menos un ramal. PUTO", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
-                    startMenuDialog.show();
-                } else {
-                    // No hay conexión a Internet en este momento
-                    Toast.makeText(getContext(), "Sin conexion a internet.", Toast.LENGTH_SHORT).show();
-
+                // setTab Change Tab algo con tab
+                if (ramales_seleccionados.size() == 0) {
+                    Toast.makeText(getContext(), "Seleciona por lo menos un ramal. PUTO", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-
+                tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
+                startMenuDialog.show();
 
             }
         });
@@ -131,6 +118,4 @@ public class LineasFragment extends Fragment {
     public void setStartMenuDialog(Dialog startMenuDialog) {
         this.startMenuDialog = startMenuDialog;
     }
-
-
 }

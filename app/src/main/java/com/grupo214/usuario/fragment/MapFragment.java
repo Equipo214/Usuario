@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -56,11 +55,13 @@ public class MapFragment extends Fragment {
     private GoogleMap googleMap;
     private ArrayList<Linea> mLinea;
     private Alarma alarma;
+    private Marker startMakerUser;
     private boolean selecionar = false; // por si las moscas.
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
 
         paradasConAlarmas = new HashMap<>();
         alarma = new Alarma(getContext(), paradasConAlarmas);
@@ -79,8 +80,12 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
+
+
                 // Probar esto.
                 dibujar = new Dibujar(googleMap, getContext(), mLinea, ramales_seleccionados);
+
+
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -103,6 +108,8 @@ public class MapFragment extends Fragment {
                     @Override
                     public boolean onMarkerClick(final Marker marker) {
                         // tiempo estimado al abrir el info view
+                        marker.showInfoWindow();
+
                         if (marker.getTitle().contains("cercana")) {
                             mensaje("cercana");
                             return true;
@@ -123,7 +130,7 @@ public class MapFragment extends Fragment {
                                     @Override
                                     public void onClick(View v) {
                                         marker.setIcon(BitmapDescriptorFactory
-                                                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)); // ICONO ALARMA
+                                                .fromResource(R.mipmap.ic_parada_alarma_iv)); // ICONO ALARMA
                                         paradasConAlarmas.put(marker.getId(), marker.getPosition());
                                     }
                                 });
@@ -135,7 +142,7 @@ public class MapFragment extends Fragment {
                                     @Override
                                     public void onClick(View v) {
                                         marker.setIcon(BitmapDescriptorFactory
-                                                .defaultMarker(BitmapDescriptorFactory.HUE_RED)); // ICONO COMUN
+                                                .fromResource(R.mipmap.ic_parada_bondi)); // ICONO COMUN
                                         paradasConAlarmas.remove(marker.getId());
                                     }
                                 });
@@ -174,24 +181,47 @@ public class MapFragment extends Fragment {
                     @Override
                     public void onMapClick(LatLng latLng) {
                         if (selecionar) {
-                            googleMap.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title("Punto de partida"));
+                            if (!startMakerUser.isVisible())
+                                startMakerUser.setVisible(true);
+                            startMakerUser.setPosition(latLng);
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                                    new CameraPosition.Builder().target(latLng).zoom(2).build()));
-                            selecionar = false;
+                                    new CameraPosition.Builder().target(latLng).zoom(15).build()));
                             dondeEstaMiBondi(latLng);
+                            selecionar = false;
                         }
+                    }
+                });
+
+                googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                    @Override
+                    public void onMarkerDragStart(Marker marker) {
+
+                    }
+
+                    @Override
+                    public void onMarkerDrag(Marker marker) {
+
+                    }
+
+                    @Override
+                    public void onMarkerDragEnd(Marker marker) {
+
                     }
                 });
 
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(13).build()));
 
+                startMakerUser = googleMap.addMarker(new MarkerOptions()
+                        .visible(false)
+                        .position(new LatLng(0, 0))
+                        .title("Punto de partida"));
+
                 loadRoutes();
                 cargarDialog();
                 alarma.run();
                 dibujar.run();
+
             }
         });
 
@@ -199,8 +229,9 @@ public class MapFragment extends Fragment {
     }
 
     private void dondeEstaMiBondi(LatLng latLng) {
-        for(Ramal r: ramales_seleccionados.values())
+        for (Ramal r : ramales_seleccionados.values())
             googleMap.addMarker(new MarkerOptions().position(r.paraMasCercana(latLng)));
+
     }
 
 
@@ -259,9 +290,9 @@ public class MapFragment extends Fragment {
                 for (LatLng parada : r.getParadas()) {
                     Marker mk = googleMap.addMarker(new MarkerOptions()
                             .position(parada)
-                            .icon(BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi))
                             .title("Parada de la linea " + l.getLinea())
+                            .anchor(0.5f, 0.5f)
                             .snippet("Ramal: " + r.getDescripcion()));
                     r.getDibujo().agregarParada(mk);
                 }
@@ -314,7 +345,6 @@ public class MapFragment extends Fragment {
                 startMenuDialog.dismiss();
                 mensaje("Seleciona el punto de partida en el mapa");
                 selecionar = true;
-                
             }
         });
 

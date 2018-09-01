@@ -122,6 +122,9 @@ public class Dibujar implements Runnable {
                 Log.d("JSON:ERROR", error.toString());
             }
         });
+
+
+
         Volley.newRequestQueue(context).add(jsonRequest);
     }
 
@@ -199,9 +202,8 @@ public class Dibujar implements Runnable {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                consumirPosicion();
+                   consumirPosicion();
             }
         }, 0,2000);
     }
-
 }
