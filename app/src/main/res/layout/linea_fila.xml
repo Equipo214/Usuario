@@ -12,8 +12,8 @@
         android:id="@+id/tx_linea"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/icoColectivo"
-        android:layout_toEndOf="@+id/icoColectivo"
+        android:layout_alignBottom="@+id/ico_te"
+        android:layout_toEndOf="@+id/ico_te"
         android:text="Linea "
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#f65034"
@@ -31,7 +31,7 @@
         android:textSize="21sp" />
 
     <ImageView
-        android:id="@+id/icoColectivo"
+        android:id="@+id/ico_te"
         android:layout_width="45dp"
         android:layout_height="39dp"
         android:layout_alignParentStart="true"

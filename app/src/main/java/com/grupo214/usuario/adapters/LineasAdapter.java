@@ -30,15 +30,6 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         this._listDataTextChild = new HashMap<>();
 
 
-        if(mLineas == null) {
-            try {
-                wait(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-
         for (Linea l : mLineas) {
             this._listDataHeader.add(l.getLinea());
             this._listDataTextChild.put(l.getLinea(), l.getRamales());

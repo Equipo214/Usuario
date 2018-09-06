@@ -71,6 +71,10 @@ public class MainActivity extends AppCompatActivity
      * en el telefono (si no hay actualizacion)
      */
     private ArrayList<Linea> mLineas;
+    /**
+     *
+     *
+     */
     private HashMap<String, Ramal> ramales_seleccionados;
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
@@ -129,7 +133,7 @@ public class MainActivity extends AppCompatActivity
 
         ramales_seleccionados = new HashMap<>();
         lineasFragment = new LineasFragment();
-        mLineas = SplashScreen.mLineas; // ALTA NEGRADA :(
+        mLineas = SplashScreen.mLineas;
 
         lineasFragment.setStartMenuDialog(startMenuDialog);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);

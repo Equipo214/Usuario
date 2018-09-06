@@ -2,9 +2,9 @@ package com.grupo214.usuario.fragment;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,12 +58,11 @@ public class LineasFragment extends Fragment {
             public void onClick(View v) {
                 // setTab Change Tab algo con tab
                 if (ramales_seleccionados.size() == 0) {
-                    Toast.makeText(getContext(), "Seleciona por lo menos un ramal. PUTO", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Seleciona por lo menos un ramal.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
                 startMenuDialog.show();
-
             }
         });
 
@@ -91,10 +90,12 @@ public class LineasFragment extends Fragment {
                 r.setChecked(!r.isCheck());
                 if (r.isCheck()) {
                     r.getDibujo().show();
-                    ramales_seleccionados.put(r.getIdLinea(), r);
+                    ramales_seleccionados.put(r.getIdRamal(), r);
+                    Log.d("LineasFragment","Ramal put " + r.toString() + "Cantidad de ramales: "+ ramales_seleccionados.size());
                 } else {
                     r.getDibujo().hide();
-                    ramales_seleccionados.remove(r.getIdLinea());
+                    ramales_seleccionados.remove(r.getIdRamal());
+                    Log.d("LineasFragment","Ramal remove " + r.toString());
                 }
 
                 checkBox.setChecked(r.isCheck());
@@ -106,9 +107,9 @@ public class LineasFragment extends Fragment {
         return rootView;
     }
 
-    public void setLineas(ArrayList<Linea> mLineas, HashMap<String, Ramal> lineas_seleccionadas) {
+    public void setLineas(ArrayList<Linea> mLineas, HashMap<String, Ramal> ramales_seleccionados) {
         this.mLineas = mLineas;
-        this.ramales_seleccionados = lineas_seleccionadas;
+        this.ramales_seleccionados = ramales_seleccionados;
     }
 
     public void setTabViewPager(ViewPager tabViewPager) {

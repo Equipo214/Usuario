@@ -33,9 +33,9 @@ public class Alarma extends Timer {
                 /*Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 Ringtone r = RingtoneManager.getRingtone(context, notification);
                 r.play();*/
-                for (LatLng parada : paradasConAlarmas.values())
+               // for (LatLng parada : paradasConAlarmas.values())
                     //if (UtilMap.calculateDistance(parada,new LatLng(0.0,0.0)) < 5000)
-                      Log.d("Alarma", "Distancia: " + UtilMap.calculateDistance(parada,new LatLng(0.0,0.0)));
+                    // Log.d("Alarma", "Distancia: " + UtilMap.calculateDistance(parada,new LatLng(0.0,0.0)));
             }
         }, 0, 1000);
     }

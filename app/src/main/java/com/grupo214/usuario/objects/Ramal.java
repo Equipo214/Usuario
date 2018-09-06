@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.Util.UtilMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Ramal {
     private String idLinea;
@@ -14,6 +15,7 @@ public class Ramal {
     private ArrayList<LatLng> paradas;
     private Boolean checked;
     private Dibujo dibujo;
+    private HashMap<String,Servicio> serviciosActivos;
 
     public Ramal(String idLinea, String idRamal, String ramal, String code_recorrido, ArrayList<LatLng> paradas) {
         this.idLinea = idLinea;
@@ -23,6 +25,15 @@ public class Ramal {
         this.paradas = paradas;
         this.dibujo = new Dibujo();
         this.checked = false;
+        this.serviciosActivos = new HashMap<>();
+    }
+
+    public HashMap<String, Servicio> getServiciosActivos() {
+        return serviciosActivos;
+    }
+
+    public void setServiciosActivos(HashMap<String, Servicio> serviciosActivos) {
+        this.serviciosActivos = serviciosActivos;
     }
 
     @Override
@@ -68,7 +79,7 @@ public class Ramal {
      * @param userStart
      * @return
      */
-    public LatLng paraMasCercana(LatLng userStart) {
+    public LatLng paradaMasCercanaLatLng(LatLng userStart) {
         LatLng paradaMasCercana = paradas.get(0); // guardo el primero como minimo
         double distancia = UtilMap.calculateDistance(userStart, paradaMasCercana);
 
@@ -81,6 +92,10 @@ public class Ramal {
             }
         }
         return paradaMasCercana;
+    }
+
+    public Marker paradaMasCercana(LatLng latLng){
+        return  dibujo.paradaMasCercana(latLng);
     }
 
     public boolean esParada(Marker mk) {

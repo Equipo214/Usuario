@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -17,12 +16,16 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
+import com.grupo214.usuario.objects.Servicio;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,32 +51,58 @@ public class Dibujar implements Runnable {
 
     private final static long REFRESH_TIME = 1000;
     private final ArrayList<Linea> mLinea;
-    private HashMap<String, Marker> servicioss;
+    private TimerTask calcularTiempoTask;
+    private TimerTask obtenerUbicacionTask;
+    private HashMap<String, Servicio> serviciosActivos;
     private HashMap<String, Ramal> ramales_seleccionados;
-    private Context context;
+    private HashMap<String, Marker> paradasCercanas;
+    private TiempoEstimadoAdapter tiempoEstimadoAdapter;
+    private Timer timer;
     private GoogleMap googleMap;
+    private Context context;
 
 
-    public Dibujar(GoogleMap googleMap, Context context, ArrayList<Linea> mLinea, HashMap<String,Ramal> ramales_seleccionados) {
+    public Dibujar(GoogleMap googleMap, Context context, ArrayList<Linea> mLinea, HashMap<String, Ramal> ramales_seleccionados,
+                   HashMap<String, Marker> paradasCercanas, final TiempoEstimadoAdapter tiempoEstimadoAdapter, final HashMap<String, Servicio> serviciosActivos) {
         this.googleMap = googleMap;
         this.context = context;
-        this.servicioss = new HashMap<>();
         this.mLinea = mLinea;
         this.ramales_seleccionados = ramales_seleccionados;
+        this.paradasCercanas = paradasCercanas;
+        this.timer = new Timer();
+        this.tiempoEstimadoAdapter = tiempoEstimadoAdapter;
+        this.serviciosActivos = serviciosActivos;
+        inicializarTasks();
+    }
+
+    private void inicializarTasks() {
+        obtenerUbicacionTask = new TimerTask() {
+            @Override
+            public void run() {
+                consumirPosicion();
+            }
+        };
+        calcularTiempoTask = new TimerTask() {
+            @Override
+            public void run() {
+                calcularTiempo(serviciosActivos);
+            }
+        };
     }
 
 
-    public void consumirPosicion() {
+    private void consumirPosicion() {
         String parameters = "";
-        if(ramales_seleccionados.size() == 0)
+        if (ramales_seleccionados.size() == 0) {
+            stop();
             return;
+        }
 
-        //OPTIMIZAR ESTO con lineas_seleccionadas.
-            for (Ramal r : ramales_seleccionados.values() ) {
-                if (r.isCheck()) {
-                    parameters += "&lineas%5B%5D=" + r.getIdLinea() + "&ramales%5B%5D=" + r.getIdRamal();
-                }
+        for (Ramal r : ramales_seleccionados.values()) {
+            if (r.isCheck()) {
+                parameters += "&lineas%5B%5D=" + r.getIdLinea() + "&ramales%5B%5D=" + r.getIdRamal();
             }
+        }
 
 
         parameters = parameters.replace("?&", "?");
@@ -83,33 +112,64 @@ public class Dibujar implements Runnable {
         // &lineas%5B%5D=3&ramales%5B%5D=1
 
         String url = "https://virginal-way.000webhostapp.com/appPasajero/getUbicacionServicios.php?" + parameters;
-        Log.d("URL ubicaciones: ", url);
-
+        //  Log.d("URL DIBUJAR", url);
         final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        JSONArray servicios = response.optJSONArray("servicios");
-                        Log.d("Dibujar",response.toString());
-                        try {
-                            for (int i = 0; i < servicios.length(); i++) {
-                                String idLinea = servicios.getJSONObject(i).getString("idLinea");
-                                String idRamal = servicios.getJSONObject(i).getString("idRamal");
-                                Double lat = servicios.getJSONObject(i).getDouble("latitud");
-                                Double log = servicios.getJSONObject(i).getDouble("longitud");
-                                String idServicio = servicios.getJSONObject(i).getString("idServicio");
-                                Marker mk = servicioss.get(idServicio);
-                                if (mk == null) {
-                                    // buscar la linea
-                                    servicioss.put(idServicio,
-                                            googleMap.addMarker(
-                                                    new MarkerOptions().position(new LatLng(lat, log))
-                                                            .title("Servicio de la linea " + idLinea)
-                                                            .snippet("Ramal "+ idRamal)));
-                                } else {
-                                    animateMarker(mk, new LatLng(lat, log), false, googleMap);
-                                }
+                        JSONArray serviciosJson = response.optJSONArray("servicios");
 
+                        try {
+                            for (int i = 0; i < serviciosJson.length(); i++) {
+                                String idLinea = serviciosJson.getJSONObject(i).getString("idLinea");
+                                String idRamal = serviciosJson.getJSONObject(i).getString("idRamal");
+                                Double lat = serviciosJson.getJSONObject(i).getDouble("latitud");
+                                Double log = serviciosJson.getJSONObject(i).getDouble("longitud");
+                                String idServicio = serviciosJson.getJSONObject(i).getString("idServicio");
+                                String color = serviciosJson.getJSONObject(i).getString("color");
+
+                                Servicio s = serviciosActivos.get(idServicio);
+                                LatLng destino = new LatLng(lat, log);
+                                Ramal r = ramales_seleccionados.get(idRamal);
+                                if (s == null) {
+                                    // DESPUES cambiar el get(idramal) <- ramlaes selecionados
+
+                                    BitmapDescriptor ico;
+                                    if(color.equals("V"))
+                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_verde);
+                                    else if(color.equals("A"))
+                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_amarillo);
+                                    else if(color.equals("R"))
+                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_rojo);
+                                    else
+                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_gris);
+
+                                    Marker mk = googleMap.addMarker(new MarkerOptions()
+                                            .position(destino)
+                                            .icon(ico));
+                                    serviciosActivos.put(idServicio, new Servicio(idServicio, r.getIdLinea(), r.getDescripcion(), mk, paradasCercanas.get(idRamal).getPosition()));
+                                    tiempoEstimadoAdapter.add(serviciosActivos.get(idServicio));
+
+                                    Log.d("DIBUJAR", "Nuevo servicio " + idServicio + destino.toString());
+
+                                } else {
+
+                                    /* ver si falla
+                                    BitmapDescriptor ico;
+                                    if(color.equals("V"))
+                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_verde);
+                                    else if(color.equals("A"))
+                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_amarillo);
+                                    else if(color.equals("R"))
+                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_rojo);
+                                    else
+                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_gris);
+                                    s.getMk().setIcon(ico);*/
+                                    // si esta en el top 3 de sercanos animar
+                                    animateMarker(s.getMk(), destino, false, googleMap);
+                                    s.setUbicacionActual(destino);
+                                    Log.d("DIBUJAR", "Actualizar servicio " + idServicio + destino.toString());
+                                }
                             }
                         } catch (JSONException e) {
                             Log.d("Json Error", e.toString());
@@ -122,9 +182,6 @@ public class Dibujar implements Runnable {
                 Log.d("JSON:ERROR", error.toString());
             }
         });
-
-
-
         Volley.newRequestQueue(context).add(jsonRequest);
     }
 
@@ -162,48 +219,59 @@ public class Dibujar implements Runnable {
         });
     }
 
-    private void calcularTiempo(Marker mkInicio, final Marker mkDestino) {
+    private void calcularTiempo(HashMap<String, Servicio> serviciosActivos) {
 
-        String outputFormat = "origins=" + mkInicio.getPosition().latitude + "," + mkInicio.getPosition().longitude +
-                "&destinations=" + mkDestino.getPosition().latitude + "," + mkDestino.getPosition().longitude;
-        String parameters = ""; // añadir -> ? <-
-        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?" + outputFormat + parameters + "&key=" + context.getString(R.string.google_maps_key);
-        Log.d("MapFragment URL: ", url);
+        for (final Servicio servicio : serviciosActivos.values()) {
 
-        final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Dibujar",response.toString() +" :><: " + response.length());
-                        if (response.length() == 2) { //<- no esta funcionando bien :(
-                            Log.d("Dibujar", "Sin servicios disponibles");
-                        } else {
+            String outputFormat = "origins=" + servicio.getUbicacionActual().latitude + "," + servicio.getUbicacionActual().longitude +
+                    "&destinations=" + servicio.getParada().latitude + "," + servicio.getParada().longitude;
+            String parameters = ""; // añadir -> ? <-
+            String url = "https://maps.googleapis.com/maps/api/distancematrix/json?" + outputFormat + parameters + "&key=" + context.getString(R.string.google_maps_key);
+
+            Log.d("URL TE", url);
+
+            final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
                             JSONArray rows = response.optJSONArray("rows");
                             try {
-                                mkDestino.setSnippet(rows.getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text"));
+                                servicio.setTiempoEstimado(rows.getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text"));
+                                tiempoEstimadoAdapter.notifyDataSetChanged();
                             } catch (JSONException e) {
                                 Log.d("Json Error", e.toString());
+                                tiempoEstimadoAdapter.notifyDataSetChanged();
                             }
                         }
-                    }
-                }, new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("JSON:ERROR", error.toString());
-            }
-        });
-        Volley.newRequestQueue(context).add(jsonRequest);
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("JSON:ERROR", error.toString());
+                }
+            });
+            Volley.newRequestQueue(context).add(jsonRequest);
+        }
 
     }
 
+
     @Override
     public void run() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                   consumirPosicion();
-            }
-        }, 0,2000);
+        timer.schedule(obtenerUbicacionTask, 0, 5000); // 5000 = 5 segundos
+        timer.schedule(calcularTiempoTask, 5000, 10000); // 60000 = 1 min
+    }
+
+    public void stop() {
+        timer.cancel(); // ver si funca esto;
+        serviciosActivos.clear();
+        tiempoEstimadoAdapter.clear();
+    }
+
+    public void reiniciar() {
+        stop();
+        timer = new Timer();
+        inicializarTasks();
+        run();
     }
 }
