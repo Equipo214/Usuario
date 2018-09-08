@@ -10,6 +10,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -60,7 +61,8 @@ public class Dibujar implements Runnable {
     private Timer timer;
     private GoogleMap googleMap;
     private Context context;
-
+    private RequestQueue requestQueue_getUbicacion;
+    private RequestQueue requestQueue_distanceMatrix;
 
     public Dibujar(GoogleMap googleMap, Context context, ArrayList<Linea> mLinea, HashMap<String, Ramal> ramales_seleccionados,
                    HashMap<String, Marker> paradasCercanas, final TiempoEstimadoAdapter tiempoEstimadoAdapter, final HashMap<String, Servicio> serviciosActivos) {
@@ -92,6 +94,10 @@ public class Dibujar implements Runnable {
 
 
     private void consumirPosicion() {
+        if(requestQueue_distanceMatrix !=null){
+            requestQueue_distanceMatrix.stop();
+            requestQueue_distanceMatrix = null;
+        }
         String parameters = "";
         if (ramales_seleccionados.size() == 0) {
             stop();
@@ -132,14 +138,13 @@ public class Dibujar implements Runnable {
                                 LatLng destino = new LatLng(lat, log);
                                 Ramal r = ramales_seleccionados.get(idRamal);
                                 if (s == null) {
-                                    // DESPUES cambiar el get(idramal) <- ramlaes selecionados
 
                                     BitmapDescriptor ico;
-                                    if(color.equals("V"))
+                                    if (color.equals("V"))
                                         ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_verde);
-                                    else if(color.equals("A"))
+                                    else if (color.equals("A"))
                                         ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_amarillo);
-                                    else if(color.equals("R"))
+                                    else if (color.equals("R"))
                                         ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_rojo);
                                     else
                                         ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_gris);
@@ -147,28 +152,24 @@ public class Dibujar implements Runnable {
                                     Marker mk = googleMap.addMarker(new MarkerOptions()
                                             .position(destino)
                                             .icon(ico));
-                                    serviciosActivos.put(idServicio, new Servicio(idServicio, r.getIdLinea(), r.getDescripcion(), mk, paradasCercanas.get(idRamal).getPosition()));
+                                    serviciosActivos.put(idServicio, new Servicio(idServicio, r.getLinea(), r.getDescripcion(), mk, paradasCercanas.get(idRamal).getPosition()));
                                     tiempoEstimadoAdapter.add(serviciosActivos.get(idServicio));
-
-                                    Log.d("DIBUJAR", "Nuevo servicio " + idServicio + destino.toString());
-
                                 } else {
 
-                                    /* ver si falla
+
                                     BitmapDescriptor ico;
-                                    if(color.equals("V"))
+                                    if (color.equals("V"))
                                         ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_verde);
-                                    else if(color.equals("A"))
+                                    else if (color.equals("A"))
                                         ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_amarillo);
-                                    else if(color.equals("R"))
+                                    else if (color.equals("R"))
                                         ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_rojo);
                                     else
                                         ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_gris);
-                                    s.getMk().setIcon(ico);*/
+                                    s.getMk().setIcon(ico);
                                     // si esta en el top 3 de sercanos animar
                                     animateMarker(s.getMk(), destino, false, googleMap);
                                     s.setUbicacionActual(destino);
-                                    Log.d("DIBUJAR", "Actualizar servicio " + idServicio + destino.toString());
                                 }
                             }
                         } catch (JSONException e) {
@@ -182,7 +183,8 @@ public class Dibujar implements Runnable {
                 Log.d("JSON:ERROR", error.toString());
             }
         });
-        Volley.newRequestQueue(context).add(jsonRequest);
+        requestQueue_distanceMatrix = Volley.newRequestQueue(context);
+        requestQueue_distanceMatrix.add(jsonRequest);
     }
 
     public void animateMarker(final Marker marker, final LatLng toPosition,
@@ -221,11 +223,16 @@ public class Dibujar implements Runnable {
 
     private void calcularTiempo(HashMap<String, Servicio> serviciosActivos) {
 
+        if(requestQueue_getUbicacion !=null){
+            requestQueue_getUbicacion.stop();
+            requestQueue_getUbicacion =null;
+        }
+
         for (final Servicio servicio : serviciosActivos.values()) {
 
             String outputFormat = "origins=" + servicio.getUbicacionActual().latitude + "," + servicio.getUbicacionActual().longitude +
                     "&destinations=" + servicio.getParada().latitude + "," + servicio.getParada().longitude;
-            String parameters = ""; // añadir -> ? <-
+            String parameters = "&language=es";
             String url = "https://maps.googleapis.com/maps/api/distancematrix/json?" + outputFormat + parameters + "&key=" + context.getString(R.string.google_maps_key);
 
             Log.d("URL TE", url);
@@ -250,7 +257,8 @@ public class Dibujar implements Runnable {
                     Log.d("JSON:ERROR", error.toString());
                 }
             });
-            Volley.newRequestQueue(context).add(jsonRequest);
+            RequestQueue v = Volley.newRequestQueue(context);
+            v.add(jsonRequest);
         }
 
     }
@@ -259,7 +267,7 @@ public class Dibujar implements Runnable {
     @Override
     public void run() {
         timer.schedule(obtenerUbicacionTask, 0, 5000); // 5000 = 5 segundos
-        timer.schedule(calcularTiempoTask, 5000, 10000); // 60000 = 1 min
+  //     timer.schedule(calcularTiempoTask, 5000, 10000); // 60000 = 1 min
     }
 
     public void stop() {

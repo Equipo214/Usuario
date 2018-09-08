@@ -10,21 +10,23 @@ import java.util.HashMap;
 public class Ramal {
     private String idLinea;
     private String idRamal;
-    private String Descripcion;
+    private String descripcion;
+    private String linea;
     private String code_recorrido;
-    private ArrayList<LatLng> paradas;
+    private ArrayList<Parada> paradas;
     private Boolean checked;
     private Dibujo dibujo;
     private HashMap<String,Servicio> serviciosActivos;
 
-    public Ramal(String idLinea, String idRamal, String ramal, String code_recorrido, ArrayList<LatLng> paradas) {
+    public Ramal(String idLinea,String linea, String idRamal, String ramal, String code_recorrido, ArrayList<Parada> paradas) {
         this.idLinea = idLinea;
         this.idRamal = idRamal;
-        this.Descripcion = ramal;
+        this.descripcion = ramal;
         this.code_recorrido = code_recorrido;
         this.paradas = paradas;
         this.dibujo = new Dibujo();
         this.checked = false;
+        this.linea = linea;
         this.serviciosActivos = new HashMap<>();
     }
 
@@ -54,10 +56,10 @@ public class Ramal {
     }
 
     public String getDescripcion() {
-        return Descripcion;
+        return descripcion;
     }
 
-    public ArrayList<LatLng> getParadas() {
+    public ArrayList<Parada> getParadas() {
         return paradas;
     }
 
@@ -73,27 +75,6 @@ public class Ramal {
         return dibujo;
     }
 
-
-    /**
-     * Poner en el marker la palabra cercana.
-     * @param userStart
-     * @return
-     */
-    public LatLng paradaMasCercanaLatLng(LatLng userStart) {
-        LatLng paradaMasCercana = paradas.get(0); // guardo el primero como minimo
-        double distancia = UtilMap.calculateDistance(userStart, paradaMasCercana);
-
-        double distancia_aux;
-        for (LatLng parada : paradas) {
-            distancia_aux = UtilMap.calculateDistance(userStart, parada);
-            if (distancia_aux < distancia) { // si no hay otro minimo es este
-                paradaMasCercana = parada;
-                distancia = distancia_aux;
-            }
-        }
-        return paradaMasCercana;
-    }
-
     public Marker paradaMasCercana(LatLng latLng){
         return  dibujo.paradaMasCercana(latLng);
     }
@@ -102,4 +83,7 @@ public class Ramal {
         return paradas.contains(mk.getPosition());
     }
 
+    public String getLinea() {
+        return linea;
+    }
 }

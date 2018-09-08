@@ -149,7 +149,11 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //  mensaje("Guardar en base de datos SQL");
-            super.onBackPressed();
+            //super.onBackPressed();
+            if(tabLayout.getTabAt(TAB_MAPA).isSelected() )
+                mViewPager.setCurrentItem(TAB_LINEA);
+            else
+                super.onBackPressed();
         }
     }
 

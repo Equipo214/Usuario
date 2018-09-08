@@ -15,10 +15,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.PolyUtil;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
+import com.grupo214.usuario.objects.Parada;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,36 +76,37 @@ public class SplashScreen extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         JSONArray lineasJson = response.optJSONArray("lineas");
                         ArrayList<Linea> listaLinea = new ArrayList<>();
+
                         try {
                             for (int i = 0; i < lineasJson.length(); i++) {
                                 JSONObject lineaJson = lineasJson.getJSONObject(i);
                                 JSONArray ramalesJson = lineaJson.getJSONArray("ramales");
                                 ArrayList<Ramal> ramales = new ArrayList<>();
-
-
+                                String linea = lineaJson.getString("linea");
+                                String idLinea = lineaJson.getString("idLinea");
                                 for (int j = 0; j < ramalesJson.length(); j++) {
                                     JSONObject ramal = ramalesJson.getJSONObject(j);
                                     JSONArray paradasJson = ramal.getJSONObject("recorrido").getJSONArray("puntos");
 
-                                    ArrayList<LatLng> paradas = new ArrayList<>();
+                                    ArrayList<Parada> paradas = new ArrayList<>();
                                     for (int k = 0; k < paradasJson.length(); k++) {
                                         JSONObject paradaJson = paradasJson.getJSONObject(k);
-                                        if (paradaJson.getString("esParada").equals("1"))
-                                            paradas.add(new LatLng(paradaJson.getDouble("latitude"), paradaJson.getDouble("longitude")));
+                                        paradas.add(new Parada(new LatLng(paradaJson.getDouble("latitude"), paradaJson.getDouble("longitude")),
+                                                paradaJson.getString("idPunto"),
+                                                paradaJson.getInt("orden")));
+
                                     }
 
                                     String code = ramal.getJSONObject("recorrido").getString("recorridoCompleto");
                                     // Fix \\ -> \
-                                    code = code.replace("\\\\","\\");
+                                    code = code.replace("\\\\", "\\");
 
-                                    ramales.add(new Ramal(lineaJson.getString("idLinea"),ramal.getString("idRamal"),
+                                    ramales.add(new Ramal(lineaJson.getString("idLinea"), linea, ramal.getString("idRamal"),
                                             ramal.getString("descripcion"),
                                             code, paradas));
 
                                 }
-                                listaLinea.add(new Linea(lineaJson.getString("idLinea"),
-                                        lineaJson.getString("linea"),
-                                        ramales));
+                                listaLinea.add(new Linea(idLinea, linea, ramales));
                             }
                         } catch (JSONException e) {
                             Log.d("Json Error", e.toString());

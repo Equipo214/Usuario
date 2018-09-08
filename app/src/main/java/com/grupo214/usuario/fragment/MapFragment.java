@@ -4,6 +4,8 @@ package com.grupo214.usuario.fragment;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -37,12 +39,14 @@ import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
 import com.grupo214.usuario.alarma.Alarma;
 import com.grupo214.usuario.connserver.Dibujar;
 import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.Parada;
 import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Servicio;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 
 /**
@@ -62,13 +66,15 @@ public class MapFragment extends Fragment {
     private Alarma alarma;
     private Marker startMakerUser;
     private boolean selecionar = false; // por si las moscas.
-    private HashMap<String,Marker> paradasCercanas;
+    private HashMap<String, Marker> paradasCercanas;
     private boolean dondeEstaMiBondi = false;
     private ListView lv_listTiempoEstimado;
     private TiempoEstimadoAdapter adaptador;
     private boolean heightAdjust = false;
     private int cant = 0;
-    private HashMap<String,Servicio> servicios;
+    private HashMap<String, Servicio> servicios;
+    private LocationManager locationManager;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -79,7 +85,9 @@ public class MapFragment extends Fragment {
         paradasConAlarmas = new HashMap<>();
         alarma = new Alarma(getContext(), paradasConAlarmas);
         servicios = new HashMap<>();
-        adaptador = new TiempoEstimadoAdapter(getContext() , android.R.layout.simple_list_item_2);
+        adaptador = new TiempoEstimadoAdapter(getContext(), android.R.layout.simple_list_item_2);
+
+        locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
 
         lv_listTiempoEstimado = (ListView) rootView.findViewById(R.id.listaTiempoEstimado);
         lv_listTiempoEstimado.setAdapter(adaptador);
@@ -98,10 +106,10 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
-
+                adaptador.setGoogleMap(mMap);
 
                 // Probar esto.
-                dibujar = new Dibujar(googleMap, getContext(), mLinea, ramalesSeleccionados, paradasCercanas,adaptador, servicios);
+                dibujar = new Dibujar(googleMap, getContext(), mLinea, ramalesSeleccionados, paradasCercanas, adaptador, servicios);
 
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{
@@ -277,7 +285,7 @@ public class MapFragment extends Fragment {
         for (Ramal r : ramalesSeleccionados.values()) {
             Log.d("MapFragment", "ramal numero: " + r.toString());
             Marker mk = r.paradaMasCercana(latLng);
-            paradasCercanas.put(r.getIdRamal(),mk);
+            paradasCercanas.put(r.getIdRamal(), mk);
             mk.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_cercana));
             if (paradasConAlarmas.get(mk.getId()) != null)
                 paradasConAlarmas.remove(mk.getId());
@@ -344,9 +352,9 @@ public class MapFragment extends Fragment {
                 Polyline p = googleMap.addPolyline(new PolylineOptions().addAll(PolyUtil.decode(r.getCode_recorrido())));
                 r.getDibujo().setPolyline(p);
 
-                for (LatLng parada : r.getParadas()) {
+                for (Parada parada : r.getParadas()) {
                     Marker mk = googleMap.addMarker(new MarkerOptions()
-                            .position(parada)
+                            .position(parada.getLatLng())
                             .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi))
                             .title("Parada de la linea " + l.getLinea())
                             .anchor(0.5f, 0.5f)
@@ -392,6 +400,23 @@ public class MapFragment extends Fragment {
                 startMenuDialog.dismiss();
                 Toast.makeText(getContext(), "Ubicacion", Toast.LENGTH_SHORT).show();
 
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                    mensaje("Amigo no tenes permisos.");
+
+                } else {
+                    if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+
+                        mensaje("No tenes ni el GPS ni el Internet Rata");
+                        // poner menu de activar
+
+                    else{
+                        Location location = locationManager
+                                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                        dondeEstaMiBondi(new LatLng(location.getLatitude(),location.getLongitude()));
+                    }
+                }
             }
         });
 
@@ -407,7 +432,9 @@ public class MapFragment extends Fragment {
 
     }
 
+
     public void setStartMenuDialog(Dialog startMenuDialog) {
         this.startMenuDialog = startMenuDialog;
     }
+
 }

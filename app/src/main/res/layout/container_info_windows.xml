@@ -12,8 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/ico_te"
-        android:layout_toRightOf="@+id/ico_te"
+        android:layout_toEndOf="@+id/bt_te_servicio"
+        android:layout_toRightOf="@+id/bt_te_servicio"
         android:text="@string/linea"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#f65034"
@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/list_text_linea"
         android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/ico_te"
-        android:layout_toRightOf="@+id/ico_te"
+        android:layout_toEndOf="@+id/bt_te_servicio"
+        android:layout_toRightOf="@+id/bt_te_servicio"
         android:text="@string/ramal" />
 
 </RelativeLayout>

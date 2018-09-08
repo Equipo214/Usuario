@@ -2,6 +2,7 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,40 +10,56 @@
 
 
     <TextView
+        android:id="@+id/tx_te_linea"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignBottom="@+id/bt_te_servicio"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Linea"
+        android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+        app:layout_constraintBottom_toTopOf="@+id/tx_te_ramal"
+        app:layout_constraintEnd_toStartOf="@+id/tx_te"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/tx_te_ramal"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_alignBottom="@+id/ico_te"
+        android:layout_alignBottom="@+id/bt_te_servicio"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Linea - Ramal "
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintBottom_toBottomOf="@+id/ico_te"
+        android:text="Ramal"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_te_servicio"
         app:layout_constraintEnd_toStartOf="@+id/tx_te"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/tx_te_linea" />
 
     <TextView
         android:id="@+id/tx_te"
-        android:layout_width="51dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_alignTop="@+id/tx_te_ramal"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:text="0'"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintBottom_toBottomOf="@+id/ico_te"
-        app:layout_constraintEnd_toStartOf="@+id/ico_te"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_te_servicio"
+        app:layout_constraintEnd_toStartOf="@+id/bt_te_servicio"
+        app:layout_constraintStart_toEndOf="@+id/tx_te_linea"
+        app:layout_constraintTop_toTopOf="@+id/tx_te_linea" />
 
-    <ImageView
-        android:id="@+id/ico_te"
-        android:layout_width="45dp"
-        android:layout_height="39dp"
+
+    <ImageButton
+        android:id="@+id/bt_te_servicio"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
@@ -52,7 +69,7 @@
         android:maxWidth="74dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_parada_cercana" />
+        app:srcCompat="@mipmap/ic_bus_gris" />
 
 
 </android.support.constraint.ConstraintLayout>
