@@ -17,7 +17,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -94,9 +93,10 @@ public class Dibujar implements Runnable {
 
 
     private void consumirPosicion() {
-        if(requestQueue_distanceMatrix !=null){
-            requestQueue_distanceMatrix.stop();
-            requestQueue_distanceMatrix = null;
+        // limpiar memoria.
+        if (requestQueue_getUbicacion != null) {
+            requestQueue_getUbicacion.stop();
+            requestQueue_getUbicacion = null;
         }
         String parameters = "";
         if (ramales_seleccionados.size() == 0) {
@@ -105,7 +105,8 @@ public class Dibujar implements Runnable {
         }
 
         for (Ramal r : ramales_seleccionados.values()) {
-            if (r.isCheck()) {
+
+            if (r.isCheck() && paradasCercanas.get(r.getIdRamal()) != null) {
                 parameters += "&lineas%5B%5D=" + r.getIdLinea() + "&ramales%5B%5D=" + r.getIdRamal();
             }
         }
@@ -118,7 +119,7 @@ public class Dibujar implements Runnable {
         // &lineas%5B%5D=3&ramales%5B%5D=1
 
         String url = "https://virginal-way.000webhostapp.com/appPasajero/getUbicacionServicios.php?" + parameters;
-        //  Log.d("URL DIBUJAR", url);
+        Log.d("URL DIBUJAR", url);
         final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -137,37 +138,48 @@ public class Dibujar implements Runnable {
                                 Servicio s = serviciosActivos.get(idServicio);
                                 LatLng destino = new LatLng(lat, log);
                                 Ramal r = ramales_seleccionados.get(idRamal);
+
+
                                 if (s == null) {
-
-                                    BitmapDescriptor ico;
-                                    if (color.equals("V"))
-                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_verde);
-                                    else if (color.equals("A"))
-                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_amarillo);
-                                    else if (color.equals("R"))
-                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_rojo);
-                                    else
-                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_gris);
-
+                                    int resource;
+                                    if (color.equals("V")) {
+                                        resource = R.mipmap.ic_bus_verde;
+                                    } else if (color.equals("A")) {
+                                        resource = R.mipmap.ic_bus_amarillo;
+                                    } else if (color.equals("R")) {
+                                        resource = R.mipmap.ic_bus_rojo;
+                                    } else {
+                                        resource = (R.mipmap.ic_bus_gris);
+                                    }
                                     Marker mk = googleMap.addMarker(new MarkerOptions()
                                             .position(destino)
-                                            .icon(ico));
-                                    serviciosActivos.put(idServicio, new Servicio(idServicio, r.getLinea(), r.getDescripcion(), mk, paradasCercanas.get(idRamal).getPosition()));
+                                            .icon(BitmapDescriptorFactory.fromResource(resource)));
+
+                                    // Ojo de no buscar el servicio si no tengo la parada mas cercana todavia,
+                                    // ver cuando llamo a esta funcoin o quizas deberia hacer que no se pase tan rapido s
+                                    // tengo sueño, pero hay que programar pero dejo estas anotaciones para el dani del futuro
+                                    // att: dani del pasado :)
+                                    // PD: recuerda que la luz que te ilumina te hace mas fuerte QUEWE
+                                    serviciosActivos.put(idServicio, new Servicio(idServicio, r.getLinea(), r.getDescripcion(), mk, paradasCercanas.get(idRamal).getPosition(), resource));
                                     tiempoEstimadoAdapter.add(serviciosActivos.get(idServicio));
+
                                 } else {
 
-
-                                    BitmapDescriptor ico;
-                                    if (color.equals("V"))
-                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_verde);
-                                    else if (color.equals("A"))
-                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_amarillo);
-                                    else if (color.equals("R"))
-                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_rojo);
-                                    else
-                                        ico = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_gris);
-                                    s.getMk().setIcon(ico);
+                                    int resource;
+                                    if (color.equals("V")) {
+                                        resource = R.mipmap.ic_bus_verde;
+                                    } else if (color.equals("A")) {
+                                        resource = R.mipmap.ic_bus_amarillo;
+                                    } else if (color.equals("R")) {
+                                        resource = R.mipmap.ic_bus_rojo;
+                                    } else {
+                                        resource = (R.mipmap.ic_bus_gris);
+                                    }
+                                    s.getMk().setIcon(BitmapDescriptorFactory.fromResource(resource));
+                                    s.setIco(resource);
+                                    tiempoEstimadoAdapter.notifyDataSetChanged();
                                     // si esta en el top 3 de sercanos animar
+
                                     animateMarker(s.getMk(), destino, false, googleMap);
                                     s.setUbicacionActual(destino);
                                 }
@@ -183,12 +195,12 @@ public class Dibujar implements Runnable {
                 Log.d("JSON:ERROR", error.toString());
             }
         });
-        requestQueue_distanceMatrix = Volley.newRequestQueue(context);
-        requestQueue_distanceMatrix.add(jsonRequest);
+        requestQueue_getUbicacion = Volley.newRequestQueue(context);
+        requestQueue_getUbicacion.add(jsonRequest);
     }
 
-    public void animateMarker(final Marker marker, final LatLng toPosition,
-                              final boolean hideMarker, GoogleMap googleMap) {
+    private void animateMarker(final Marker marker, final LatLng toPosition,
+                               final boolean hideMarker, GoogleMap googleMap) {
 
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
@@ -223,9 +235,9 @@ public class Dibujar implements Runnable {
 
     private void calcularTiempo(HashMap<String, Servicio> serviciosActivos) {
 
-        if(requestQueue_getUbicacion !=null){
-            requestQueue_getUbicacion.stop();
-            requestQueue_getUbicacion =null;
+        if (requestQueue_distanceMatrix != null) {
+            requestQueue_distanceMatrix.stop();
+            requestQueue_distanceMatrix = null;
         }
 
         for (final Servicio servicio : serviciosActivos.values()) {
@@ -257,8 +269,8 @@ public class Dibujar implements Runnable {
                     Log.d("JSON:ERROR", error.toString());
                 }
             });
-            RequestQueue v = Volley.newRequestQueue(context);
-            v.add(jsonRequest);
+            requestQueue_distanceMatrix = Volley.newRequestQueue(context);
+            requestQueue_distanceMatrix.add(jsonRequest);
         }
 
     }
@@ -267,7 +279,7 @@ public class Dibujar implements Runnable {
     @Override
     public void run() {
         timer.schedule(obtenerUbicacionTask, 0, 5000); // 5000 = 5 segundos
-  //     timer.schedule(calcularTiempoTask, 5000, 10000); // 60000 = 1 min
+        //     timer.schedule(calcularTiempoTask, 5000, 10000); // 60000 = 1 min
     }
 
     public void stop() {

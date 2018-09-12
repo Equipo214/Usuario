@@ -7,10 +7,12 @@ import com.google.android.gms.maps.model.Marker;
 
 /**
  * Clase que representa un servicio de colectivo en tiempo real.
+ *
  * @author Daniel Boullon
  */
 public class Servicio {
 
+    private int ico;
     private String idServicio;
     private String linea;
     private String ramal;
@@ -19,7 +21,7 @@ public class Servicio {
     private LatLng parada;
     private LatLng ubicacionActual;
 
-    public Servicio(String idServicio, String linea, String ramal, Marker mk, LatLng parada) {
+    public Servicio(String idServicio, String linea, String ramal, Marker mk, LatLng parada, int ico) {
         this.idServicio = idServicio;
         this.linea = linea;
         this.ramal = ramal;
@@ -27,7 +29,7 @@ public class Servicio {
         this.ubicacionActual = mk.getPosition();
         this.tiempoEstimado = "-";
         this.mk = mk;
-
+        this.ico = ico;
     }
 
     public LatLng getParada() {
@@ -58,7 +60,6 @@ public class Servicio {
         return ramal;
     }
 
-
     public String getTiempoEstimado() {
         return tiempoEstimado;
     }
@@ -69,8 +70,16 @@ public class Servicio {
             this.tiempoEstimado = tiempoEstimado;
     }
 
-
     public String getIdServicio() {
         return idServicio;
+    }
+
+    public int getIco() {
+        return ico;
+    }
+
+    public void setIco(int ico) {
+        this.ico = ico;
+
     }
 }

@@ -29,7 +29,7 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         this._listDataHeader = new ArrayList<>();
         this._listDataTextChild = new HashMap<>();
 
-
+//  ACA LLEGA NULL, DEBO VALIDAR PORQUE; DEBERIA LLEGAR SIEMPRE ALGO VALIDO A ESTA PARTE :(
         for (Linea l : mLineas) {
             this._listDataHeader.add(l.getLinea());
             this._listDataTextChild.put(l.getLinea(), l.getRamales());

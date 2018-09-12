@@ -14,11 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
-        <activity android:name="com.grupo214.usuario.SplashScreen"
+        <activity android:name="com.grupo214.usuario.activities.SplashScreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -41,11 +40,15 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" />
         <activity android:name=".activities.CommentaryActivity" />
 
+        <service android:name=".alarma.Alarma"
+            android:enabled="true"
+            android:exported="true"/>
+        
     </application>
 
 </manifest>

@@ -34,7 +34,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
+import com.grupo214.usuario.Dialog.DialogoAccesibilidad;
+import com.grupo214.usuario.Dialog.DialogoAlarma;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
 import com.grupo214.usuario.alarma.Alarma;
 import com.grupo214.usuario.connserver.Dibujar;
@@ -47,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static com.grupo214.usuario.activities.MainActivity.puntoPartida;
 
 
 /**
@@ -63,37 +67,44 @@ public class MapFragment extends Fragment {
     private MapView mMapView;
     private GoogleMap googleMap;
     private ArrayList<Linea> mLinea;
-    private Alarma alarma;
+
     private Marker startMakerUser;
     private boolean selecionar = false; // por si las moscas.
     private HashMap<String, Marker> paradasCercanas;
+    private ArrayList<String> paradasCercanasId;
+    private ArrayList<String> paradasAccId;
     private boolean dondeEstaMiBondi = false;
     private ListView lv_listTiempoEstimado;
     private TiempoEstimadoAdapter adaptador;
-    private boolean heightAdjust = false;
-    private int cant = 0;
+    private boolean accesibilidad = false;
+    private boolean alarmaDestino = false;
     private HashMap<String, Servicio> servicios;
     private LocationManager locationManager;
+    private LatLng posInicial;
+    private TextView bottomSheetTextView;
+    private Alarma alarma;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
-
+        paradasAccId = new ArrayList<String>();
+        paradasCercanasId = new ArrayList<String>();
         paradasCercanas = new HashMap<>();
         paradasConAlarmas = new HashMap<>();
-        alarma = new Alarma(getContext(), paradasConAlarmas);
         servicios = new HashMap<>();
         adaptador = new TiempoEstimadoAdapter(getContext(), android.R.layout.simple_list_item_2);
 
         locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
 
         lv_listTiempoEstimado = (ListView) rootView.findViewById(R.id.listaTiempoEstimado);
+        adaptador.setLv(lv_listTiempoEstimado);
         lv_listTiempoEstimado.setAdapter(adaptador);
 
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
+
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -132,53 +143,30 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(final Marker marker) {
-                        // tiempo estimado al abrir el info view
-                        marker.showInfoWindow();
-
-                        if (marker.getTitle().contains("cercana")) {
-                            mensaje("cercana");
-                            return true;
-                        }
-
-                        if (marker.getTitle().contains("Servicio")) {
-                            mensaje("Servicio");
-                            return true;
-                        }
-
                         if (marker.getTitle().contains("Parada")) {
-                            Snackbar mySnackbar;
-                            if (paradasConAlarmas.get(marker.getId()) == null) {
-                                mySnackbar = Snackbar.make(rootView,
-                                        "Alarma", Snackbar.LENGTH_LONG);
-                                mySnackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
-                                mySnackbar.setAction("ACTIVAR", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        marker.setIcon(BitmapDescriptorFactory
-                                                .fromResource(R.mipmap.ic_parada_alarma_iv)); // ICONO ALARMA
-                                        paradasConAlarmas.put(marker.getId(), marker.getPosition());
-                                    }
-                                });
-                            } else {
-                                mySnackbar = Snackbar.make(rootView,
-                                        "Alarma", Snackbar.LENGTH_SHORT);
-                                mySnackbar.setActionTextColor(getResources().getColor(R.color.colorWarning));
-                                mySnackbar.setAction("DESACTIVAR", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        marker.setIcon(BitmapDescriptorFactory
-                                                .fromResource(R.mipmap.ic_parada_bondi)); // ICONO COMUN
-                                        paradasConAlarmas.remove(marker.getId());
-                                    }
-                                });
+                            if (accesibilidad) {
+                                DialogoAccesibilidad dialogoAccesibilidad = new DialogoAccesibilidad();
+                                dialogoAccesibilidad.setParams(marker, paradasAccId);
+                                dialogoAccesibilidad.show(getFragmentManager(), "Dialog Accesibilidad");
+                                accesibilidad = false;
+                                return true;
                             }
-                            mySnackbar.show();
-                            return true;
+                            if (alarmaDestino) {
+                                if (!paradasCercanasId.contains(marker.getId())) {
+                                    DialogoAlarma dialogoAlarma = new DialogoAlarma();
+                                    dialogoAlarma.setParams(marker, paradasConAlarmas);
+                                    dialogoAlarma.show(getFragmentManager(), "Dialog Alarma");
+                                } else {
+                                    Toast.makeText(getContext(), "No permitido alarma en parada cercana", Toast.LENGTH_SHORT).show();
+                                }
+                                alarmaDestino = false;
+                                return true;
+                            }
                         }
                         return false;
-
                     }
                 });
+
 
                 googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
@@ -197,25 +185,6 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
-                        mensaje("botton ubicacion");
-
-
-/*
-                        if( !heightAdjust && adaptador.getCount() == 4 ) { // asi entra una vez cuando sea mayor a tres.
-                            ViewGroup.LayoutParams params = lv_listTiempoEstimado.getLayoutParams();
-                            params.height = lv_listTiempoEstimado.getMeasuredHeight() + (lv_listTiempoEstimado.getDividerHeight() * (lv_listTiempoEstimado.getCount() - 1));
-                            lv_listTiempoEstimado.setLayoutParams(params);
-                            lv_listTiempoEstimado.requestLayout();
-                            heightAdjust = true;
-                        } else if( heightAdjust && adaptador.getCount() < 4){
-                            ViewGroup.LayoutParams params = lv_listTiempoEstimado.getLayoutParams();
-                            params.height = lv_listTiempoEstimado.getMeasuredHeight() + (lv_listTiempoEstimado.getDividerHeight() * (lv_listTiempoEstimado.getCount() - 1));
-                            lv_listTiempoEstimado.setLayoutParams(params);
-                            lv_listTiempoEstimado.requestLayout();
-                            heightAdjust = false;
-                        }
-*/
-
 
                         return false;
                     }
@@ -234,12 +203,20 @@ public class MapFragment extends Fragment {
 
                     @Override
                     public void onMarkerDragEnd(Marker marker) {
-                        dondeEstaMiBondi(marker.getPosition());
+                        puntoPartida = marker.getPosition();
+                        dondeEstaMiBondi(puntoPartida);
                     }
                 });
 
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(new LatLng(-34.669997, -58.563181)).zoom(13).build()));
+                Location location = location();
+                posInicial = new LatLng(-34.669997, -58.563181);
+
+                if (location != null)
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                            new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15).build()));
+                else
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                            new CameraPosition.Builder().target(posInicial).zoom(12).build()));
 
                 MarkerOptions markerOptions = new MarkerOptions()
                         .visible(false)
@@ -258,35 +235,46 @@ public class MapFragment extends Fragment {
                             startMakerUser.setPosition(latLng);
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                                     new CameraPosition.Builder().target(latLng).zoom(15).build()));
-                            dondeEstaMiBondi(latLng);
+                            puntoPartida = latLng;
+                            dondeEstaMiBondi(puntoPartida);
                             selecionar = false;
                         }
                     }
                 });
 
                 loadRoutes();
-                cargarDialog();
-                alarma.run();
+                dialogDondeEstaMiBondi();
+
             }
         });
+
+
+        cargarMenuInferior(rootView);
+
 
         return rootView;
     }
 
+    private void cargarMenuInferior(View rootView) {
 
-    private void dondeEstaMiBondi(LatLng latLng) {
+    }
+
+
+    public void dondeEstaMiBondi(LatLng latLng) {
 
         for (Marker mk : paradasCercanas.values()) {
             mk.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi));
         }
         paradasCercanas.clear();
-        Log.d("Ramales", "Clear paradas Cercanas: " + paradasCercanas.size());
+        paradasCercanasId = new ArrayList<String>();
 
         for (Ramal r : ramalesSeleccionados.values()) {
             Log.d("MapFragment", "ramal numero: " + r.toString());
             Marker mk = r.paradaMasCercana(latLng);
             paradasCercanas.put(r.getIdRamal(), mk);
+            paradasCercanasId.add(mk.getId());
             mk.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_cercana));
+            mk.showInfoWindow();
             if (paradasConAlarmas.get(mk.getId()) != null)
                 paradasConAlarmas.remove(mk.getId());
         }
@@ -384,12 +372,12 @@ public class MapFragment extends Fragment {
         this.ramalesSeleccionados = ramales_seleccionados;
     }
 
-    public void cargarDialog() {
+    public void dialogDondeEstaMiBondi() {
 
         //deshabilitamos el título por defecto
         startMenuDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //obligamos al usuario a pulsar los botones para cerrarlo
-        startMenuDialog.setCancelable(false);
+
+        startMenuDialog.setCancelable(true);
         //establecemos el contenido de nuestro dialog
         startMenuDialog.setContentView(R.layout.start_menu_route);
 
@@ -399,24 +387,16 @@ public class MapFragment extends Fragment {
             public void onClick(View view) {
                 startMenuDialog.dismiss();
                 Toast.makeText(getContext(), "Ubicacion", Toast.LENGTH_SHORT).show();
-
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                    mensaje("Amigo no tenes permisos.");
-
+                Location location = location();
+                if (location != null) {
+                    puntoPartida = new LatLng(location.getLatitude(), location.getLongitude());
+                    dondeEstaMiBondi(puntoPartida);
                 } else {
-                    if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-
-                        mensaje("No tenes ni el GPS ni el Internet Rata");
-                        // poner menu de activar
-
-                    else{
-                        Location location = locationManager
-                                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                        dondeEstaMiBondi(new LatLng(location.getLatitude(),location.getLongitude()));
-                    }
+                    Toast.makeText(getContext(), "GPS error (cambiar esto anita)", Toast.LENGTH_SHORT).show();
+                    puntoPartida = posInicial;
+                    dondeEstaMiBondi(puntoPartida); // hardCode aca no debo hacer esto sino avisar que no se puede geolocalizar al usuario.
                 }
+
             }
         });
 
@@ -432,9 +412,34 @@ public class MapFragment extends Fragment {
 
     }
 
+    private Location location() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            mensaje("Amigo no tenes permisos.");
+        } else {
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+
+                mensaje("No tenes ni el GPS ni el Internet Rata");
+
+            return null;
+
+        }
+        return locationManager
+                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    }
+
+
+    public void setAccesibilidad(boolean accesibilidad) {
+        mensaje("Selecione la parada donde solicite accesibilidad");
+        this.accesibilidad = accesibilidad;
+
+    }
 
     public void setStartMenuDialog(Dialog startMenuDialog) {
         this.startMenuDialog = startMenuDialog;
+    }
+
+    public void setAlarmaDestino(boolean alarmaDestino) {
+        this.alarmaDestino = alarmaDestino;
     }
 
 }

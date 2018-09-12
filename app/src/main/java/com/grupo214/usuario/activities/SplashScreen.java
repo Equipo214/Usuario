@@ -1,4 +1,4 @@
-package com.grupo214.usuario;
+package com.grupo214.usuario.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
-import com.grupo214.usuario.activities.MainActivity;
+import com.grupo214.usuario.R;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Parada;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 
 public class SplashScreen extends AppCompatActivity {
     public static ArrayList<Linea> mLineas;
+    private RequestQueue requestQueue_getRecorrido;
 
     public void setmLineas(ArrayList<Linea> mLineas) {
         SplashScreen.mLineas = mLineas;
@@ -62,6 +64,7 @@ public class SplashScreen extends AppCompatActivity {
     public void starttt() {
         Intent main = new Intent(SplashScreen.this, MainActivity.class);
         startActivity(main);
+        requestQueue_getRecorrido = null;
         finish();
     }
 
@@ -70,6 +73,7 @@ public class SplashScreen extends AppCompatActivity {
 
         String url = getString(R.string.GET_RECORRIDOS);
 
+        requestQueue_getRecorrido = Volley.newRequestQueue(this);
         final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -122,7 +126,7 @@ public class SplashScreen extends AppCompatActivity {
             }
         });
 
-        Volley.newRequestQueue(this).add(jsonRequest);
+        requestQueue_getRecorrido.add(jsonRequest);
     }
 
     private void mensaje(String msj) {

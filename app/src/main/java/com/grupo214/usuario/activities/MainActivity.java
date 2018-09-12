@@ -19,9 +19,8 @@ import android.view.MenuItem;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.SettingsActivity;
-import com.grupo214.usuario.SplashScreen;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
@@ -82,12 +81,15 @@ public class MainActivity extends AppCompatActivity
     private SmartTabLayout tabLayout;
     private ViewPager mViewPager;
     private Dialog startMenuDialog;
+    public static LatLng puntoPartida;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Bundle objetoSeralizado = getIntent().getExtras();
+
+        // menu dezlizante:
+
 
         //Seteo de variables:
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -106,9 +108,17 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setAdapter(mSectionsPageAdapter);
         mViewPager.setCurrentItem(TAB_LINEA); // para que inicie la tab de Mapas --> temporalmente cambiado.
         tabLayout.setViewPager(mViewPager);
+        tabLayout.setOnTabClickListener(new SmartTabLayout.OnTabClickListener() {
+            @Override
+            public void onTabClicked(int position) {
+                if (position == TAB_MAPA)
+                    if (puntoPartida != null)
+                        mapFragment.dondeEstaMiBondi(puntoPartida);
+            }
+        });
 
-        //      tabLayout.getTabAt(TAB_LINEA).setPointerIcon(new PointerIcon());
-        //      tabLayout.getTabAt(TAB_MAPA).setIcon(R.drawable.ic_map_unselect_24dp);
+        //   tabLayout.getTabAt(TAB_LINEA).setPointerIcon(new PointerIcon());
+        //   tabLayout.getTabAt(TAB_MAPA).setIcon(R.drawable.ic_map_unselect_24dp);
         //   int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelect);
         //   tabLayout.getTabAt(TAB_MAPA).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
 
@@ -130,11 +140,9 @@ public class MainActivity extends AppCompatActivity
         // con este tema personalizado evitamos los bordes por defecto
         startMenuDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         mapFragment = new MapFragment();
-
-        ramales_seleccionados = new HashMap<>();
         lineasFragment = new LineasFragment();
+        ramales_seleccionados = new HashMap<>();
         mLineas = SplashScreen.mLineas;
-
         lineasFragment.setStartMenuDialog(startMenuDialog);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);
         lineasFragment.setTabViewPager(mViewPager);
@@ -148,12 +156,12 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            //  mensaje("Guardar en base de datos SQL");
+            //mensaje("Guardar en base de datos SQL");
             //super.onBackPressed();
-            if(tabLayout.getTabAt(TAB_MAPA).isSelected() )
+            if (tabLayout.getTabAt(TAB_MAPA).isSelected())
                 mViewPager.setCurrentItem(TAB_LINEA);
             else
-                super.onBackPressed();
+                moveTaskToBack(true);
         }
     }
 
@@ -174,6 +182,10 @@ public class MainActivity extends AppCompatActivity
                         .putExtra("URL", LINK_TARIFAS));
                 break;
 
+            case R.id.nav_destino:
+                mapFragment.setAlarmaDestino(true);
+                break;
+
             case R.id.nav_ajustes:
                 mensaje("Ajustes");
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -184,7 +196,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_acc:
-                mensaje("Solicitar Accecibilidad");
+                mapFragment.setAccesibilidad(true);
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

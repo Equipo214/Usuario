@@ -10,8 +10,11 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.SplashScreen;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 
@@ -20,16 +23,20 @@ import java.util.ArrayList;
 public class CommentaryActivity extends AppCompatActivity {
 
     private static final int CANT_CARACTERES = 10;
-    ArrayList<String> lineas_nombres; // lineas_nombres;
-    ArrayList<String> lineas_id_nombres; // lineas id
-    ArrayList<String> ramal_nombres;
-    ArrayList<String> ramal_id_nombres;
-    ArrayAdapter<String> myAdapterLinea;
-    ArrayAdapter<String> myAdapterRamal;
+    private RequestQueue requestQueue_enviarComentario;
+    private ArrayList<String> lineas_nombres; // lineas_nombres;
+    private ArrayList<String> lineas_id_nombres; // lineas id
+    private ArrayList<String> ramal_nombres;
+    private ArrayList<String> ramal_id_nombres;
+    private ArrayAdapter<String> myAdapterLinea;
+    private ArrayAdapter<String> myAdapterRamal;
+
     private Spinner spinner_linea;
     private Spinner spinner_ramal;
     private EditText tx_comentario;
     private ArrayList<Linea> mLinea;
+    private String idLinea;
+    private String idRamal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +61,23 @@ public class CommentaryActivity extends AppCompatActivity {
         bt_enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(tx_comentario.getText().toString().length() < CANT_CARACTERES){
-                    Toast.makeText(getApplicationContext(), "Ingresar  un minimo de " + CANT_CARACTERES + " caracteres.", Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(getApplicationContext(), "Enviado", Toast.LENGTH_LONG).show();
+                String comentario = tx_comentario.getText().toString();
+                if (idLinea != null && idRamal != null)
+                    if (comentario.length() < CANT_CARACTERES) {
+                        Toast.makeText(getApplicationContext(), "Ingresar  un minimo de " + CANT_CARACTERES + " caracteres.", Toast.LENGTH_LONG).show();
+                    } else {
+
+                        if (requestQueue_enviarComentario != null) {
+                            requestQueue_enviarComentario.stop();
+                            requestQueue_enviarComentario = null;
+                        }
+                        String url = "https://virginal-way.000webhostapp.com/appPasajero/addComentario.php?idLinea=" + idLinea + "&idRamal=" + idRamal + "&comentario=" + comentario;
+
+                        final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null, null, null);
+                        requestQueue_enviarComentario = Volley.newRequestQueue(getApplicationContext());
+                        requestQueue_enviarComentario.add(jsonRequest);
+                        Toast.makeText(getApplicationContext(), "Enviado", Toast.LENGTH_LONG).show();
+                        CommentaryActivity.super.onBackPressed();
                 }
             }
         });
@@ -67,11 +87,25 @@ public class CommentaryActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView adapter, View v, int position, long lng) {
                 String item = adapter.getItemAtPosition(position).toString();
-                String idLinea = lineas_id_nombres.get(lineas_nombres.indexOf(item));
+                idLinea = lineas_id_nombres.get(lineas_nombres.indexOf(item));
                 traerRamal(idLinea);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        spinner_ramal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                idRamal = ramal_id_nombres.get(ramal_nombres.indexOf(item));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }

@@ -1,0 +1,59 @@
+package com.grupo214.usuario.Dialog;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatDialogFragment;
+
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.grupo214.usuario.R;
+
+import java.util.HashMap;
+
+public class DialogoAlarma extends AppCompatDialogFragment {
+
+
+    private Marker marker;
+    private HashMap<String, LatLng> paradasConAlarmas;
+    private HashMap<String, Marker> paradasCercana;
+
+    public void setParams(Marker marker, HashMap<String, LatLng> paradasConAlarmas) {
+        this.marker = marker;
+        this.paradasConAlarmas = paradasConAlarmas;
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final Boolean modo;
+        modo = paradasConAlarmas.get(marker.getId()) == null;
+
+
+        builder.setTitle("Alarma")
+                .setMessage("¿" + (modo ? "Activar" : "Desactivar") + " alamar?")
+                .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (modo) {
+                            marker.setIcon(BitmapDescriptorFactory
+                                    .fromResource(R.mipmap.ic_parada_alarma_iv)); // ICONO ALARMA
+                            paradasConAlarmas.put(marker.getId(), marker.getPosition());
+                        } else {
+                            marker.setIcon(BitmapDescriptorFactory
+                                    .fromResource(R.mipmap.ic_parada_bondi)); // ICONO COMUN
+                            paradasConAlarmas.remove(marker.getId());
+                        }
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dismiss();
+                    }
+                });
+        return builder.create();
+    }
+}

@@ -1,4 +1,4 @@
-package com.grupo214.usuario;
+package com.grupo214.usuario.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

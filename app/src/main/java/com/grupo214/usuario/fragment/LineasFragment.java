@@ -1,6 +1,7 @@
 package com.grupo214.usuario.fragment;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -13,10 +14,10 @@ import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
-
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.LineasAdapter;
+import com.grupo214.usuario.alarma.Alarma;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 
@@ -51,18 +52,24 @@ public class LineasFragment extends Fragment {
         adapter = new LineasAdapter(getContext(), mLineas);
         expandableListView.setAdapter(adapter);
 
+
         // ¿ DONDE ESTA MI BONDI ?
         bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
         bt_dondeEstaMiBondi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // setTab Change Tab algo con tab
+
+                /*
                 if (ramales_seleccionados.size() == 0) {
                     Toast.makeText(getContext(), "Seleciona por lo menos un ramal.", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (MainActivity.puntoPartida == null)
+                    startMenuDialog.show();
+                */
+                getContext().startService(new Intent(getContext(),Alarma.class));
                 tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
-                startMenuDialog.show();
             }
         });
 
@@ -91,11 +98,11 @@ public class LineasFragment extends Fragment {
                 if (r.isCheck()) {
                     r.getDibujo().show();
                     ramales_seleccionados.put(r.getIdRamal(), r);
-                    Log.d("LineasFragment","Ramal put " + r.toString() + "Cantidad de ramales: "+ ramales_seleccionados.size());
+                    Log.d("LineasFragment", "Ramal put " + r.toString() + "Cantidad de ramales: " + ramales_seleccionados.size());
                 } else {
                     r.getDibujo().hide();
                     ramales_seleccionados.remove(r.getIdRamal());
-                    Log.d("LineasFragment","Ramal remove " + r.toString());
+                    Log.d("LineasFragment", "Ramal remove " + r.toString());
                 }
 
                 checkBox.setChecked(r.isCheck());
@@ -119,4 +126,6 @@ public class LineasFragment extends Fragment {
     public void setStartMenuDialog(Dialog startMenuDialog) {
         this.startMenuDialog = startMenuDialog;
     }
+
+
 }

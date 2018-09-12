@@ -16,6 +16,11 @@
             android:id="@+id/nav_ajustes"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/nav_ajustes" />
+        <item
+            android:id="@+id/nav_destino"
+            android:icon="@drawable/ic_alarm"
+            android:title="@string/nav_destino" />
+
     </group>
 
     <item android:title="Comunicacion">
