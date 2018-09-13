@@ -4,6 +4,13 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.grupo214.usuario.Util.UtilMap;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Clase que representa un servicio de colectivo en tiempo real.
@@ -18,26 +25,36 @@ public class Servicio {
     private String ramal;
     private String tiempoEstimado;
     private Marker mk;
-    private LatLng parada;
+    private LatLng paradaCercanaAlPasajero;
     private LatLng ubicacionActual;
 
-    public Servicio(String idServicio, String linea, String ramal, Marker mk, LatLng parada, int ico) {
+    public Servicio(String idServicio, String linea, String ramal, Marker mk, LatLng paradaCercanaAlPasajero, int ico) {
         this.idServicio = idServicio;
         this.linea = linea;
         this.ramal = ramal;
-        this.parada = parada;
+        this.paradaCercanaAlPasajero = paradaCercanaAlPasajero;
         this.ubicacionActual = mk.getPosition();
         this.tiempoEstimado = "-";
         this.mk = mk;
         this.ico = ico;
     }
 
-    public LatLng getParada() {
-        return parada;
+    public static void ordenar(HashMap<String, Servicio> serviciosActivos) {
+        List<Servicio> serviciosList = new ArrayList<Servicio>(serviciosActivos.values());
+        Collections.sort(serviciosList, new Comparator<Servicio>() {
+
+            public int compare(Servicio s1, Servicio s2) {
+                if (UtilMap.calculateDistance(s1.getUbicacionActual(), s1.getParadaCercanaAlPasajero())
+                        >= UtilMap.calculateDistance(s2.getUbicacionActual(), s2.getParadaCercanaAlPasajero()))
+                    return -1;
+                else
+                    return 1;
+            }
+        });
     }
 
-    public void setParada(LatLng parada) {
-        this.parada = parada;
+    public LatLng getParadaCercanaAlPasajero() {
+        return paradaCercanaAlPasajero;
     }
 
     public Marker getMk() {

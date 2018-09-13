@@ -48,7 +48,9 @@
         <service android:name=".alarma.Alarma"
             android:enabled="true"
             android:exported="true"/>
-        
+        <receiver android:name=".alarma.ActionReceiver"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

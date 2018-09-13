@@ -49,7 +49,8 @@ import java.util.TimerTask;
  */
 public class Dibujar implements Runnable {
 
-    private final static long REFRESH_TIME = 1000;
+    private final static long REFRESH_TIME = 1000; // 1 segundo de animacion
+    private static final long TIME_OBTENER_UBICACIONES = 5000 ;// cada 5 segundo llamara
     private final ArrayList<Linea> mLinea;
     private TimerTask calcularTiempoTask;
     private TimerTask obtenerUbicacionTask;
@@ -73,6 +74,8 @@ public class Dibujar implements Runnable {
         this.timer = new Timer();
         this.tiempoEstimadoAdapter = tiempoEstimadoAdapter;
         this.serviciosActivos = serviciosActivos;
+
+
         inicializarTasks();
     }
 
@@ -135,12 +138,12 @@ public class Dibujar implements Runnable {
                                 String idServicio = serviciosJson.getJSONObject(i).getString("idServicio");
                                 String color = serviciosJson.getJSONObject(i).getString("color");
 
-                                Servicio s = serviciosActivos.get(idServicio);
+                                Servicio servicio = serviciosActivos.get(idServicio);
                                 LatLng destino = new LatLng(lat, log);
                                 Ramal r = ramales_seleccionados.get(idRamal);
 
 
-                                if (s == null) {
+                                if (servicio == null) {
                                     int resource;
                                     if (color.equals("V")) {
                                         resource = R.mipmap.ic_bus_verde;
@@ -153,6 +156,7 @@ public class Dibujar implements Runnable {
                                     }
                                     Marker mk = googleMap.addMarker(new MarkerOptions()
                                             .position(destino)
+                                            .visible(false)
                                             .icon(BitmapDescriptorFactory.fromResource(resource)));
 
                                     // Ojo de no buscar el servicio si no tengo la parada mas cercana todavia,
@@ -175,15 +179,18 @@ public class Dibujar implements Runnable {
                                     } else {
                                         resource = (R.mipmap.ic_bus_gris);
                                     }
-                                    s.getMk().setIcon(BitmapDescriptorFactory.fromResource(resource));
-                                    s.setIco(resource);
+                                    servicio.getMk().setIcon(BitmapDescriptorFactory.fromResource(resource));
+                                    servicio.setIco(resource);
                                     tiempoEstimadoAdapter.notifyDataSetChanged();
-                                    // si esta en el top 3 de sercanos animar
-
-                                    animateMarker(s.getMk(), destino, false, googleMap);
-                                    s.setUbicacionActual(destino);
+                                    // si esta en el top 3 de cercanos animar
+                                    if (servicio.getMk().isVisible())
+                                        animateMarker(servicio.getMk(), destino,  googleMap);
+                                    else
+                                        servicio.getMk().setPosition(destino);
+                                    servicio.setUbicacionActual(destino);
                                 }
                             }
+                            Servicio.ordenar(serviciosActivos);
                         } catch (JSONException e) {
                             Log.d("Json Error", e.toString());
                         }
@@ -199,8 +206,7 @@ public class Dibujar implements Runnable {
         requestQueue_getUbicacion.add(jsonRequest);
     }
 
-    private void animateMarker(final Marker marker, final LatLng toPosition,
-                               final boolean hideMarker, GoogleMap googleMap) {
+    private void animateMarker(final Marker marker, final LatLng toPosition, GoogleMap googleMap) {
 
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
@@ -222,13 +228,13 @@ public class Dibujar implements Runnable {
                 marker.setPosition(new LatLng(lat, lng));
                 if (t < 1.0) {
                     handler.postDelayed(this, 16);
-                } else {
+                } /*else {  // si lo quiero hacer invisible.
                     if (hideMarker) {
                         marker.setVisible(false);
                     } else {
                         marker.setVisible(true);
                     }
-                }
+                }*/
             }
         });
     }
@@ -243,7 +249,7 @@ public class Dibujar implements Runnable {
         for (final Servicio servicio : serviciosActivos.values()) {
 
             String outputFormat = "origins=" + servicio.getUbicacionActual().latitude + "," + servicio.getUbicacionActual().longitude +
-                    "&destinations=" + servicio.getParada().latitude + "," + servicio.getParada().longitude;
+                    "&destinations=" + servicio.getParadaCercanaAlPasajero().latitude + "," + servicio.getParadaCercanaAlPasajero().longitude;
             String parameters = "&language=es";
             String url = "https://maps.googleapis.com/maps/api/distancematrix/json?" + outputFormat + parameters + "&key=" + context.getString(R.string.google_maps_key);
 
@@ -278,8 +284,8 @@ public class Dibujar implements Runnable {
 
     @Override
     public void run() {
-        timer.schedule(obtenerUbicacionTask, 0, 5000); // 5000 = 5 segundos
-        //     timer.schedule(calcularTiempoTask, 5000, 10000); // 60000 = 1 min
+        timer.schedule(obtenerUbicacionTask, 0, TIME_OBTENER_UBICACIONES); // 5000 = 5 segundos
+        timer.schedule(calcularTiempoTask, 2000, 10000); // 60000 = 1 min
     }
 
     public void stop() {

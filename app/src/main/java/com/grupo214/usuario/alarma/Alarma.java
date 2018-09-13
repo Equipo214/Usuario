@@ -19,8 +19,8 @@ import com.grupo214.usuario.activities.MainActivity;
 //                getContext().startService(new Intent(getContext(),Alarma.class)); <- forma de crear
 public class Alarma extends Service {
 
-    private NotificationManager mNotificationManager;
     private String YES_ACTION = "se";
+    private NotificationManager mNotificationManager;
 
 
     @Nullable
@@ -52,22 +52,25 @@ public class Alarma extends Service {
         bigText.setSummaryText("Donde esta mi bondi");
 
 
-        Intent okReceive = new Intent();
-        okReceive.setAction(YES_ACTION);
-        PendingIntent pendingIntentOk= PendingIntent.getBroadcast(this, 12345, okReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent okReceive = new Intent(getBaseContext(),ActionReceiver.class);
+        okReceive.putExtra("action","Aceptar");
+        PendingIntent pendingIntentOk = PendingIntent.getBroadcast(this, 12345, okReceive, PendingIntent.FLAG_UPDATE_CURRENT);
 
-         Intent posPonerReceive = new Intent();
-        posPonerReceive.setAction(YES_ACTION);
+        Intent posPonerReceive = new Intent(getBaseContext(),ActionReceiver.class);
+        posPonerReceive.putExtra("action","Posponer");
         PendingIntent pendingIntentPosponer = PendingIntent.getBroadcast(this, 12345, posPonerReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+
 
         //mBuilder.setContentIntent(pendingIntent);
         mBuilder.setSmallIcon(R.drawable.ic_buss);
         mBuilder.setContentTitle("¿Donde esta mi bondi?");
         mBuilder.setContentText("Linea 242 A - Liners");
-        mBuilder.setPriority(Notification.PRIORITY_MAX);
         mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         mBuilder.addAction(R.drawable.ic_directions_bus_black_24dp, "Aceptar", pendingIntentOk);
         mBuilder.addAction(R.drawable.ic_sync_black_24dp, "Posponer", pendingIntentPosponer);
+        mBuilder.setOngoing(true);
 
         mBuilder.setVibrate(new long[]{100, 250, 100, 500});
         mBuilder.setStyle(bigText);
