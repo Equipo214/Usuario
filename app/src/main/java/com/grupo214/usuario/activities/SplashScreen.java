@@ -95,10 +95,10 @@ public class SplashScreen extends AppCompatActivity {
                                     ArrayList<Parada> paradas = new ArrayList<>();
                                     for (int k = 0; k < paradasJson.length(); k++) {
                                         JSONObject paradaJson = paradasJson.getJSONObject(k);
+
                                         paradas.add(new Parada(new LatLng(paradaJson.getDouble("latitude"), paradaJson.getDouble("longitude")),
                                                 paradaJson.getString("idPunto"),
                                                 paradaJson.getInt("orden")));
-
                                     }
 
                                     String code = ramal.getJSONObject("recorrido").getString("recorridoCompleto");

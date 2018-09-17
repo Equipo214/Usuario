@@ -14,7 +14,8 @@ import com.grupo214.usuario.R;
 /**
  * Clase actividad donde se gestiona
  * los links a paginas web y se muestra.
- * @author  [nombre del autor de la función]
+ *
+ * @author [nombre del autor de la función]
  */
 
 public class WebActivity extends AppCompatActivity {
@@ -22,6 +23,7 @@ public class WebActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setIcon(R.mipmap.ic_launcher);
         progressDialog.setMessage("Cargando...");
@@ -34,12 +36,10 @@ public class WebActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
 
 
-
-        webView.loadUrl( getIntent().getExtras().getString("URL"));
-
+        webView.loadUrl(getIntent().getExtras().getString("URL"));
 
 
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);

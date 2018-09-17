@@ -51,7 +51,6 @@ public class Dibujo {
     public Marker paradaMasCercana(LatLng userStart) {
         Marker paradaMasCercana = paradas.get(0); // guardo el primero como minimo
         double distancia = UtilMap.calculateDistance(userStart, paradaMasCercana.getPosition());
-
         double distancia_aux;
         for (Marker parada : paradas) {
             distancia_aux = UtilMap.calculateDistance(userStart, parada.getPosition());

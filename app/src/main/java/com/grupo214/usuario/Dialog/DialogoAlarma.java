@@ -32,14 +32,15 @@ public class DialogoAlarma extends AppCompatDialogFragment {
         modo = paradasConAlarmas.get(marker.getId()) == null;
 
 
-        builder.setTitle("Alarma")
-                .setMessage("¿" + (modo ? "Activar" : "Desactivar") + " alamar?")
+        builder.setTitle("NotificationBus")
+                .setMessage("¿Desea " + (modo ? "activar" : "desactivar") + " alamar?")
                 .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (modo) {
                             marker.setIcon(BitmapDescriptorFactory
-                                    .fromResource(R.mipmap.ic_parada_alarma_iv)); // ICONO ALARMA
+                                    .fromResource(R.mipmap.ic_parada_alarma_iv));
+                            marker.setAlpha(1f);// ICONO ALARMA
                             paradasConAlarmas.put(marker.getId(), marker.getPosition());
                         } else {
                             marker.setIcon(BitmapDescriptorFactory

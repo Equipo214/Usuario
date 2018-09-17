@@ -16,8 +16,8 @@ import android.widget.Toast;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.activities.MainActivity;
 
-//                getContext().startService(new Intent(getContext(),Alarma.class)); <- forma de crear
-public class Alarma extends Service {
+//                getContext().startService(new Intent(getContext(),NotificationBus.class)); <- forma de crear
+public class NotificationBus extends Service {
 
     private String YES_ACTION = "se";
     private NotificationManager mNotificationManager;
@@ -47,9 +47,9 @@ public class Alarma extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, ii, 0);
 
         NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
-        bigText.bigText("Anda saliendo wachin");
-        bigText.setBigContentTitle("Linea 242 A - Liners");
-        bigText.setSummaryText("Donde esta mi bondi");
+        bigText.bigText("El colectivo esta a 5 minutos de la parada.");
+        bigText.setBigContentTitle("Linea 242 Ramal: D - Moron");
+        bigText.setSummaryText("¡Hay un Colectivo cerca!");
 
 
         Intent okReceive = new Intent(getBaseContext(),ActionReceiver.class);
@@ -64,11 +64,11 @@ public class Alarma extends Service {
 
 
         //mBuilder.setContentIntent(pendingIntent);
-        mBuilder.setSmallIcon(R.drawable.ic_buss);
+        mBuilder.setSmallIcon(R.mipmap.ic_bus_1);
         mBuilder.setContentTitle("¿Donde esta mi bondi?");
-        mBuilder.setContentText("Linea 242 A - Liners");
+        mBuilder.setContentText("Linea 242 Ramal A - Liners");
         mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        mBuilder.addAction(R.drawable.ic_directions_bus_black_24dp, "Aceptar", pendingIntentOk);
+        mBuilder.addAction(R.mipmap.ic_bus_1, "Aceptar", pendingIntentOk);
         mBuilder.addAction(R.drawable.ic_sync_black_24dp, "Posponer", pendingIntentPosponer);
         mBuilder.setOngoing(true);
 
@@ -81,8 +81,8 @@ public class Alarma extends Service {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("notify_001",
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                    "Colectivo cerca",
+                    NotificationManager.IMPORTANCE_LOW);
             mNotificationManager.createNotificationChannel(channel);
         }
 
@@ -91,7 +91,7 @@ public class Alarma extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 /*
-    public Alarma(Context context, HashMap<String, LatLng> paradasConAlarmas) {
+    public NotificationBus(Context context, HashMap<String, LatLng> paradasConAlarmas) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.context = context;
         this.parametro = preferences.getString("list_preference_parameter", "nope");

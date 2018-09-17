@@ -10,12 +10,16 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private Dialog startMenuDialog;
     public static LatLng puntoPartida;
+    public static Boolean DEMO = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         // menu dezlizante:
-
+        int nums = 1234;
 
         //Seteo de variables:
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -196,7 +201,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_acc:
-                mapFragment.setAccesibilidad(true);
+                Toast.makeText(this, "hola",Toast.LENGTH_LONG).show();
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

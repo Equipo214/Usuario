@@ -1,6 +1,7 @@
 package com.grupo214.usuario.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +20,15 @@ import com.grupo214.usuario.objects.Servicio;
 
 public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
 
+    private final TextView txServicioBack;
     private GoogleMap googleMap;
     private ListView lv_listTiempoEstimado;
     private boolean heightAdjust = false;
 
 
-    public TiempoEstimadoAdapter(@NonNull Context context, int resource) {
+    public TiempoEstimadoAdapter(@NonNull Context context, int resource,TextView txServicioBack) {
         super(context, resource);
+        this.txServicioBack = txServicioBack;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
         tx_ramal.setText(s.getRamal());
 
         TextView tiempoEstimado = (TextView) convertView.findViewById(R.id.tx_te);
-        tiempoEstimado.setText(s.getTiempoEstimado());
+        tiempoEstimado.setText(s.getTiempoEstimado()+"'");
 
         ImageButton imageButton = (ImageButton) convertView.findViewById(R.id.bt_te_servicio);
         imageButton.setImageResource(s.getIco());
@@ -63,9 +66,15 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
 
     @Override
     public void notifyDataSetChanged() {
-
         super.notifyDataSetChanged();
+        if(this.getCount() > 0){
+            txServicioBack.setVisibility(View.INVISIBLE);
+        }
+        else if( this.getCount()==0){
+            txServicioBack.setVisibility(View.VISIBLE);
+        }
 
+        /*
         if (!heightAdjust && this.getCount() >= 4) { // asi entra una vez cuando sea mayor a tres.
             ViewGroup.LayoutParams params = lv_listTiempoEstimado.getLayoutParams();
             params.height = lv_listTiempoEstimado.getMeasuredHeight() + (lv_listTiempoEstimado.getDividerHeight() * (lv_listTiempoEstimado.getCount() - 1));
@@ -78,7 +87,7 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
             lv_listTiempoEstimado.setLayoutParams(params);
             lv_listTiempoEstimado.requestLayout();
             heightAdjust = false;
-        }
+        }*/
     }
 
     public void setGoogleMap(GoogleMap googleMaps) {

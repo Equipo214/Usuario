@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
@@ -13,7 +12,7 @@ import com.grupo214.usuario.R;
 
 import java.util.ArrayList;
 
-public class DialogoAccesibilidad extends AppCompatDialogFragment {
+public class DialogoParadaOnInfo extends AppCompatDialogFragment {
 
 
     private Marker marker;
@@ -31,8 +30,8 @@ public class DialogoAccesibilidad extends AppCompatDialogFragment {
         final Boolean modo;
         modo = !paradasAccId.contains(marker.getId());
 
-        builder.setTitle("Solicitar accesibilidad")
-                .setMessage("¿Desea " + (modo ? "solicitar" : "cancelar") + " parada con accesibilidad?")
+        builder.setTitle("¿Que deseas hacer?")
+                .setMessage("¿Que deseas hacer?")
                 .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

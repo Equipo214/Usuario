@@ -6,7 +6,7 @@ public class Parada {
     private LatLng latLng;
     private String idParda;
     private int orden;
-
+    private long tiempoEstimado;
 
     public Parada(LatLng latLng, String idParda, int orden) {
         this.latLng = latLng;
@@ -14,15 +14,20 @@ public class Parada {
         this.orden = orden;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
+    public long getTiempoEstimado() {
+        return tiempoEstimado;
     }
 
-    public String getIdParda() {
-        return idParda;
+    public void setTiempoEstimado(long tiempoEstimado) {
+        this.tiempoEstimado = tiempoEstimado;
+    }
+
+    public LatLng getLatLng() {
+        return latLng;
     }
 
     public int getOrden() {
         return orden;
     }
+
 }

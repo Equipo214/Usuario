@@ -1,16 +1,9 @@
 package com.grupo214.usuario.objects;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.grupo214.usuario.Util.UtilMap;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Clase que representa un servicio de colectivo en tiempo real.
@@ -23,10 +16,16 @@ public class Servicio {
     private String idServicio;
     private String linea;
     private String ramal;
-    private String tiempoEstimado;
+    private int tiempoEstimado;
     private Marker mk;
     private LatLng paradaCercanaAlPasajero;
     private LatLng ubicacionActual;
+    public static Comparator<Servicio> COMPARATOR =  new Comparator<Servicio>() {
+        @Override
+        public int compare(Servicio o1, Servicio o2) {
+            return o1.getTiempoEstimado() - o2.getTiempoEstimado();
+        }
+    };
 
     public Servicio(String idServicio, String linea, String ramal, Marker mk, LatLng paradaCercanaAlPasajero, int ico) {
         this.idServicio = idServicio;
@@ -34,24 +33,13 @@ public class Servicio {
         this.ramal = ramal;
         this.paradaCercanaAlPasajero = paradaCercanaAlPasajero;
         this.ubicacionActual = mk.getPosition();
-        this.tiempoEstimado = "-";
+        this.tiempoEstimado = -1;
         this.mk = mk;
         this.ico = ico;
+        this.mk.setTitle("Servicio");
+        this.mk.setSnippet("Linea " + linea + "\nRamal " + ramal);
     }
 
-    public static void ordenar(HashMap<String, Servicio> serviciosActivos) {
-        List<Servicio> serviciosList = new ArrayList<Servicio>(serviciosActivos.values());
-        Collections.sort(serviciosList, new Comparator<Servicio>() {
-
-            public int compare(Servicio s1, Servicio s2) {
-                if (UtilMap.calculateDistance(s1.getUbicacionActual(), s1.getParadaCercanaAlPasajero())
-                        >= UtilMap.calculateDistance(s2.getUbicacionActual(), s2.getParadaCercanaAlPasajero()))
-                    return -1;
-                else
-                    return 1;
-            }
-        });
-    }
 
     public LatLng getParadaCercanaAlPasajero() {
         return paradaCercanaAlPasajero;
@@ -77,14 +65,12 @@ public class Servicio {
         return ramal;
     }
 
-    public String getTiempoEstimado() {
+    public int getTiempoEstimado() {
         return tiempoEstimado;
     }
 
-    public void setTiempoEstimado(String tiempoEstimado) {
-        Log.d("Servicio", "id " + idServicio + " tiempo " + tiempoEstimado);
-        if (tiempoEstimado != null)
-            this.tiempoEstimado = tiempoEstimado;
+    public void setTiempoEstimado(int tiempoEstimado) {
+        this.tiempoEstimado = tiempoEstimado;
     }
 
     public String getIdServicio() {

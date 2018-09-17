@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.LineasAdapter;
-import com.grupo214.usuario.alarma.Alarma;
+import com.grupo214.usuario.alarma.NotificationBus;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 
@@ -60,15 +60,15 @@ public class LineasFragment extends Fragment {
             public void onClick(View v) {
                 // setTab Change Tab algo con tab
 
-                /*
+
                 if (ramales_seleccionados.size() == 0) {
                     Toast.makeText(getContext(), "Seleciona por lo menos un ramal.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (MainActivity.puntoPartida == null)
                     startMenuDialog.show();
-                */
-                getContext().startService(new Intent(getContext(),Alarma.class));
+
+              //  getContext().startService(new Intent(getContext(),NotificationBus.class));
                 tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
             }
         });
@@ -89,6 +89,7 @@ public class LineasFragment extends Fragment {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //getContext().startService(new Intent(getContext(),NotificationBus.class));
 
                 Ramal r = mLineas.get(groupPosition).getRamales().get(childPosition);
                 CheckBox checkBox = v.findViewById(R.id.list_checkBox);
@@ -98,11 +99,9 @@ public class LineasFragment extends Fragment {
                 if (r.isCheck()) {
                     r.getDibujo().show();
                     ramales_seleccionados.put(r.getIdRamal(), r);
-                    Log.d("LineasFragment", "Ramal put " + r.toString() + "Cantidad de ramales: " + ramales_seleccionados.size());
                 } else {
                     r.getDibujo().hide();
                     ramales_seleccionados.remove(r.getIdRamal());
-                    Log.d("LineasFragment", "Ramal remove " + r.toString());
                 }
 
                 checkBox.setChecked(r.isCheck());
@@ -126,6 +125,4 @@ public class LineasFragment extends Fragment {
     public void setStartMenuDialog(Dialog startMenuDialog) {
         this.startMenuDialog = startMenuDialog;
     }
-
-
 }

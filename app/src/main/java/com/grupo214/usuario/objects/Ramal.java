@@ -1,13 +1,15 @@
 package com.grupo214.usuario.objects;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.grupo214.usuario.Util.UtilMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Ramal {
+    private int indexParadas;
     private String idLinea;
     private String idRamal;
     private String descripcion;
@@ -28,6 +30,7 @@ public class Ramal {
         this.checked = false;
         this.linea = linea;
         this.serviciosActivos = new HashMap<>();
+        this.indexParadas = 7;
     }
 
     public HashMap<String, Servicio> getServiciosActivos() {
@@ -86,4 +89,12 @@ public class Ramal {
     public String getLinea() {
         return linea;
     }
+
+    public LatLng[] sigParada() {
+        LatLng[] paradasConexas = new LatLng[2];
+            paradasConexas[0] = paradas.get(indexParadas++).getLatLng();
+            paradasConexas[1] = paradas.get(indexParadas).getLatLng();
+        return  paradasConexas;
+    }
+
 }
