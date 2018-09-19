@@ -61,7 +61,7 @@ import static com.grupo214.usuario.activities.MainActivity.puntoPartida;
  */
 public class MapFragment extends Fragment {
 
-    public static final LatLng posInicial = new LatLng(-34.680724, -58.559426);
+    public static final LatLng posInicial = new LatLng(-34.681496, -58.559774);
     private HashMap<String, LatLng> paradasConAlarmas;
     private HashMap<String, Ramal> ramalesSeleccionados;
     private Dialog startMenuDialog;
@@ -299,7 +299,7 @@ public class MapFragment extends Fragment {
             paradasCercanas.put(r.getIdRamal(), mk);
             paradasCercanasId.add(mk.getId());
             mk.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_cercana));
-            mk.showInfoWindow();
+            //mk.showInfoWindow();
             if (paradasConAlarmas.get(mk.getId()) != null)
                 paradasConAlarmas.remove(mk.getId());
         }

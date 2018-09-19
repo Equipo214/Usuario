@@ -48,6 +48,9 @@
         <service android:name=".alarma.NotificationBus"
             android:enabled="true"
             android:exported="true"/>
+        <service android:name=".alarma.ServicioAlarmas"
+            android:enabled="true"
+            android:exported="true"/>
         <receiver android:name=".alarma.ActionReceiver"
             android:enabled="true"
             android:exported="true"/>

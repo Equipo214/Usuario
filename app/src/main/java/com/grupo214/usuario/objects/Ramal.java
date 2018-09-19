@@ -30,7 +30,7 @@ public class Ramal {
         this.checked = false;
         this.linea = linea;
         this.serviciosActivos = new HashMap<>();
-        this.indexParadas = 7;
+        this.indexParadas = paradas.size()>=7?8:1;
     }
 
     public HashMap<String, Servicio> getServiciosActivos() {
@@ -92,8 +92,8 @@ public class Ramal {
 
     public LatLng[] sigParada() {
         LatLng[] paradasConexas = new LatLng[2];
-            paradasConexas[0] = paradas.get(indexParadas++).getLatLng();
-            paradasConexas[1] = paradas.get(indexParadas).getLatLng();
+            paradasConexas[0] = paradas.get(indexParadas).getLatLng();
+            paradasConexas[1] = paradas.get(++indexParadas>=paradas.size()?1:indexParadas).getLatLng();
         return  paradasConexas;
     }
 

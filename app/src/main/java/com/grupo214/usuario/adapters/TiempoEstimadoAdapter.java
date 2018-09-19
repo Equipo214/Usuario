@@ -42,6 +42,9 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
         final TextView tx_linea = (TextView) convertView.findViewById(R.id.tx_te_linea);
         tx_linea.setText(s.getLinea());
 
+        final TextView tx_te_servicio = (TextView) convertView.findViewById(R.id.tx_te_servicio);
+        tx_te_servicio.setText(s.getIdServicio());
+
         final TextView tx_ramal = (TextView) convertView.findViewById(R.id.tx_te_ramal);
         tx_ramal.setText(s.getRamal());
 

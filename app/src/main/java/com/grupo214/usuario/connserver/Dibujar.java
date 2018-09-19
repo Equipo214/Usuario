@@ -91,9 +91,9 @@ public class Dibujar implements Runnable {
             inicializarTasks();
             markerDemoUser = googleMap.addMarker(new MarkerOptions()
                     .position(posInicial)
-                    .flat(true)
+                    .flat(false)
                     .anchor(0.5f,0.5f)
-                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_user_marker)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_user_map_demo)));
         }
         inicializarTasks();
     }
@@ -322,32 +322,46 @@ public class Dibujar implements Runnable {
     }
 
     private boolean flag = true;
-
-    public void DEMO() {
+    private float tilt = 45;
+    public void DEMO()  {
         if (ramales_seleccionados.size() == 0)
             return;
         for (Ramal r : ramales_seleccionados.values()) {
+            LatLng[] paradasCone = r.sigParada();
             Servicio servicioDemo = serviciosActivos.get("demo");
             Servicio servicioDemo2 = serviciosActivos.get("demo2");
+            Servicio servicioDemo3 = serviciosActivos.get("demo3");
             if( servicioDemo == null){
                 serviciosActivos.put("demo",new Servicio("demo", r.getLinea(), r.getDescripcion() , markerDemo, paradasCercanas.get(r.getIdRamal()).getPosition() , R.mipmap.ic_bus_verde));
                 serviciosActivos.put("demo2",new Servicio("demo2", r.getLinea(), r.getDescripcion() , markerDemo, paradasCercanas.get(r.getIdRamal()).getPosition() , R.mipmap.ic_bus_verde));
+                serviciosActivos.put("demo3",new Servicio("demo3", r.getLinea(), r.getDescripcion() , markerDemo, paradasCercanas.get(r.getIdRamal()).getPosition() , R.mipmap.ic_bus_verde));
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(markerDemoUser.getPosition()).zoom(15).build()));
+                        new CameraPosition.Builder().target(markerDemoUser.getPosition())
+                                .zoom(15)
+                                .tilt(tilt)
+                                .build()));
                 serviciosActivos.get("demo").setTiempoEstimado(2);
                 serviciosActivos.get("demo2").setTiempoEstimado(15);
+                serviciosActivos.get("demo3").setTiempoEstimado(20);
                 tiempoEstimadoAdapter.add(serviciosActivos.get("demo"));
                 tiempoEstimadoAdapter.add(serviciosActivos.get("demo2"));
+                tiempoEstimadoAdapter.add(serviciosActivos.get("demo3"));
                 tiempoEstimadoAdapter.notifyDataSetChanged();
-                animateMarker(markerDemoUser,new LatLng(-34.681496, -58.559774),googleMap);
+         //       animateMarker(markerDemoUser,new LatLng(-34.681496, -58.559774),googleMap);
             }else{
                 servicioDemo.setTiempoEstimado(servicioDemo.getTiempoEstimado()-1);
                 servicioDemo2.setTiempoEstimado(servicioDemo2.getTiempoEstimado()-2);
+                servicioDemo3.setTiempoEstimado(servicioDemo3.getTiempoEstimado()-2);
                 tiempoEstimadoAdapter.notifyDataSetChanged();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                        new CameraPosition.Builder().target(paradasCone[1])
+                                .zoom(15)
+                                .tilt(tilt)
+                                .build()));
             }
-
-            LatLng[] paradasCone = r.sigParada();
             markerDemo.setPosition(paradasCone[0]);
+
+
 
             if (flag && UtilMap.calculateDistance(markerDemo.getPosition(),markerDemoUser.getPosition()) < 40){
                 markerDemo.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_amarillo));

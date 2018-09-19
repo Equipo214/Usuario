@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,11 +54,20 @@ public class LineasFragment extends Fragment {
 
         // ¿ DONDE ESTA MI BONDI ?
         bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
+        Button testNot = (Button) rootView.findViewById(R.id.bt_testNOt);
+
+        testNot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getContext().startService(new Intent(getContext(), NotificationBus.class));
+            }
+        });
+
+
         bt_dondeEstaMiBondi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // setTab Change Tab algo con tab
-
 
                 if (ramales_seleccionados.size() == 0) {
                     Toast.makeText(getContext(), "Seleciona por lo menos un ramal.", Toast.LENGTH_SHORT).show();
@@ -68,7 +76,6 @@ public class LineasFragment extends Fragment {
                 if (MainActivity.puntoPartida == null)
                     startMenuDialog.show();
 
-              //  getContext().startService(new Intent(getContext(),NotificationBus.class));
                 tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
             }
         });

@@ -59,8 +59,8 @@
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\dboullon\Downloads\PARADA_ALARM.png" />
-                                      <entry key="outputName" value="ic_alarm_blue" />
+                                      <entry key="imageAsset" value="C:\Users\dboullon\Downloads\hombre (1).png" />
+                                      <entry key="outputName" value="ic_user_map_demo" />
                                     </map>
                                   </option>
                                 </PersistentState>

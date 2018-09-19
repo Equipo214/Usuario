@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/tx_te_linea"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_alignBottom="@+id/bt_te_servicio"
         android:layout_marginLeft="8dp"
@@ -20,7 +20,6 @@
         android:text="Linea"
         android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
         app:layout_constraintBottom_toTopOf="@+id/tx_te_ramal"
-        app:layout_constraintEnd_toStartOf="@+id/tx_te"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,6 +51,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintBottom_toBottomOf="@+id/bt_te_servicio"
         app:layout_constraintEnd_toStartOf="@+id/bt_te_servicio"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/tx_te_linea"
         app:layout_constraintTop_toTopOf="@+id/tx_te_linea" />
 
@@ -65,13 +65,32 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:cropToPadding="false"
-        android:backgroundTintMode="multiply"
+        android:contentDescription="Ir al servicio"
         android:background="#00000000"
         android:maxHeight="35dp"
         android:maxWidth="74dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_bus_gris" />
+
+    <TextView
+        android:id="@+id/tx_te_servicio"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:gravity="right"
+        android:visibility="invisible"
+        android:text="(id servicio)"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintBottom_toTopOf="@+id/tx_te_ramal"
+        app:layout_constraintEnd_toStartOf="@+id/tx_te"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/tx_te_linea"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
