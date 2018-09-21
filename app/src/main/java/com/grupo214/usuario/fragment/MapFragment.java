@@ -94,7 +94,7 @@ public class MapFragment extends Fragment {
         paradasCercanas = new HashMap<>();
         paradasConAlarmas = new HashMap<>();
         serviciosActivos = new HashMap<>();
-        adaptador = new TiempoEstimadoAdapter(getContext(), android.R.layout.simple_list_item_2,(TextView)rootView.findViewById(R.id.tx_servicio_back));
+        adaptador = new TiempoEstimadoAdapter(getContext(), android.R.layout.simple_list_item_2, (TextView) rootView.findViewById(R.id.tx_servicio_back));
         locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
         infoWindowAdapterParadas = new GoogleMap.InfoWindowAdapter() {
             public View getInfoWindow(Marker marker) {
@@ -153,7 +153,7 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(final Marker marker) {
-                        if( marker.getTitle() == null )
+                        if (marker.getTitle() == null)
                             return true;
 
                         if (marker.getTitle().contains("Parada")) {
@@ -174,7 +174,7 @@ public class MapFragment extends Fragment {
                                 }
                                 alarmaDestino = false;
                                 marker.showInfoWindow();
-                                return  true;
+                                return true;
                             }
                         }
                         return false;
@@ -191,7 +191,7 @@ public class MapFragment extends Fragment {
                             dialogoAccesibilidad.show(getFragmentManager(), "Dialog Accesibilidad");
                             // setear un adapter info para paradas si esta activado el swicht mostrar el boton de accesibliidad.
                         }
-                        if(marker.getTitle().contains("Servicio")){
+                        if (marker.getTitle().contains("Servicio")) {
                             // setar un adapter info para servicio, asi puede activar las alarmas de ese ramal con ese servicio.
                         }
 
@@ -205,7 +205,7 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
-                        if ( MainActivity.DEMO){
+                        if (MainActivity.DEMO) {
                             dibujar.DEMO();
                             return true;
                         }
@@ -246,7 +246,7 @@ public class MapFragment extends Fragment {
                         .title("Punto de partida")
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_user_marker))
                         .flat(true)
-                        .anchor(0.5f,0.5f)
+                        .anchor(0.5f, 0.5f)
                         .draggable(true);
 
                 startMakerUser = googleMap.addMarker(markerOptions);
@@ -303,7 +303,7 @@ public class MapFragment extends Fragment {
             if (paradasConAlarmas.get(mk.getId()) != null)
                 paradasConAlarmas.remove(mk.getId());
         }
-        if(MainActivity.DEMO){
+        if (MainActivity.DEMO) {
             dibujar.DEMO();
             return;
         }
@@ -379,7 +379,6 @@ public class MapFragment extends Fragment {
                             .snippet("Ramal: " + r.getDescripcion()));
                     r.getDibujo().agregarParada(mk);
                 }
-
                 googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
             }
         }

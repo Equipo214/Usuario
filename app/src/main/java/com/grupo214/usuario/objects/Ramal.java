@@ -1,12 +1,10 @@
 package com.grupo214.usuario.objects;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.grupo214.usuario.activities.MainActivity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Ramal {
     private int indexParadas;
@@ -14,32 +12,25 @@ public class Ramal {
     private String idRamal;
     private String descripcion;
     private String linea;
-    private String code_recorrido;
-    private ArrayList<Parada> paradas;
+    private ArrayList<Recorrido> recorridosAlternos;
+    private Recorrido recorridoPrimario;
     private Boolean checked;
     private Dibujo dibujo;
-    private HashMap<String,Servicio> serviciosActivos;
 
-    public Ramal(String idLinea,String linea, String idRamal, String ramal, String code_recorrido, ArrayList<Parada> paradas) {
+
+    public Ramal(String idLinea, String linea, String idRamal, String ramal, Recorrido recorridoPrimario, ArrayList<Recorrido> recorridosAlternos) {
         this.idLinea = idLinea;
         this.idRamal = idRamal;
         this.descripcion = ramal;
-        this.code_recorrido = code_recorrido;
-        this.paradas = paradas;
+        this.recorridoPrimario = recorridoPrimario;
+        this.recorridosAlternos = recorridosAlternos;
         this.dibujo = new Dibujo();
         this.checked = false;
         this.linea = linea;
-        this.serviciosActivos = new HashMap<>();
-        this.indexParadas = paradas.size()>=7?8:1;
+        if(MainActivity.DEMO)
+            this.indexParadas = recorridoPrimario.getParadas().size() >= 7 ? 8 : 1;
     }
 
-    public HashMap<String, Servicio> getServiciosActivos() {
-        return serviciosActivos;
-    }
-
-    public void setServiciosActivos(HashMap<String, Servicio> serviciosActivos) {
-        this.serviciosActivos = serviciosActivos;
-    }
 
     @Override
     public String toString() {
@@ -51,7 +42,7 @@ public class Ramal {
     }
 
     public String getCode_recorrido() {
-        return code_recorrido;
+        return recorridoPrimario.getRecorridoCompleto();
     }
 
     public String getIdRamal() {
@@ -63,7 +54,7 @@ public class Ramal {
     }
 
     public ArrayList<Parada> getParadas() {
-        return paradas;
+        return recorridoPrimario.getParadas();
     }
 
     public Boolean isCheck() {
@@ -78,13 +69,10 @@ public class Ramal {
         return dibujo;
     }
 
-    public Marker paradaMasCercana(LatLng latLng){
-        return  dibujo.paradaMasCercana(latLng);
+    public Marker paradaMasCercana(LatLng latLng) {
+        return dibujo.paradaMasCercana(latLng);
     }
 
-    public boolean esParada(Marker mk) {
-        return paradas.contains(mk.getPosition());
-    }
 
     public String getLinea() {
         return linea;
@@ -92,9 +80,9 @@ public class Ramal {
 
     public LatLng[] sigParada() {
         LatLng[] paradasConexas = new LatLng[2];
-            paradasConexas[0] = paradas.get(indexParadas).getLatLng();
-            paradasConexas[1] = paradas.get(++indexParadas>=paradas.size()?1:indexParadas).getLatLng();
-        return  paradasConexas;
+        paradasConexas[0] = getParadas().get(indexParadas).getLatLng();
+        paradasConexas[1] = getParadas().get(++indexParadas >= getParadas().size() ? 1 : indexParadas).getLatLng();
+        return paradasConexas;
     }
 
 }

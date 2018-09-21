@@ -10,15 +10,12 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +23,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
+import com.grupo214.usuario.fragment.InicioFragment;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.objects.Linea;
@@ -57,7 +55,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Constante que representa la pestaña ?
      */
-    public final static int TAB_INICIO = 2; // esto despues tengo que revisar.
+    public final static int TAB_NOTIFICACIONES = 2; // esto despues tengo que revisar.
 
     /**
      * Constante con el link hacia la pagina de tarifas del gobierno
@@ -82,6 +80,7 @@ public class MainActivity extends AppCompatActivity
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
     private LineasFragment lineasFragment;
+    private InicioFragment inicioFragment;
     private SmartTabLayout tabLayout;
     private ViewPager mViewPager;
     private Dialog startMenuDialog;
@@ -92,6 +91,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         // menu dezlizante:
         int nums = 1234;
@@ -108,8 +109,9 @@ public class MainActivity extends AppCompatActivity
 
         //Set Tab:
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-        mSectionsPageAdapter.addFragment(lineasFragment, "Lineas");   // 0
-        mSectionsPageAdapter.addFragment(mapFragment, "Mapa");        // 1
+        mSectionsPageAdapter.addFragment(lineasFragment, "Lineas");     // 0
+        mSectionsPageAdapter.addFragment(mapFragment, "Mapa");          // 1
+        mSectionsPageAdapter.addFragment(inicioFragment, "Notif.");       // 2
         mViewPager.setAdapter(mSectionsPageAdapter);
         mViewPager.setCurrentItem(TAB_LINEA); // para que inicie la tab de Mapas --> temporalmente cambiado.
         tabLayout.setViewPager(mViewPager);
@@ -141,11 +143,18 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // crear not
+    }
+
     private void cargarLineas() {
         // con este tema personalizado evitamos los bordes por defecto
         startMenuDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
+        inicioFragment = new InicioFragment();
         ramales_seleccionados = new HashMap<>();
         mLineas = SplashScreen.mLineas;
         lineasFragment.setStartMenuDialog(startMenuDialog);

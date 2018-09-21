@@ -19,8 +19,7 @@ import com.grupo214.usuario.R;
 public class NotificationBus extends Service {
 
     private String YES_ACTION = "se";
-    private NotificationManager mNotificationManager;
-    private String NOTIFICATION_CHANNEL_ID = "notify_001";
+    public static int NOTIFICATION_ID = 1;
 
     @Nullable
     @Override
@@ -44,6 +43,9 @@ public class NotificationBus extends Service {
         okReceive.putExtra("aceptar", "Aceptar");
         PendingIntent pendingIntentOk = PendingIntent.getBroadcast(this, 12345, okReceive, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        NotificationManager mNotificationManager;
+        String NOTIFICATION_CHANNEL_ID = "notify_001";
+
         Intent posPonerReceive = new Intent(getBaseContext(), ActionReceiver.class);
         posPonerReceive.putExtra("posponer", "Posponer");
         PendingIntent pendingIntentPosponer = PendingIntent.getBroadcast(this, 12346, posPonerReceive, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -59,7 +61,8 @@ public class NotificationBus extends Service {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(R.mipmap.ic_bus_1, "Aceptar", pendingIntentOk)
                 .addAction(R.drawable.ic_sync_black_24dp, "Posponer", pendingIntentPosponer)
-                .setOngoing(true)
+                .setOngoing(false)
+                .setDeleteIntent(pendingIntentPosponer)
                 .setAutoCancel(true)
                 .setVibrate(new long[]{100, 250, 100, 500})
                 .setStyle(bigText);
@@ -81,7 +84,7 @@ public class NotificationBus extends Service {
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
 
-        mNotificationManager.notify(0, mBuilder.build());
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
         return super.onStartCommand(intent, flags, startId);
     }

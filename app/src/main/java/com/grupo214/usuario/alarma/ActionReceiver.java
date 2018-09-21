@@ -1,9 +1,9 @@
 package com.grupo214.usuario.alarma;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
 
 public class ActionReceiver extends BroadcastReceiver {
@@ -18,13 +18,20 @@ public class ActionReceiver extends BroadcastReceiver {
 
         if (aceptar != null && aceptar.equals("Aceptar")) {
             Toast.makeText(context, "Entro como caballo Aceptar", Toast.LENGTH_LONG).show();
+            clearNotification(context);
         } else if (posponer != null && posponer.equals("Posponer")) {
             Toast.makeText(context, "Entro como caballo Posponer", Toast.LENGTH_LONG).show();
+            clearNotification(context);
         }
         //This is used to close the notification tray
         Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(it);
+    }
 
+    public void clearNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(NotificationBus.NOTIFICATION_ID);
     }
 
     public void performAction1(Context context) {

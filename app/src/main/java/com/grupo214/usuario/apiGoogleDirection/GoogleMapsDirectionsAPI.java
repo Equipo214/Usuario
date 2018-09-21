@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
-import com.grupo214.usuario.objects.Recorrido;
+import com.grupo214.usuario.objects.RecorridoDemo;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class  GoogleMapsDirectionsAPI {
      * @param puntos
      * @return
      */
-    private static String getRequestUrl(Recorrido puntos) {
+    private static String getRequestUrl(RecorridoDemo puntos) {
         //Value of origin
         int i = 0;
         String str_org = "origin=" + puntos.get(i).getLatLng().latitude + "," + puntos.get(i).getLatLng().longitude;

@@ -89,7 +89,7 @@ public class LineasFragment extends Fragment {
                 for (int i = 0; i < mLineas.size(); i++)
                     if (i != groupPosition)
                         expandableListView.collapseGroup(i);
-            }
+                }
         });
 
 

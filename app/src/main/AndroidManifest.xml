@@ -51,6 +51,9 @@
         <service android:name=".alarma.ServicioAlarmas"
             android:enabled="true"
             android:exported="true"/>
+        <service android:name=".alarma.NotificacionServicio"
+            android:enabled="true"
+            android:exported="true"/>
         <receiver android:name=".alarma.ActionReceiver"
             android:enabled="true"
             android:exported="true"/>

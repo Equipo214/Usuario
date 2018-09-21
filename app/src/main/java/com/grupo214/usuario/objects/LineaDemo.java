@@ -24,7 +24,7 @@ public class LineaDemo {
     private String ramal;
     private boolean check;
 
-    private Recorrido recorrido; //esta no
+    private RecorridoDemo recorrido; //esta no
     private PolylineOptions polylineOptions; // no deberia existir
     private Polyline polyline; //esta si
     private List<Marker> paradas;
@@ -36,7 +36,7 @@ public class LineaDemo {
     private int sentido_i;
     private int sentido_j;
 
-    public LineaDemo(int id, String linea, String ramal, Recorrido recorrido, int color) {
+    public LineaDemo(int id, String linea, String ramal, RecorridoDemo recorrido, int color) {
         super();
         this.paradas = new ArrayList<>();
         this.i = 0;
@@ -51,7 +51,7 @@ public class LineaDemo {
 
     public static ArrayList<LineaDemo> listHardCodeTest() {
         ArrayList<LineaDemo> mLineaDemos = new ArrayList<>();
-        Recorrido r = new Recorrido();
+        RecorridoDemo r = new RecorridoDemo();
         ColorRuta cr = new ColorRuta();
 
         r.add(new Punto(true, new LatLng(-34.613346, -58.367064)));
@@ -62,7 +62,7 @@ public class LineaDemo {
         r.add(new Punto(true, new LatLng(-34.638853, -58.482724)));
         r.add(new Punto(true, new LatLng(-34.640636, -58.564095)));
         mLineaDemos.add(new LineaDemo(1, "4", "ramal 1", r, cr.nextColor()));
-        Recorrido r1 = new Recorrido();
+        RecorridoDemo r1 = new RecorridoDemo();
         r1.add(new Punto(true, new LatLng(-34.607313, -58.363046)));
         r1.add(new Punto(false, new LatLng(-34.611779, -58.362380)));
         r1.add(new Punto(true, new LatLng(-34.621185, -58.361426)));
@@ -70,7 +70,7 @@ public class LineaDemo {
         r1.add(new Punto(true, new LatLng(-34.758188, -58.409164)));
         mLineaDemos.add(new LineaDemo(2, "4", "ramal 2", r1, cr.nextColor()));
 
-        Recorrido r2 = new Recorrido();
+        RecorridoDemo r2 = new RecorridoDemo();
         r2.add(new Punto(true, new LatLng(-34.603435, -58.370056)));
         r2.add(new Punto(false, new LatLng(-34.610275, -58.369286)));
         r2.add(new Punto(true, new LatLng(-34.617771, -58.368680)));
@@ -78,7 +78,7 @@ public class LineaDemo {
         r2.add(new Punto(true, new LatLng(-34.687849, -58.475321)));
         mLineaDemos.add(new LineaDemo(2, "4", "ramal 3", r2, cr.nextColor()));
 
-        Recorrido r3 = new Recorrido();
+        RecorridoDemo r3 = new RecorridoDemo();
         r3.add(new Punto(true, new LatLng(-34.759334, -58.400633)));  //1
         r3.add(new Punto(true, new LatLng(-34.760338, -58.402877))); //2
         r3.add(new Punto(true, new LatLng(-34.759612, -58.408275)));  //3
@@ -142,7 +142,7 @@ public class LineaDemo {
         return ramal;
     }
 
-    public Recorrido getRecorrido() {
+    public RecorridoDemo getRecorrido() {
         return recorrido;
     }
 

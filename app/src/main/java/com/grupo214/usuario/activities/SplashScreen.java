@@ -18,8 +18,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.objects.Linea;
-import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Parada;
+import com.grupo214.usuario.objects.Ramal;
+import com.grupo214.usuario.objects.Recorrido;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,24 +91,34 @@ public class SplashScreen extends AppCompatActivity {
                                 String idLinea = lineaJson.getString("idLinea");
                                 for (int j = 0; j < ramalesJson.length(); j++) {
                                     JSONObject ramal = ramalesJson.getJSONObject(j);
-                                    JSONArray paradasJson = ramal.getJSONObject("recorrido").getJSONArray("puntos");
+                                    JSONArray recorridosJson = ramal.getJSONArray("recorrido");
+                                    ArrayList<Recorrido> recorridosAlternos = new ArrayList<>();
+                                    Recorrido recorridoPrimario = null;
 
-                                    ArrayList<Parada> paradas = new ArrayList<>();
-                                    for (int k = 0; k < paradasJson.length(); k++) {
-                                        JSONObject paradaJson = paradasJson.getJSONObject(k);
-
-                                        paradas.add(new Parada(new LatLng(paradaJson.getDouble("latitude"), paradaJson.getDouble("longitude")),
-                                                paradaJson.getString("idPunto"),
-                                                paradaJson.getInt("orden")));
+                                    for (int k = 0; k < recorridosJson.length(); k++) {
+                                        JSONObject recorrido = recorridosJson.getJSONObject(k);
+                                        int esPrimario = recorrido.getInt("esPrimario");
+                                        String idRecorrido = recorrido.getString("idRecorrido");
+                                        String code = recorrido.getString("recorridoCompleto");
+                                        // Fix \\ -> \
+                                        code = code.replace("\\\\", "\\");
+                                        JSONArray paradasJson = recorrido.getJSONArray("puntos");
+                                        ArrayList<Parada> paradas = new ArrayList<>();
+                                        for (int l = 0; l < paradasJson.length(); l++) {
+                                            JSONObject paradaJson = paradasJson.getJSONObject(l);
+                                            paradas.add(new Parada(new LatLng(paradaJson.getDouble("latitude"), paradaJson.getDouble("longitude")),
+                                                    paradaJson.getString("idPunto"),
+                                                    paradaJson.getInt("orden")));
+                                        }
+                                        if (esPrimario == 1) { // inicializar recorridoPrimario
+                                            recorridoPrimario = new Recorrido(idRecorrido, code, paradas);
+                                        } else { // addRecorridoAlterno
+                                            recorridosAlternos.add(new Recorrido(idRecorrido, code, paradas));
+                                        }
                                     }
-
-                                    String code = ramal.getJSONObject("recorrido").getString("recorridoCompleto");
-                                    // Fix \\ -> \
-                                    code = code.replace("\\\\", "\\");
-
                                     ramales.add(new Ramal(lineaJson.getString("idLinea"), linea, ramal.getString("idRamal"),
                                             ramal.getString("descripcion"),
-                                            code, paradas));
+                                            recorridoPrimario, recorridosAlternos));
 
                                 }
                                 listaLinea.add(new Linea(idLinea, linea, ramales));
