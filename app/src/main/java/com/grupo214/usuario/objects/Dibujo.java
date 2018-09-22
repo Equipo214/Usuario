@@ -12,16 +12,24 @@ import java.util.List;
 
 public class Dibujo {
     private Polyline polyline;
+    private ArrayList<Polyline> polylinesAlternos;
     private List<Marker> paradas;
+    private List<Marker> paradasAlternas;
     private HashMap<String,Marker> servicios;
 
     public  Dibujo(){
         paradas = new ArrayList<>();
+        paradasAlternas = new ArrayList<>();
+        polylinesAlternos = new ArrayList<>();
         servicios = new HashMap<>();
     }
     public void setPolyline(Polyline polyline) {
         this.polyline = polyline;
     }
+    public void addPolylineAlternative(Polyline polyline){
+        polylinesAlternos.add(polyline);
+    }
+    public void addParadasAlternas(Marker mk){paradasAlternas.add(mk);}
 
     public void agregarParada(Marker marker){
         this.paradas.add(marker);
@@ -29,9 +37,12 @@ public class Dibujo {
 
     public void hide() {
         polyline.setVisible(false);
-        for (Marker mk : paradas) {
+        for(Polyline polylineAlterna : polylinesAlternos)
+            polylineAlterna.setVisible(false);
+        for (Marker mk : paradas)
             mk.setVisible(false);
-        }
+        for(Marker mk : paradasAlternas)
+            mk.setVisible(false);
         for( Marker mk : servicios.values()){
             mk.setVisible(false);
         }
@@ -39,12 +50,14 @@ public class Dibujo {
 
     public void show() {
         polyline.setVisible(true);
-        for (Marker mk : paradas) {
+        for(Polyline polylineAlterna : polylinesAlternos)
+            polylineAlterna.setVisible(true);
+        for (Marker mk : paradas)
             mk.setVisible(true);
-        }
-        for( Marker mk : servicios.values()){
-            mk.setVisible(false);
-        }
+        for (Marker mk : paradasAlternas)
+            mk.setVisible(true);
+        for( Marker mk : servicios.values())
+            mk.setVisible(true);
     }
 
 

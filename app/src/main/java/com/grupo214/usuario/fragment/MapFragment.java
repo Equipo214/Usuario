@@ -4,6 +4,7 @@ package com.grupo214.usuario.fragment;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import com.grupo214.usuario.connserver.Dibujar;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Parada;
 import com.grupo214.usuario.objects.Ramal;
+import com.grupo214.usuario.objects.Recorrido;
 import com.grupo214.usuario.objects.Servicio;
 
 import java.util.ArrayList;
@@ -366,7 +368,9 @@ public class MapFragment extends Fragment {
 
         for (Linea l : mLinea) {
             for (Ramal r : l.getRamales()) {
-                Polyline p = googleMap.addPolyline(new PolylineOptions().addAll(PolyUtil.decode(r.getCode_recorrido())));
+                Polyline p = googleMap.addPolyline(new PolylineOptions()
+                        .color(R.color.tabSelect)
+                        .addAll(PolyUtil.decode(r.getCode_recorrido())));
                 r.getDibujo().setPolyline(p);
 
                 for (Parada parada : r.getParadas()) {
@@ -378,6 +382,25 @@ public class MapFragment extends Fragment {
                             .anchor(0.5f, 0.5f)
                             .snippet("Ramal: " + r.getDescripcion()));
                     r.getDibujo().agregarParada(mk);
+                }
+
+                for (Recorrido recorridoAlterno : r.getRecorridosAlternos()) {
+                    Log.d("MapFragment", "Recorrido alterno: " + recorridoAlterno.getRecorridoCompleto());
+                    Polyline pa = googleMap.addPolyline(new PolylineOptions()
+                            .color(Color.RED)
+                            .addAll(
+                            PolyUtil.decode(recorridoAlterno.getRecorridoCompleto())));
+                    r.getDibujo().addPolylineAlternative(pa);
+                    for (Parada parada : recorridoAlterno.getParadas()) {
+                        Marker mk = googleMap.addMarker(new MarkerOptions()
+                                .position(parada.getLatLng())
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi))
+                                .alpha(0.9f)
+                                .title("Parada línea " + l.getLinea())
+                                .anchor(0.5f, 0.5f)
+                                .snippet("Ramal: " + r.getDescripcion()));
+                        r.getDibujo().addParadasAlternas(mk);
+                    }
                 }
                 googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
             }

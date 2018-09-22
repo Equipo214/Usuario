@@ -27,10 +27,13 @@ public class Ramal {
         this.dibujo = new Dibujo();
         this.checked = false;
         this.linea = linea;
-        if(MainActivity.DEMO)
+        if (MainActivity.DEMO)
             this.indexParadas = recorridoPrimario.getParadas().size() >= 7 ? 8 : 1;
     }
 
+    public ArrayList<Recorrido> getRecorridosAlternos() {
+        return recorridosAlternos;
+    }
 
     @Override
     public String toString() {

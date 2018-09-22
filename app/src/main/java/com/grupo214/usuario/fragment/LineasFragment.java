@@ -31,7 +31,6 @@ import java.util.HashMap;
  */
 public class LineasFragment extends Fragment {
 
-
     private ExpandableListView expandableListView;
     private ArrayList<Linea> mLineas;
     private HashMap<String, Ramal> ramales_seleccionados;

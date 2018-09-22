@@ -23,9 +23,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
-import com.grupo214.usuario.fragment.InicioFragment;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
+import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity
      * Constante con el link hacia la pagina SUBE
      */
     private final static String LINK_SUBE = "https://www.argentina.gob.ar/sube";
+    public static LatLng puntoPartida;
+    public static Boolean DEMO = true;
     /**
      * Variable que contiene todas las lineas traidas desde el servidor o que esten guardadas
      * en el telefono (si no hay actualizacion)
@@ -80,18 +82,15 @@ public class MainActivity extends AppCompatActivity
     private SectionsPageAdapter mSectionsPageAdapter;
     private MapFragment mapFragment;
     private LineasFragment lineasFragment;
-    private InicioFragment inicioFragment;
+    private NotificacionFragment notificacionFragment;
     private SmartTabLayout tabLayout;
     private ViewPager mViewPager;
     private Dialog startMenuDialog;
-    public static LatLng puntoPartida;
-    public static Boolean DEMO = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         // menu dezlizante:
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
         mSectionsPageAdapter.addFragment(lineasFragment, "Lineas");     // 0
         mSectionsPageAdapter.addFragment(mapFragment, "Mapa");          // 1
-        mSectionsPageAdapter.addFragment(inicioFragment, "Notif.");       // 2
+        mSectionsPageAdapter.addFragment(notificacionFragment, "Notif.");       // 2
         mViewPager.setAdapter(mSectionsPageAdapter);
         mViewPager.setCurrentItem(TAB_LINEA); // para que inicie la tab de Mapas --> temporalmente cambiado.
         tabLayout.setViewPager(mViewPager);
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity
         startMenuDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
-        inicioFragment = new InicioFragment();
+        notificacionFragment = new NotificacionFragment();
         ramales_seleccionados = new HashMap<>();
         mLineas = SplashScreen.mLineas;
         lineasFragment.setStartMenuDialog(startMenuDialog);
@@ -210,7 +209,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_acc:
-                Toast.makeText(this, "hola",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "hola", Toast.LENGTH_LONG).show();
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
