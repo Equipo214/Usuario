@@ -11,13 +11,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.objects.Notificacion;
+import com.grupo214.usuario.objects.Alarm;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 
-public class NotificacionesAdapter extends ArrayAdapter<Notificacion> {
+public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
 
     private static final SimpleDateFormat TIME_FORMAT =
             new SimpleDateFormat("h:mm", Locale.getDefault());
@@ -34,7 +34,7 @@ public class NotificacionesAdapter extends ArrayAdapter<Notificacion> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final Notificacion n = getItem(position);
+        final Alarm n = getItem(position);
 
         if (convertView == null)
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.notif_row, parent, false);
@@ -61,9 +61,6 @@ public class NotificacionesAdapter extends ArrayAdapter<Notificacion> {
             public void onClick(View v) {
                 // editar o eliminar
                 n.setEnabled(!n.isEnabled());
-
-
-
 
                 // al final de guardar o quitar de la bbd
                 notifyDataSetChanged();

@@ -44,7 +44,7 @@ public class LineasFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_lineas, container, false);
 
-        // Obtener el ExpandableListView y setearle el adaptador
+        // Obtener el ExpandableListView y setearle el notificacionesAdapter
         expandableListView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
 
         adapter = new LineasAdapter(getContext(), mLineas);

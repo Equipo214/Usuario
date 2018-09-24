@@ -6,7 +6,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.grupo214.usuario.Util.UtilMap;
+import com.grupo214.usuario.Util.Util;
 import com.grupo214.usuario.objects.LineaDemo;
 
 
@@ -45,7 +45,7 @@ public class DibujarDemo extends Thread {
                 .snippet(lineaDemo.getRamal())
                 .visible(
 
-                        UtilMap.calculateDistance(this.userStart,inicio) < DISTANCIA
+                        Util.calculateDistance(this.userStart,inicio) < DISTANCIA
 
                 ));
 
@@ -53,7 +53,7 @@ public class DibujarDemo extends Thread {
         this.paradaInicio = googleMap.addMarker(new MarkerOptions()
                     .position(this.userStart)
                     .title("Parada mas cercana")
-                    .snippet( String.format("%.2f",( UtilMap.calculateDistance(userStart,this.userStart) / 1000) ) + " Km."));
+                    .snippet( String.format("%.2f",( Util.calculateDistance(userStart,this.userStart) / 1000) ) + " Km."));
 
         paradaInicio.showInfoWindow();
     }
@@ -94,10 +94,10 @@ public class DibujarDemo extends Thread {
             siguiente = lineaDemo.getNextPointDemo();
         else
             siguiente = lineaDemo.getPreviousPointDemo();
-        double distancia = UtilMap.calculateDistance(siguiente, userStart);
+        double distancia = Util.calculateDistance(siguiente, userStart);
 
         if(distancia < DISTANCIA ){
-            UtilMap.animateMarker(mk, siguiente, true, googleMap, refreshTime);
+            Util.animateMarker(mk, siguiente, true, googleMap, refreshTime);
         }else{
             mk.setPosition(siguiente);
             mk.setVisible(false);

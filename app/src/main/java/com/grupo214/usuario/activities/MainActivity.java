@@ -68,7 +68,9 @@ public class MainActivity extends AppCompatActivity
      */
     private final static String LINK_SUBE = "https://www.argentina.gob.ar/sube";
     public static LatLng puntoPartida;
-    public static Boolean DEMO = true;
+
+
+    public static Boolean DEMO = false;
     /**
      * Variable que contiene todas las lineas traidas desde el servidor o que esten guardadas
      * en el telefono (si no hay actualizacion)
@@ -91,11 +93,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        // menu dezlizante:
-        int nums = 1234;
-
         //Seteo de variables:
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);

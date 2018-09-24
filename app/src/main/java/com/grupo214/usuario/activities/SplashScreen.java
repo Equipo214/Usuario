@@ -56,6 +56,7 @@ public class SplashScreen extends AppCompatActivity {
         } else {
             // No hay conexión a Internet en este momento
             mensaje("Sin conexion a Internet. (Conectar y reiniciar)");
+
         }
 
 

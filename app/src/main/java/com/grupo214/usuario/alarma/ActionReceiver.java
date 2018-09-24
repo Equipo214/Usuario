@@ -16,10 +16,13 @@ public class ActionReceiver extends BroadcastReceiver {
         String aceptar = intent.getStringExtra("aceptar");
         String posponer = intent.getStringExtra("posponer");
 
+
         if (aceptar != null && aceptar.equals("Aceptar")) {
+            // que no suena mas alarma
             Toast.makeText(context, "Entro como caballo Aceptar", Toast.LENGTH_LONG).show();
             clearNotification(context);
         } else if (posponer != null && posponer.equals("Posponer")) {
+            // que busqueotro servicio
             Toast.makeText(context, "Entro como caballo Posponer", Toast.LENGTH_LONG).show();
             clearNotification(context);
         }

@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.Util.UtilMap;
+import com.grupo214.usuario.Util.Util;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
 import com.grupo214.usuario.objects.Linea;
@@ -363,7 +363,7 @@ public class Dibujar implements Runnable {
 
 
 
-            if (flag && UtilMap.calculateDistance(markerDemo.getPosition(),markerDemoUser.getPosition()) < 40){
+            if (flag && Util.calculateDistance(markerDemo.getPosition(),markerDemoUser.getPosition()) < 40){
                 markerDemo.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_amarillo));
                 serviciosActivos.get("demo").setIco(R.mipmap.ic_bus_amarillo);
                 flag = false;

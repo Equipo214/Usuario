@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.grupo214.usuario.Util.UtilMap;
+import com.grupo214.usuario.Util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,12 +208,12 @@ public class LineaDemo {
 
     public LatLng paraMasCercana(LatLng userStart) {
         LatLng parada = recorrido.get(0).getLatLng(); // guardo el primero como minimo
-        double distancia = UtilMap.calculateDistance(userStart, parada);
+        double distancia = Util.calculateDistance(userStart, parada);
 
         double aux;
         for (Punto punto : recorrido) {
             if (punto.isParada()) {
-                aux = UtilMap.calculateDistance(userStart, punto.getLatLng());
+                aux = Util.calculateDistance(userStart, punto.getLatLng());
                 if (aux < distancia) { // si no hay otro minimo es este
                     parada = punto.getLatLng();
                     distancia = aux;

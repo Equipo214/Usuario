@@ -1,8 +1,11 @@
 package com.grupo214.usuario.Util;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.SparseBooleanArray;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
@@ -11,13 +14,28 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.grupo214.usuario.objects.Alarm;
+
+import java.util.ArrayList;
+
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_FRI;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_IS_ENABLED;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_LABEL;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_MON;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_SAT;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_SUN;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_THURS;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_TIME;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_TUES;
+import static com.grupo214.usuario.Util.DatabaseHelper.COL_WED;
+import static com.grupo214.usuario.Util.DatabaseHelper._ID;
 
 /**
  * Clase con metodos de apoyo para el map.
  *
  * @author Daniel Boullon
  */
-public class UtilMap {
+public class Util {
 
     private RequestQueue requestQueue_distanceMatrix;
 
@@ -75,6 +93,72 @@ public class UtilMap {
             }
         });
     }
+
+    public static ContentValues toContentValues(Alarm alarm) {
+
+        final ContentValues cv = new ContentValues(10);
+
+        cv.put(COL_TIME, alarm.getTime());
+        cv.put(COL_LABEL, alarm.getLabel());
+
+        final SparseBooleanArray days = alarm.getDays();
+        cv.put(COL_MON, days.get(Alarm.MON) ? 1 : 0);
+        cv.put(COL_TUES, days.get(Alarm.TUES) ? 1 : 0);
+        cv.put(COL_WED, days.get(Alarm.WED) ? 1 : 0);
+        cv.put(COL_THURS, days.get(Alarm.THURS) ? 1 : 0);
+        cv.put(COL_FRI, days.get(Alarm.FRI) ? 1 : 0);
+        cv.put(COL_SAT, days.get(Alarm.SAT) ? 1 : 0);
+        cv.put(COL_SUN, days.get(Alarm.SUN) ? 1 : 0);
+
+        cv.put(COL_IS_ENABLED, alarm.isEnabled());
+
+        return cv;
+
+    }
+
+    public static ArrayList<Alarm> buildAlarmList(Cursor c) {
+
+        if (c == null) return new ArrayList<>();
+
+        final int size = c.getCount();
+
+        final ArrayList<Alarm> alarms = new ArrayList<>(size);
+
+        if (c.moveToFirst()){
+            do {
+
+                final long id = c.getLong(c.getColumnIndex(_ID));
+                final long time = c.getLong(c.getColumnIndex(COL_TIME));
+                final String label = c.getString(c.getColumnIndex(COL_LABEL));
+                final boolean mon = c.getInt(c.getColumnIndex(COL_MON)) == 1;
+                final boolean tues = c.getInt(c.getColumnIndex(COL_TUES)) == 1;
+                final boolean wed = c.getInt(c.getColumnIndex(COL_WED)) == 1;
+                final boolean thurs = c.getInt(c.getColumnIndex(COL_THURS)) == 1;
+                final boolean fri = c.getInt(c.getColumnIndex(COL_FRI)) == 1;
+                final boolean sat = c.getInt(c.getColumnIndex(COL_SAT)) == 1;
+                final boolean sun = c.getInt(c.getColumnIndex(COL_SUN)) == 1;
+                final boolean isEnabled = c.getInt(c.getColumnIndex(COL_IS_ENABLED)) == 1;
+
+                final Alarm alarm = new Alarm(id, time, label);
+                alarm.setDay(Alarm.MON, mon);
+                alarm.setDay(Alarm.TUES, tues);
+                alarm.setDay(Alarm.WED, wed);
+                alarm.setDay(Alarm.THURS, thurs);
+                alarm.setDay(Alarm.FRI, fri);
+                alarm.setDay(Alarm.SAT, sat);
+                alarm.setDay(Alarm.SUN, sun);
+
+                alarm.setEnabled(isEnabled);
+
+                alarms.add(alarm);
+
+            } while (c.moveToNext());
+        }
+
+        return alarms;
+
+    }
+
     /*
     public Parada calcularTiempoEstimado(LatLng ubicacion, final ArrayList<Parada> paradas, Parada proximaParada, Context context) {
         // esto hay que afinarlo un poco mas.

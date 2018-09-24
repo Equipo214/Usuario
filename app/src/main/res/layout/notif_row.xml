@@ -1,89 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="?attr/listPreferredItemHeight"
-    android:paddingStart="@dimen/activity_horizontal_margin"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:focusable="false"
-    android:focusableInTouchMode="false">
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/ar_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="start|bottom"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        tools:text="7:00"/>
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:gravity="end|bottom"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6"
+        tools:text="7:00" />
 
     <TextView
         android:id="@+id/ar_am_pm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAllCaps="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginRight="128dp"
+        android:layout_marginTop="8dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_alignBaseline="@+id/ar_time"
-        android:layout_toRightOf="@+id/ar_time"
-        android:layout_toEndOf="@+id/ar_time"
-        tools:text="AM"/>
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/ar_icon"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/ar_time"
+        app:layout_constraintTop_toTopOf="@+id/ar_time"
+        tools:text="AM" />
 
-
-    <ImageView
-        android:id="@+id/ar_repeat_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_alarm"
-        android:layout_toRightOf="@+id/ar_am_pm"
-        android:layout_toEndOf="@+id/ar_am_pm"
-        android:layout_alignTop="@+id/ar_time"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:orientation="vertical"
-        android:layout_toRightOf="@+id/ar_repeat_icon"
-        android:layout_toEndOf="@+id/ar_repeat_icon"
-        android:layout_toLeftOf="@+id/ar_icon"
-        android:layout_toStartOf="@+id/ar_icon"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_centerVertical="true">
+        app:layout_constraintBottom_toTopOf="@+id/list_paradas_noti"
+        app:layout_constraintEnd_toStartOf="@+id/bt_delete_not"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ar_time">
 
         <TextView
             android:id="@+id/ar_label"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Get Up"/>
+            android:layout_height="match_parent"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="18sp"
+            tools:text="¿Donde esta mi bondi?" />
 
         <TextView
             android:id="@+id/ar_days"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Lu Ma Mi Ju Vi Sa Do"/>
+            android:shadowColor="@color/colorBlack"
+            tools:text="Lu Ma Mi Ju Vi Sa Do" />
 
     </LinearLayout>
 
     <ImageView
         android:id="@+id/ar_icon"
+        android:layout_width="46dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="Alarma"
+        app:layout_constraintBottom_toTopOf="@+id/bt_delete_not"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_alarm_on_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/bt_delete_not"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:tint="@color/common_google_signin_btn_text_dark_disabled"
-        app:srcCompat="@drawable/ic_local_atm_black_24dp"/>
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginRight="26dp"
+        android:layout_marginTop="8dp"
+        android:background="#00000000"
+        app:layout_constraintBottom_toTopOf="@+id/list_paradas_noti"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ar_icon"
+        app:srcCompat="@drawable/ic_delete_black_24dp" />
 
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/list_paradas_noti"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="406"
+                app:layout_constraintBottom_toTopOf="@+id/bt_te_parada1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/bt_te_parada1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:background="#00000000"
+                android:contentDescription="Ir a la parada"
+                android:padding="0dp"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@mipmap/ic_bt_parada_not" />
+        </android.support.constraint.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

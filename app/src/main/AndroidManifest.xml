@@ -62,7 +62,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activities.EditarNotificacion"></activity>
+        <activity android:name=".activities.AMNotificacion"></activity>
     </application>
 
 </manifest>
