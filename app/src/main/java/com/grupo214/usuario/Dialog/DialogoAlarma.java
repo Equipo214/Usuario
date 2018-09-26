@@ -18,7 +18,6 @@ public class DialogoAlarma extends AppCompatDialogFragment {
 
     private Marker marker;
     private HashMap<String, LatLng> paradasConAlarmas;
-    private HashMap<String, Marker> paradasCercana;
 
     public void setParams(Marker marker, HashMap<String, LatLng> paradasConAlarmas) {
         this.marker = marker;
@@ -32,8 +31,8 @@ public class DialogoAlarma extends AppCompatDialogFragment {
         modo = paradasConAlarmas.get(marker.getId()) == null;
 
 
-        builder.setTitle("NotificationBus")
-                .setMessage("¿Desea " + (modo ? "activar" : "desactivar") + " alamar?")
+        builder.setTitle("Alarma")
+                .setMessage("¿Desea " + (modo ? "activar" : "desactivar") + " alarma en esta parada?")
                 .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

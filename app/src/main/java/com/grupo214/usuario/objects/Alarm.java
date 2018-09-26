@@ -2,10 +2,12 @@ package com.grupo214.usuario.objects;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 
 public class Alarm {
     public static final int MON = 1;
@@ -20,6 +22,7 @@ public class Alarm {
     private String label;
     private SparseBooleanArray allDays;
     private boolean isEnabled;
+    private ArrayList<ParadaAlarma> paradaAlarmas;
 
     public Alarm(long id, long time, String label, SparseBooleanArray allDays, boolean isEnabled) {
         this.id = id;
@@ -27,37 +30,20 @@ public class Alarm {
         this.label = label;
         this.allDays = allDays;
         this.isEnabled = isEnabled;
+        this.paradaAlarmas = new ArrayList<>();
     }
 
-    public Alarm(long id, long time, String label) {
-        this.allDays = new SparseBooleanArray(7);
-        this.id = id;
-        this.time = time;
-        this.label = label;
-    }
-
-    public Alarm() {
-        this.allDays = new SparseBooleanArray(7);
-        allDays.put(MON, false);
-        allDays.put(MON, false);
-        allDays.put(TUES, false);
-        allDays.put(WED, false);
-        allDays.put(THURS, false);
-        allDays.put(FRI, false);
-        allDays.put(SAT, false);
-        id = -1; // despues tengo que ver esto.
-    }
-
-    public void setDay(@Days int day, boolean isAlarmed) {
-        allDays.append(day, isAlarmed);
-    }
 
     public boolean getDay(@Days int day) {
         return allDays.get(day);
     }
 
-    public SparseBooleanArray getDays() {
+    public SparseBooleanArray getAllDays() {
         return allDays;
+    }
+
+    public void setAllDays(SparseBooleanArray allDays) {
+        this.allDays = allDays;
     }
 
     public long getId() {
@@ -81,20 +67,20 @@ public class Alarm {
         this.label = label;
     }
 
-    public SparseBooleanArray getAllDays() {
-        return allDays;
-    }
-
-    public void setAllDays(SparseBooleanArray allDays) {
-        this.allDays = allDays;
-    }
-
     public boolean isEnabled() {
         return isEnabled;
     }
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public void addParada(ParadaAlarma paradaAlarma) {
+        this.paradaAlarmas.add(paradaAlarma);
+    }
+
+    public ParadaAlarma getParada(int i) {
+        return paradaAlarmas.get(i);
     }
 
     @Retention(RetentionPolicy.SOURCE)

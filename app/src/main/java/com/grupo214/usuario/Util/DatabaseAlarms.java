@@ -9,37 +9,38 @@ import android.util.Log;
 import com.grupo214.usuario.objects.Alarm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
-public final class DatabaseHelper extends SQLiteOpenHelper {
+public final class DatabaseAlarms extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "alarms.db";
     private static final int SCHEMA = 1;
 
     private static final String TABLE_NAME = "alarms";
 
-    public static final String _ID = "_id";
-    public static final String COL_TIME = "time";
-    public static final String COL_LABEL = "label";
-    public static final String COL_MON = "lunes";
-    public static final String COL_TUES = "martes";
-    public static final String COL_WED = "miercoles";
-    public static final String COL_THURS = "jueves";
-    public static final String COL_FRI = "viernes";
-    public static final String COL_SAT = "sabado";
-    public static final String COL_SUN = "domingo";
-    public static final String COL_IS_ENABLED = "is_enabled";
+    static final String _ID = "_id";
+    static final String COL_TIME = "time";
+    static final String COL_LABEL = "label";
+    static final String COL_MON = "lunes";
+    static final String COL_TUES = "martes";
+    static final String COL_WED = "miercoles";
+    static final String COL_THURS = "jueves";
+    static final String COL_FRI = "viernes";
+    static final String COL_SAT = "sabado";
+    static final String COL_SUN = "domingo";
+    static final String COL_IS_ENABLED = "is_enabled";
 
-    private static DatabaseHelper sInstance = null;
+    private static DatabaseAlarms sInstance = null;
 
-    public static synchronized DatabaseHelper getInstance(Context context) {
+    public static synchronized DatabaseAlarms getInstance(Context context) {
         if (sInstance == null) {
-            sInstance = new DatabaseHelper(context.getApplicationContext());
+            sInstance = new DatabaseAlarms(context.getApplicationContext());
         }
         return sInstance;
     }
 
-    private DatabaseHelper(Context context) {
+    private DatabaseAlarms(Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
     }
 
@@ -71,11 +72,8 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
         throw new UnsupportedOperationException("This shouldn't happen yet!");
     }
 
-    public long addAlarm() {
-        return addAlarm(new Alarm());
-    }
 
-    long addAlarm(Alarm alarm) {
+    public long addAlarm(Alarm alarm) {
         return getWritableDatabase().insert(TABLE_NAME, null, Util.toContentValues(alarm));
     }
 
@@ -86,11 +84,12 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
                 .update(TABLE_NAME, Util.toContentValues(alarm), where, whereArgs);
     }
 
+
     public int deleteAlarm(Alarm alarm) {
         return deleteAlarm(alarm.getId());
     }
 
-    int deleteAlarm(long id) {
+    public int deleteAlarm(long id) {
         final String where = _ID + "=?";
         final String[] whereArgs = new String[] { Long.toString(id) };
         return getWritableDatabase().delete(TABLE_NAME, where, whereArgs);
@@ -106,7 +105,17 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             if (c != null && !c.isClosed()) c.close();
         }
-
     }
+    public Alarm getAlarm(long id) {
 
+        Cursor c = null;
+        final String where = _ID + "=?";
+        final String[] whereArgs = new String[] { Long.toString(id) };
+        try{
+            c = getReadableDatabase().query (TABLE_NAME,null ,where,whereArgs,null,null,null);
+            return Util.buildAlarm(c);
+        } finally {
+            if (c != null && !c.isClosed()) c.close();
+        }
+    }
 }

@@ -1,13 +1,16 @@
 package com.grupo214.usuario.Util;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.SparseBooleanArray;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.TimePicker;
 
 import com.android.volley.RequestQueue;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,20 +18,27 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.objects.Alarm;
+import com.grupo214.usuario.objects.ParadaAlarma;
 
 import java.util.ArrayList;
 
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_FRI;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_IS_ENABLED;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_LABEL;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_MON;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_SAT;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_SUN;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_THURS;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_TIME;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_TUES;
-import static com.grupo214.usuario.Util.DatabaseHelper.COL_WED;
-import static com.grupo214.usuario.Util.DatabaseHelper._ID;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_FRI;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_IS_ENABLED;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_LABEL;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_MON;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_SAT;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_SUN;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_THURS;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_TIME;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_TUES;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_WED;
+import static com.grupo214.usuario.Util.DatabaseAlarms._ID;
+import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_ID_ALARMS;
+import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_ID_LINEA;
+import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_ID_PARADA;
+import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_ID_RAMAL;
+import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_LAT;
+import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_LNG;
 
 /**
  * Clase con metodos de apoyo para el map.
@@ -97,11 +107,11 @@ public class Util {
     public static ContentValues toContentValues(Alarm alarm) {
 
         final ContentValues cv = new ContentValues(10);
-
+        cv.put(_ID, alarm.getId());
         cv.put(COL_TIME, alarm.getTime());
         cv.put(COL_LABEL, alarm.getLabel());
 
-        final SparseBooleanArray days = alarm.getDays();
+        final SparseBooleanArray days = alarm.getAllDays();
         cv.put(COL_MON, days.get(Alarm.MON) ? 1 : 0);
         cv.put(COL_TUES, days.get(Alarm.TUES) ? 1 : 0);
         cv.put(COL_WED, days.get(Alarm.WED) ? 1 : 0);
@@ -113,8 +123,22 @@ public class Util {
         cv.put(COL_IS_ENABLED, alarm.isEnabled());
 
         return cv;
-
     }
+
+    public static ContentValues toContentValues(ParadaAlarma paradaAlarma) {
+
+        final ContentValues cv = new ContentValues(6);
+
+        cv.put(COL_ID_ALARMS, paradaAlarma.getId_alarms());
+        cv.put(COL_ID_PARADA, paradaAlarma.getId_parada());
+        cv.put(COL_ID_LINEA, paradaAlarma.getLinea());
+        cv.put(COL_ID_RAMAL, paradaAlarma.getRamal());
+        cv.put(COL_LAT, paradaAlarma.getPunto().latitude);
+        cv.put(COL_LNG, paradaAlarma.getPunto().longitude);
+
+        return cv;
+    }
+
 
     public static ArrayList<Alarm> buildAlarmList(Cursor c) {
 
@@ -124,7 +148,7 @@ public class Util {
 
         final ArrayList<Alarm> alarms = new ArrayList<>(size);
 
-        if (c.moveToFirst()){
+        if (c.moveToFirst()) {
             do {
 
                 final long id = c.getLong(c.getColumnIndex(_ID));
@@ -138,25 +162,96 @@ public class Util {
                 final boolean sat = c.getInt(c.getColumnIndex(COL_SAT)) == 1;
                 final boolean sun = c.getInt(c.getColumnIndex(COL_SUN)) == 1;
                 final boolean isEnabled = c.getInt(c.getColumnIndex(COL_IS_ENABLED)) == 1;
+                final SparseBooleanArray dias = new SparseBooleanArray(7);
+                dias.put(Alarm.MON, mon);
+                dias.put(Alarm.TUES, tues);
+                dias.put(Alarm.WED, wed);
+                dias.put(Alarm.THURS, thurs);
+                dias.put(Alarm.FRI, fri);
+                dias.put(Alarm.SAT, sat);
+                dias.put(Alarm.SUN, sun);
+                final Alarm alarm = new Alarm(id, time, label,dias,isEnabled);
 
-                final Alarm alarm = new Alarm(id, time, label);
-                alarm.setDay(Alarm.MON, mon);
-                alarm.setDay(Alarm.TUES, tues);
-                alarm.setDay(Alarm.WED, wed);
-                alarm.setDay(Alarm.THURS, thurs);
-                alarm.setDay(Alarm.FRI, fri);
-                alarm.setDay(Alarm.SAT, sat);
-                alarm.setDay(Alarm.SUN, sun);
-
-                alarm.setEnabled(isEnabled);
 
                 alarms.add(alarm);
 
             } while (c.moveToNext());
         }
-
         return alarms;
+    }
 
+
+    public static ArrayList<ParadaAlarma> buildParadasList(Cursor c) {
+
+        if (c == null) return new ArrayList<>();
+
+        final int size = c.getCount();
+
+        final ArrayList<ParadaAlarma> paradas = new ArrayList<>(size);
+
+        if (c.moveToFirst()) {
+            do {
+
+                final String id_alarms = c.getString(c.getColumnIndex(COL_ID_ALARMS));
+                final String id_parada = c.getString(c.getColumnIndex(COL_ID_PARADA));
+                final String id_linea = c.getString(c.getColumnIndex(COL_ID_LINEA));
+                final String id_ramal = c.getString(c.getColumnIndex(COL_ID_RAMAL));
+                final double lat = c.getDouble(c.getColumnIndex(COL_LAT));
+                final double lng = c.getDouble(c.getColumnIndex(COL_LNG));
+
+                final ParadaAlarma parada = new ParadaAlarma(id_parada,id_linea,id_ramal,new LatLng(lat,lng),id_alarms);
+
+                paradas.add(parada);
+
+            } while (c.moveToNext());
+        }
+
+        return paradas;
+    }
+
+
+    public static Alarm buildAlarm(Cursor c) {
+        if (c == null) return null;
+
+        Alarm alarm = null;
+        if (c.moveToFirst()) {
+
+            final long id = c.getLong(c.getColumnIndex(_ID));
+            final long time = c.getLong(c.getColumnIndex(COL_TIME));
+            final String label = c.getString(c.getColumnIndex(COL_LABEL));
+            final boolean mon = c.getInt(c.getColumnIndex(COL_MON)) == 1;
+            final boolean tues = c.getInt(c.getColumnIndex(COL_TUES)) == 1;
+            final boolean wed = c.getInt(c.getColumnIndex(COL_WED)) == 1;
+            final boolean thurs = c.getInt(c.getColumnIndex(COL_THURS)) == 1;
+            final boolean fri = c.getInt(c.getColumnIndex(COL_FRI)) == 1;
+            final boolean sat = c.getInt(c.getColumnIndex(COL_SAT)) == 1;
+            final boolean sun = c.getInt(c.getColumnIndex(COL_SUN)) == 1;
+            final boolean isEnabled = c.getInt(c.getColumnIndex(COL_IS_ENABLED)) == 1;
+            final SparseBooleanArray dias = new SparseBooleanArray(7);
+            dias.put(Alarm.MON, mon);
+            dias.put(Alarm.TUES, tues);
+            dias.put(Alarm.WED, wed);
+            dias.put(Alarm.THURS, thurs);
+            dias.put(Alarm.FRI, fri);
+            dias.put(Alarm.SAT, sat);
+            dias.put(Alarm.SUN, sun);
+            alarm = new Alarm(id, time, label,dias,isEnabled);
+        }
+        return alarm;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public static int getTimePickerMinute(TimePicker picker) {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                ? picker.getMinute()
+                : picker.getCurrentMinute();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public static int getTimePickerHour(TimePicker picker) {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                ? picker.getHour()
+                : picker.getCurrentHour();
     }
 
     /*

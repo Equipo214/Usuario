@@ -35,12 +35,15 @@ public class SplashScreen extends AppCompatActivity {
 
     public void setmLineas(ArrayList<Linea> mLineas) {
         SplashScreen.mLineas = mLineas;
-        if (SplashScreen.mLineas != null)
+        if (SplashScreen.mLineas != null){
             starttt();
+        }
         else
             getRecorrido();
 
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

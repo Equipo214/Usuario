@@ -14,12 +14,17 @@ public class Parada {
         this.orden = orden;
     }
 
+
     public long getTiempoEstimado() {
         return tiempoEstimado;
     }
 
     public void setTiempoEstimado(long tiempoEstimado) {
         this.tiempoEstimado = tiempoEstimado;
+    }
+
+    public String getIdParda() {
+        return idParda;
     }
 
     public LatLng getLatLng() {

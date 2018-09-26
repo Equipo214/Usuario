@@ -27,6 +27,7 @@ public class Linea {
         return ramales;
     }
 
+
     public List<String> getRamalesNombres() {
         ArrayList<String> ramalesNombres = new ArrayList<>();
 

@@ -36,7 +36,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/agregarNotificacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
@@ -44,6 +44,7 @@
         android:layout_marginRight="32dp"
         android:clickable="true"
         android:focusable="true"
+        app:rippleColor="@color/tabSelect"
         app:backgroundTint="@color/tabSelect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

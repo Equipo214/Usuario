@@ -139,15 +139,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // crear not
-    }
+
 
     private void cargarLineas() {
         // con este tema personalizado evitamos los bordes por defecto
-        startMenuDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+        startMenuDialog = new Dialog(this, R.style.Theme_AppCompat_Dialog_Alert);
         mapFragment = new MapFragment();
         lineasFragment = new LineasFragment();
         notificacionFragment = new NotificacionFragment();
@@ -158,6 +154,8 @@ public class MainActivity extends AppCompatActivity
         lineasFragment.setTabViewPager(mViewPager);
         mapFragment.setStartMenuDialog(startMenuDialog);
         mapFragment.setLineas(mLineas, ramales_seleccionados);
+        notificacionFragment.setTabViewPage(mViewPager);
+        notificacionFragment.setMapFragment(mapFragment);
     }
 
     @Override

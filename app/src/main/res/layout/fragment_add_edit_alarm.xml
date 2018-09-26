@@ -28,7 +28,7 @@
                 android:layout_weight="1"
                 android:hint="Nombre"
                 android:inputType="textCapWords"
-                android:maxLength="15"
+                android:maxLength="20"
                 android:textColor="@color/colorBlack"
                 android:textStyle="italic" />
 
@@ -121,6 +121,16 @@
             android:layout_height="1dp"
             android:layout_marginBottom="8dp"
             android:background="@color/tabSelect" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Paradas" />
+
+        <ListView
+            android:id="@+id/list_paradas_noti"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

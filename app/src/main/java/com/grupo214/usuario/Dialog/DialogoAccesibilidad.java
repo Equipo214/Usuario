@@ -10,6 +10,7 @@ import android.util.Log;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.fragment.NotificacionFragment;
 
 import java.util.ArrayList;
 
@@ -57,4 +58,5 @@ public class DialogoAccesibilidad extends AppCompatDialogFragment {
                 });
         return builder.create();
     }
+
 }

@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,8 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
-import com.grupo214.usuario.Dialog.DialogoAccesibilidad;
-import com.grupo214.usuario.Dialog.DialogoAlarma;
+import com.grupo214.usuario.Dialog.DialogoParadaOnInfo;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
@@ -44,6 +42,7 @@ import com.grupo214.usuario.alarma.NotificationBus;
 import com.grupo214.usuario.connserver.Dibujar;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Parada;
+import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Recorrido;
 import com.grupo214.usuario.objects.Servicio;
@@ -86,6 +85,10 @@ public class MapFragment extends Fragment {
     private TextView bottomSheetTextView;
     private NotificationBus notificationBus;
     private GoogleMap.InfoWindowAdapter infoWindowAdapterParadas;
+
+    public GoogleMap getGoogleMap() {
+        return googleMap;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -159,25 +162,7 @@ public class MapFragment extends Fragment {
                             return true;
 
                         if (marker.getTitle().contains("Parada")) {
-                            if (accesibilidad) {
-                                DialogoAccesibilidad dialogoAccesibilidad = new DialogoAccesibilidad();
-                                dialogoAccesibilidad.setParams(marker, paradasAccId);
-                                dialogoAccesibilidad.show(getFragmentManager(), "Dialog Accesibilidad");
-                                accesibilidad = false;
-                                return true;
-                            }
-                            if (alarmaDestino) {
-                                if (!paradasCercanasId.contains(marker.getId())) {
-                                    DialogoAlarma dialogoAlarma = new DialogoAlarma();
-                                    dialogoAlarma.setParams(marker, paradasConAlarmas);
-                                    dialogoAlarma.show(getFragmentManager(), "Dialog NotificationBus");
-                                } else {
-                                    Toast.makeText(getContext(), "No permitido notificationBus en parada cercana", Toast.LENGTH_SHORT).show();
-                                }
-                                alarmaDestino = false;
-                                marker.showInfoWindow();
-                                return true;
-                            }
+                            return false; // quizas mueva todo aca() AHRE LOCO TODO CAMBIA DE COLOR
                         }
                         return false;
                     }
@@ -187,10 +172,12 @@ public class MapFragment extends Fragment {
                 googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
+                        if (marker.getTitle() == null)
+                            return;
                         if (marker.getTitle().contains("Parada")) {
-                            DialogoAccesibilidad dialogoAccesibilidad = new DialogoAccesibilidad();
-                            dialogoAccesibilidad.setParams(marker, paradasAccId);
-                            dialogoAccesibilidad.show(getFragmentManager(), "Dialog Accesibilidad");
+                            DialogoParadaOnInfo dialogoParadaOnInfo = new DialogoParadaOnInfo();
+                            dialogoParadaOnInfo.setParams(marker, paradasAccId, paradasConAlarmas, paradasCercanasId);
+                            dialogoParadaOnInfo.show(getFragmentManager(), "Parada");
                             // setear un adapter info para paradas si esta activado el swicht mostrar el boton de accesibliidad.
                         }
                         if (marker.getTitle().contains("Servicio")) {
@@ -382,6 +369,8 @@ public class MapFragment extends Fragment {
                             .anchor(0.5f, 0.5f)
                             .snippet("Ramal: " + r.getDescripcion()));
                     r.getDibujo().agregarParada(mk);
+                    ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), l.getLinea(), r.getDescripcion(),parada.getLatLng());
+                    mk.setTag(paradaAlarma);
                 }
 
                 for (Recorrido recorridoAlterno : r.getRecorridosAlternos()) {
@@ -389,7 +378,7 @@ public class MapFragment extends Fragment {
                     Polyline pa = googleMap.addPolyline(new PolylineOptions()
                             .color(Color.RED)
                             .addAll(
-                            PolyUtil.decode(recorridoAlterno.getRecorridoCompleto())));
+                                    PolyUtil.decode(recorridoAlterno.getRecorridoCompleto())));
                     r.getDibujo().addPolylineAlternative(pa);
                     for (Parada parada : recorridoAlterno.getParadas()) {
                         Marker mk = googleMap.addMarker(new MarkerOptions()
@@ -400,6 +389,7 @@ public class MapFragment extends Fragment {
                                 .anchor(0.5f, 0.5f)
                                 .snippet("Ramal: " + r.getDescripcion()));
                         r.getDibujo().addParadasAlternas(mk);
+
                     }
                 }
                 googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
@@ -413,11 +403,12 @@ public class MapFragment extends Fragment {
         this.ramalesSeleccionados = ramales_seleccionados;
     }
 
+
     public void dialogDondeEstaMiBondi() {
 
         //deshabilitamos el título por defecto
-        startMenuDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        //    startMenuDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        startMenuDialog.setTitle("Selecciona el punto de partida");
         startMenuDialog.setCancelable(true);
         //establecemos el contenido de nuestro dialog
         startMenuDialog.setContentView(R.layout.start_menu_route);
@@ -497,5 +488,16 @@ public class MapFragment extends Fragment {
         }
 
         return bestLocation;
+    }
+
+    public void camare(final LatLng punto) {
+        getmMapView().getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                        new CameraPosition.Builder().target(punto).zoom(15).build()));
+
+            }
+        });
     }
 }

@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?selectableItemBackground"
     android:orientation="horizontal">
 
     <TextView
@@ -20,26 +17,26 @@
         android:gravity="end|bottom"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout_simple"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.6"
-        tools:text="7:00" />
+        tools:text="2:14" />
 
     <TextView
         android:id="@+id/ar_am_pm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="128dp"
-        android:layout_marginRight="128dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/ar_icon"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/ar_time"
-        app:layout_constraintTop_toTopOf="@+id/ar_time"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         tools:text="AM" />
 
 
@@ -54,10 +51,9 @@
         android:layout_marginStart="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/list_paradas_noti"
-        app:layout_constraintEnd_toStartOf="@+id/bt_delete_not"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toStartOf="@+id/bt_edit_not"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ar_time">
+        app:layout_constraintTop_toBottomOf="@+id/ar_time_simple">
 
         <TextView
             android:id="@+id/ar_label"
@@ -76,7 +72,7 @@
 
     </LinearLayout>
 
-    <ImageView
+    <ImageButton
         android:id="@+id/ar_icon"
         android:layout_width="46dp"
         android:layout_height="38dp"
@@ -92,17 +88,31 @@
 
     <ImageButton
         android:id="@+id/bt_delete_not"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="54dp"
+        android:layout_height="37dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="26dp"
-        android:layout_marginRight="26dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:background="#00000000"
         app:layout_constraintBottom_toTopOf="@+id/list_paradas_noti"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ar_icon"
+        app:layout_constraintTop_toBottomOf="@+id/ar_icon_simple"
         app:srcCompat="@drawable/ic_delete_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/bt_edit_not"
+        android:layout_width="47dp"
+        android:layout_height="39dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="#00000000"
+        app:layout_constraintBottom_toTopOf="@+id/list_paradas_noti"
+        app:layout_constraintEnd_toStartOf="@+id/bt_delete_not"
+        app:layout_constraintTop_toBottomOf="@+id/ar_icon_simple"
+        app:srcCompat="@drawable/ic_edit_black_24dp" />
 
     <LinearLayout
         android:id="@+id/list_paradas_noti"
@@ -118,30 +128,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout_simple">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView9"
+                android:id="@+id/tx_not_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="4dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:text="406"
-                app:layout_constraintBottom_toTopOf="@+id/bt_te_parada1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:layout_constraintBottom_toTopOf="@+id/bt_not_parada1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:id="@+id/bt_te_parada1"
+                android:id="@+id/bt_not_parada1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
