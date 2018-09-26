@@ -2,7 +2,6 @@ package com.grupo214.usuario.objects;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import java.lang.annotation.Retention;
@@ -81,6 +80,10 @@ public class Alarm {
 
     public ParadaAlarma getParada(int i) {
         return paradaAlarmas.get(i);
+    }
+
+    public void setParadaAlarmas(ArrayList<ParadaAlarma> paradaAlarmas) {
+        this.paradaAlarmas = paradaAlarmas;
     }
 
     @Retention(RetentionPolicy.SOURCE)

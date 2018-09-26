@@ -33,12 +33,12 @@ import static com.grupo214.usuario.Util.DatabaseAlarms.COL_TIME;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_TUES;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_WED;
 import static com.grupo214.usuario.Util.DatabaseAlarms._ID;
-import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_ID_ALARMS;
-import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_ID_LINEA;
-import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_ID_PARADA;
-import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_ID_RAMAL;
-import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_LAT;
-import static com.grupo214.usuario.Util.DatabaseParadasAlarms.COL_LNG;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_ALARMS;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_LINEA;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_PARADA;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_RAMAL;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_LAT;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_LNG;
 
 /**
  * Clase con metodos de apoyo para el map.
@@ -170,8 +170,8 @@ public class Util {
                 dias.put(Alarm.FRI, fri);
                 dias.put(Alarm.SAT, sat);
                 dias.put(Alarm.SUN, sun);
-                final Alarm alarm = new Alarm(id, time, label,dias,isEnabled);
 
+                final Alarm alarm = new Alarm(id, time, label, dias, isEnabled);
 
                 alarms.add(alarm);
 
@@ -199,7 +199,7 @@ public class Util {
                 final double lat = c.getDouble(c.getColumnIndex(COL_LAT));
                 final double lng = c.getDouble(c.getColumnIndex(COL_LNG));
 
-                final ParadaAlarma parada = new ParadaAlarma(id_parada,id_linea,id_ramal,new LatLng(lat,lng),id_alarms);
+                final ParadaAlarma parada = new ParadaAlarma(id_parada, id_linea, id_ramal, new LatLng(lat, lng), id_alarms);
 
                 paradas.add(parada);
 
@@ -235,7 +235,7 @@ public class Util {
             dias.put(Alarm.FRI, fri);
             dias.put(Alarm.SAT, sat);
             dias.put(Alarm.SUN, sun);
-            alarm = new Alarm(id, time, label,dias,isEnabled);
+            alarm = new Alarm(id, time, label, dias, isEnabled);
         }
         return alarm;
     }

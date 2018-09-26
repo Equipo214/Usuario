@@ -1,7 +1,9 @@
 package com.grupo214.usuario.activities;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -88,6 +90,8 @@ public class MainActivity extends AppCompatActivity
     private SmartTabLayout tabLayout;
     private ViewPager mViewPager;
     private Dialog startMenuDialog;
+    private AlarmManager manager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity
         // final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         tabLayout = (SmartTabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.container);
+        manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
@@ -156,7 +161,9 @@ public class MainActivity extends AppCompatActivity
         mapFragment.setLineas(mLineas, ramales_seleccionados);
         notificacionFragment.setTabViewPage(mViewPager);
         notificacionFragment.setMapFragment(mapFragment);
+        notificacionFragment.setAlarmManager(manager);
     }
+
 
     @Override
     public void onBackPressed() {

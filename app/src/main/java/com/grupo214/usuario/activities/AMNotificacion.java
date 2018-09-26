@@ -1,6 +1,9 @@
 package com.grupo214.usuario.activities;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +21,7 @@ import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.Util.Util;
 import com.grupo214.usuario.adapters.ParadasListaAdapter;
+import com.grupo214.usuario.alarma.CheckPostsReceiver;
 import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.Alarm;
 
@@ -75,7 +79,6 @@ public class AMNotificacion extends AppCompatActivity {
             viernes.setChecked(alarm.getDay(Alarm.FRI));
             sabado.setChecked(alarm.getDay(Alarm.SAT));
             domingo.setChecked(alarm.getDay(Alarm.SUN));
-            //paradasListaAdapter.addAll(alarm.getParadas());
         }
 
 
@@ -125,14 +128,27 @@ public class AMNotificacion extends AppCompatActivity {
         if (modo.equals(AGREGAR)) {
             time.set(Calendar.MINUTE, Util.getTimePickerMinute(timePicker));
             time.set(Calendar.HOUR_OF_DAY, Util.getTimePickerHour(timePicker));
-
             dias.put(Alarm.MON, lunes.isChecked());
+            if(lunes.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
             dias.put(Alarm.TUES, martes.isChecked());
+            if(martes.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.TUESDAY);
             dias.put(Alarm.WED, miercoles.isChecked());
+            if(miercoles.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.WEDNESDAY);
             dias.put(Alarm.THURS, jueves.isChecked());
+            if(jueves.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.THURSDAY);
             dias.put(Alarm.FRI, viernes.isChecked());
+            if(viernes.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
             dias.put(Alarm.SAT, sabado.isChecked());
-            dias.put(Alarm.SUN, domingo.isChecked());
+            if(sabado.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
+            dias.put(Alarm.SUN, sabado.isChecked());
+            if(sabado.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
             alarm = new Alarm(NotificacionFragment.getCountNotificacion(),
                     time.getTimeInMillis(),
                     editText.getText().toString(),
@@ -141,25 +157,61 @@ public class AMNotificacion extends AppCompatActivity {
             DatabaseAlarms.getInstance(this).addAlarm(alarm);
             NotificacionFragment.addNotificacion(alarm);
         } else if (modo.equals(EDITAR)) {
-            alarm = DatabaseAlarms.getInstance(this).getAlarms().get(getIntent().getExtras().getInt("id"));
+            alarm = DatabaseAlarms.getInstance(this).getAlarm(getIntent().getExtras().getInt("id"));
             time.set(Calendar.MINUTE, Util.getTimePickerMinute(timePicker));
             time.set(Calendar.HOUR_OF_DAY, Util.getTimePickerHour(timePicker));
             SparseBooleanArray dias = new SparseBooleanArray(7);
             dias.append(Alarm.MON, lunes.isChecked());
+            if(lunes.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
             dias.append(Alarm.TUES, martes.isChecked());
+            if(martes.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.TUESDAY);
             dias.append(Alarm.WED, miercoles.isChecked());
+            if(miercoles.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.WEDNESDAY);
             dias.append(Alarm.THURS, jueves.isChecked());
+            if(jueves.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.THURSDAY);
             dias.append(Alarm.FRI, viernes.isChecked());
+            if(viernes.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
             dias.append(Alarm.SAT, sabado.isChecked());
+            if(sabado.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
             dias.append(Alarm.SUN, domingo.isChecked());
+            if(sabado.isChecked())
+                time.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
             alarm.setAllDays(dias);
             alarm.setTime(time.getTimeInMillis());
             alarm.setLabel(editText.getText().toString());
         }
+
         final int rowsUpdated = DatabaseAlarms.getInstance(this).updateAlarm(alarm);
-        String messageId = (rowsUpdated == 1) ? "Guardado" : "Fallo";
-        Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show();
+        String messageId;
+        if (rowsUpdated == 1) {
+            // crear alarma con el manger
+            averAlcine(time);
+            messageId = "Guardado";
+        } else
+            messageId = "Fallo";
+
+       // Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show();
         NotificacionFragment.notifyDataSetChange(this);
         finish();
+    }
+
+    void averAlcine(Calendar calendar) {
+        AlarmManager alarmMgr;
+        PendingIntent alarmIntent;
+
+        alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, CheckPostsReceiver.class);
+        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                1000 * 60 * 5, alarmIntent);
+        Toast.makeText(this, "Alarma guardada", Toast.LENGTH_SHORT).show();
+
     }
 }

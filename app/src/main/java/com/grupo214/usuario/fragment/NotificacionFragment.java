@@ -1,6 +1,7 @@
 package com.grupo214.usuario.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.AMNotificacion;
@@ -23,7 +23,6 @@ import com.grupo214.usuario.adapters.NotificacionesNombreAdapter;
 import com.grupo214.usuario.objects.Alarm;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Clase gestiona la pestaña "inicio" quizas esto muera como los sentimientos de ella hacia mi.
@@ -34,7 +33,6 @@ public final class NotificacionFragment extends Fragment {
     private static final String TAG = "NotificacionFragment";
     public static String AGREGAR = "AGREGAR";
     public static String EDITAR = "EDITAR";
-    public static String ELIMINAR = "ELIMINAR";
 
     @SuppressLint("StaticFieldLeak")
     private static NotificacionesAdapter notificacionesAdapter;
@@ -42,6 +40,7 @@ public final class NotificacionFragment extends Fragment {
     private ListView lv_listNotificaciones;
     private ViewPager tabViewPage;
     private MapFragment mapFragment;
+    private AlarmManager alarmManager;
 
     public static NotificacionesNombreAdapter getNotificacionesNombreAdapter() {
         return notificacionesNombreAdapter;
@@ -88,6 +87,7 @@ public final class NotificacionFragment extends Fragment {
 
         lv_listNotificaciones = (ListView) view.findViewById(R.id.listaNotificaciones);
         notificacionesAdapter.setMapFragment(mapFragment);
+        notificacionesAdapter.setAlarmManager(alarmManager);
         lv_listNotificaciones.setAdapter(notificacionesAdapter);
         ArrayList<Alarm> listAlarms = DatabaseAlarms.getInstance(getContext()).getAlarms();
         notificacionesAdapter.addAll(listAlarms);
@@ -106,5 +106,9 @@ public final class NotificacionFragment extends Fragment {
 
     public void setTabViewPage(ViewPager tabViewPage) {
         this.tabViewPage = tabViewPage;
+    }
+
+    public void setAlarmManager(AlarmManager alarmManager) {
+        this.alarmManager = alarmManager;
     }
 }

@@ -1,5 +1,7 @@
 package com.grupo214.usuario.adapters;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -20,6 +22,7 @@ import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.AMNotificacion;
 import com.grupo214.usuario.activities.MainActivity;
+import com.grupo214.usuario.alarma.CheckPostsReceiver;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.Alarm;
@@ -40,6 +43,7 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
     private FragmentManager fragmentManager;
     private  ViewPager tabViewPager;
     private MapFragment mapFragment;
+    private AlarmManager alarmManager;
 
     public NotificacionesAdapter(@NonNull Context context, int resource, TextView txServicioBack, FragmentManager fragmentManager,ViewPager tabViewPager) {
         super(context, resource);
@@ -89,6 +93,11 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
             public void onClick(View v) {
                 // editar o eliminar
                 curAlarm.setEnabled(!curAlarm.isEnabled());
+                /*if(curAlarm.isEnabled()){
+
+                }else {
+
+                }*/
                 // al final de guardar o quitar de la bbd
                 DatabaseAlarms.getInstance(v.getContext()).updateAlarm(curAlarm);
                 notifyDataSetChanged();
@@ -166,5 +175,8 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
         this.mapFragment = mapFragment;
     }
 
+    public void setAlarmManager(AlarmManager alarmManager) {
+        this.alarmManager = alarmManager;
+    }
 }
 

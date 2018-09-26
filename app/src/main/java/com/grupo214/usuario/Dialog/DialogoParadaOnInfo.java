@@ -7,13 +7,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.SwitchCompat;
-import android.util.SparseBooleanArray;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.Util.DatabaseParadasAlarms;
+import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.adapters.NotificacionesNombreAdapter;
 import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.Alarm;
@@ -83,7 +82,7 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
         alt_bld.setTitle("Notificaciones");
 
         final NotificacionesNombreAdapter notificacionesNombreAdapter = NotificacionFragment.getNotificacionesNombreAdapter();
-      //  notificacionesNombreAdapter.add(new Alarm(-2, 0, "Nueva notificacion", new SparseBooleanArray(7), false));
+        //  notificacionesNombreAdapter.add(new Alarm(-2, 0, "Nueva notificacion", new SparseBooleanArray(7), false));
 
         alt_bld.setSingleChoiceItems(notificacionesNombreAdapter, -1, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
@@ -94,7 +93,7 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
                     ParadaAlarma paradaAlarma = (ParadaAlarma) marker.getTag();
                     paradaAlarma.setId_alarms(Long.toString(alarm.getId()));
                     alarm.addParada(paradaAlarma);
-                    DatabaseParadasAlarms.getInstance(context).addParadaAlarma(paradaAlarma);
+                    DatabaseAlarms.getInstance(context).addParadaAlarma(paradaAlarma);
                 }
                 dialog.dismiss();
 
