@@ -62,7 +62,10 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activities.AMNotificacion"/>
+        <activity
+            android:name=".activities.AMNotificacion"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>

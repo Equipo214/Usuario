@@ -7,23 +7,25 @@ import android.util.SparseBooleanArray;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Alarm {
-    public static final int MON = 1;
-    public static final int TUES = 2;
-    public static final int WED = 3;
-    public static final int THURS = 4;
-    public static final int FRI = 5;
-    public static final int SAT = 6;
-    public static final int SUN = 7;
-    private final long id;
+    public static final int MON = Calendar.MONDAY;
+    public static final int TUES = Calendar.TUESDAY;
+    public static final int WED = Calendar.WEDNESDAY;
+    public static final int THURS = Calendar.THURSDAY;
+    public static final int FRI = Calendar.FRIDAY;
+    public static final int SAT = Calendar.SATURDAY;
+    public static final int SUN = Calendar.SUNDAY;
+    private final int id;
     private long time;
     private String label;
     private SparseBooleanArray allDays;
     private boolean isEnabled;
     private ArrayList<ParadaAlarma> paradaAlarmas;
+    private ParadaAlarma paradas;
 
-    public Alarm(long id, long time, String label, SparseBooleanArray allDays, boolean isEnabled) {
+    public Alarm(int id, long time, String label, SparseBooleanArray allDays, boolean isEnabled) {
         this.id = id;
         this.time = time;
         this.label = label;
@@ -45,7 +47,7 @@ public class Alarm {
         this.allDays = allDays;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -82,9 +84,14 @@ public class Alarm {
         return paradaAlarmas.get(i);
     }
 
+    public ArrayList<ParadaAlarma> getParadaAlarmas() {
+        return paradaAlarmas;
+    }
+
     public void setParadaAlarmas(ArrayList<ParadaAlarma> paradaAlarmas) {
         this.paradaAlarmas = paradaAlarmas;
     }
+
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({MON, TUES, WED, THURS, FRI, SAT, SUN})

@@ -15,48 +15,53 @@ public class Dibujo {
     private ArrayList<Polyline> polylinesAlternos;
     private List<Marker> paradas;
     private List<Marker> paradasAlternas;
-    private HashMap<String,Marker> servicios;
+    private HashMap<String, Marker> servicios;
 
-    public  Dibujo(){
+    public Dibujo() {
         paradas = new ArrayList<>();
         paradasAlternas = new ArrayList<>();
         polylinesAlternos = new ArrayList<>();
         servicios = new HashMap<>();
     }
+
     public void setPolyline(Polyline polyline) {
         this.polyline = polyline;
     }
-    public void addPolylineAlternative(Polyline polyline){
+
+    public void addPolylineAlternative(Polyline polyline) {
         polylinesAlternos.add(polyline);
     }
-    public void addParadasAlternas(Marker mk){paradasAlternas.add(mk);}
 
-    public void agregarParada(Marker marker){
+    public void addParadasAlternas(Marker mk) {
+        paradasAlternas.add(mk);
+    }
+
+    public void agregarParada(Marker marker) {
         this.paradas.add(marker);
     }
 
     public void hide() {
         polyline.setVisible(false);
-        for(Polyline polylineAlterna : polylinesAlternos)
+        for (Polyline polylineAlterna : polylinesAlternos)
             polylineAlterna.setVisible(false);
         for (Marker mk : paradas)
             mk.setVisible(false);
-        for(Marker mk : paradasAlternas)
+        for (Marker mk : paradasAlternas)
             mk.setVisible(false);
-        for( Marker mk : servicios.values()){
+        for (Marker mk : servicios.values()) {
             mk.setVisible(false);
         }
     }
 
     public void show() {
         polyline.setVisible(true);
-        for(Polyline polylineAlterna : polylinesAlternos)
+        for (Polyline polylineAlterna : polylinesAlternos)
             polylineAlterna.setVisible(true);
         for (Marker mk : paradas)
             mk.setVisible(true);
         for (Marker mk : paradasAlternas)
             mk.setVisible(true);
-        for( Marker mk : servicios.values())
+        for (Marker mk : servicios.values())
             mk.setVisible(true);
     }
 
@@ -73,5 +78,12 @@ public class Dibujo {
             }
         }
         return paradaMasCercana;
+    }
+
+    public void setAlpah(Boolean visible) {
+
+        for (int i = 1; i < paradas.size() - 1; i++) {
+            paradas.get(i).setVisible(visible);
+        }
     }
 }

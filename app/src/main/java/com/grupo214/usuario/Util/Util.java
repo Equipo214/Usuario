@@ -151,7 +151,7 @@ public class Util {
         if (c.moveToFirst()) {
             do {
 
-                final long id = c.getLong(c.getColumnIndex(_ID));
+                final int id = c.getInt(c.getColumnIndex(_ID));
                 final long time = c.getLong(c.getColumnIndex(COL_TIME));
                 final String label = c.getString(c.getColumnIndex(COL_LABEL));
                 final boolean mon = c.getInt(c.getColumnIndex(COL_MON)) == 1;
@@ -216,7 +216,7 @@ public class Util {
         Alarm alarm = null;
         if (c.moveToFirst()) {
 
-            final long id = c.getLong(c.getColumnIndex(_ID));
+            final int id = c.getInt(c.getColumnIndex(_ID));
             final long time = c.getLong(c.getColumnIndex(COL_TIME));
             final String label = c.getString(c.getColumnIndex(COL_LABEL));
             final boolean mon = c.getInt(c.getColumnIndex(COL_MON)) == 1;

@@ -12,6 +12,12 @@ import java.util.Comparator;
  */
 public class Servicio {
 
+    public static Comparator<Servicio> COMPARATOR = new Comparator<Servicio>() {
+        @Override
+        public int compare(Servicio o1, Servicio o2) {
+            return o1.getTiempoEstimado() - o2.getTiempoEstimado();
+        }
+    };
     private int ico;
     private String idServicio;
     private String linea;
@@ -20,26 +26,29 @@ public class Servicio {
     private Marker mk;
     private LatLng paradaCercanaAlPasajero;
     private LatLng ubicacionActual;
-    public static Comparator<Servicio> COMPARATOR =  new Comparator<Servicio>() {
-        @Override
-        public int compare(Servicio o1, Servicio o2) {
-            return o1.getTiempoEstimado() - o2.getTiempoEstimado();
-        }
-    };
+    private boolean activo;
 
-    public Servicio(String idServicio, String linea, String ramal, Marker mk, LatLng paradaCercanaAlPasajero, int ico) {
+    public Servicio(String idServicio, String linea, String ramal, Marker mk, LatLng paradaCercanaAlPasajero, int ico, int minutos) {
         this.idServicio = idServicio;
         this.linea = linea;
         this.ramal = ramal;
         this.paradaCercanaAlPasajero = paradaCercanaAlPasajero;
         this.ubicacionActual = mk.getPosition();
-        this.tiempoEstimado = -1;
+        this.tiempoEstimado = minutos;
         this.mk = mk;
         this.ico = ico;
+        this.activo = true;
         this.mk.setTitle("Servicio");
         this.mk.setSnippet("Linea " + linea + "\nRamal " + ramal);
     }
 
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 
     public LatLng getParadaCercanaAlPasajero() {
         return paradaCercanaAlPasajero;

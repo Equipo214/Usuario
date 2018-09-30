@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity
 
 
     public static Boolean DEMO = false;
+
+
     /**
      * Variable que contiene todas las lineas traidas desde el servidor o que esten guardadas
      * en el telefono (si no hay actualizacion)
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        cargarLineas();
+        inicializarFragments();
 
         //Set Tab:
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
@@ -146,24 +148,22 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    private void cargarLineas() {
-        // con este tema personalizado evitamos los bordes por defecto
-        startMenuDialog = new Dialog(this, R.style.Theme_AppCompat_Dialog_Alert);
-        mapFragment = new MapFragment();
-        lineasFragment = new LineasFragment();
-        notificacionFragment = new NotificacionFragment();
+    private void inicializarFragments() {
+        mLineas = SplashScreen.mLineas;  // cambiar por SQLite o algo mas objetoso
         ramales_seleccionados = new HashMap<>();
-        mLineas = SplashScreen.mLineas;
+        startMenuDialog = new Dialog(this, R.style.Theme_AppCompat_Dialog_Alert);
+        notificacionFragment = new NotificacionFragment();
+        lineasFragment = new LineasFragment();
         lineasFragment.setStartMenuDialog(startMenuDialog);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);
         lineasFragment.setTabViewPager(mViewPager);
+        mapFragment = new MapFragment();
         mapFragment.setStartMenuDialog(startMenuDialog);
         mapFragment.setLineas(mLineas, ramales_seleccionados);
         notificacionFragment.setTabViewPage(mViewPager);
         notificacionFragment.setMapFragment(mapFragment);
         notificacionFragment.setAlarmManager(manager);
     }
-
 
     @Override
     public void onBackPressed() {

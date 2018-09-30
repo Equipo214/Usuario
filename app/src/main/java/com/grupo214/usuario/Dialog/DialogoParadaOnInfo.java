@@ -17,6 +17,7 @@ import com.grupo214.usuario.adapters.NotificacionesNombreAdapter;
 import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.Alarm;
 import com.grupo214.usuario.objects.ParadaAlarma;
+import com.grupo214.usuario.objects.Ramal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +28,12 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
 
     private Marker marker;
     private ArrayList<String> paradasAccId;
-    private ArrayList<String> paradasCercanas;
+    private HashMap<String, Marker>  paradasCercanas;
     private HashMap<String, LatLng> paradasConAlarmas;
 
     public void setParams(Marker marker, ArrayList<String> paradasAccId,
                           HashMap<String, LatLng> paradasConAlarmas,
-                          ArrayList<String> paradasCercanas) {
+                          HashMap<String, Marker>  paradasCercanas) {
         this.marker = marker;
         this.paradasAccId = paradasAccId;
         this.paradasConAlarmas = paradasConAlarmas;
@@ -52,7 +53,8 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
                     }
                 });
 
-        if (!paradasCercanas.contains(marker.getId()))
+
+        if (paradasCercanas.get(marker.getId()) == null)
             builder.setNeutralButton("Alarma destino", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

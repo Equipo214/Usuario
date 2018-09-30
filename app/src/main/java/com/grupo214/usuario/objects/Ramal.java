@@ -16,7 +16,7 @@ public class Ramal {
     private Recorrido recorridoPrimario;
     private Boolean checked;
     private Dibujo dibujo;
-
+    private String paradaCercana;
 
     public Ramal(String idLinea, String linea, String idRamal, String ramal, Recorrido recorridoPrimario, ArrayList<Recorrido> recorridosAlternos) {
         this.idLinea = idLinea;
@@ -29,6 +29,14 @@ public class Ramal {
         this.linea = linea;
         if (MainActivity.DEMO)
             this.indexParadas = recorridoPrimario.getParadas().size() >= 7 ? 8 : 1;
+    }
+
+    public String getParadaCercana() {
+        return paradaCercana;
+    }
+
+    public void setParadaCercana(String paradaCercana) {
+        this.paradaCercana = paradaCercana;
     }
 
     public ArrayList<Recorrido> getRecorridosAlternos() {
@@ -76,7 +84,6 @@ public class Ramal {
         return dibujo.paradaMasCercana(latLng);
     }
 
-
     public String getLinea() {
         return linea;
     }
@@ -87,5 +94,4 @@ public class Ramal {
         paradasConexas[1] = getParadas().get(++indexParadas >= getParadas().size() ? 1 : indexParadas).getLatLng();
         return paradasConexas;
     }
-
 }

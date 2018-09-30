@@ -21,8 +21,10 @@ import com.grupo214.usuario.activities.AMNotificacion;
 import com.grupo214.usuario.adapters.NotificacionesAdapter;
 import com.grupo214.usuario.adapters.NotificacionesNombreAdapter;
 import com.grupo214.usuario.objects.Alarm;
+import com.grupo214.usuario.objects.Ramal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Clase gestiona la pestaña "inicio" quizas esto muera como los sentimientos de ella hacia mi.
@@ -41,6 +43,7 @@ public final class NotificacionFragment extends Fragment {
     private ViewPager tabViewPage;
     private MapFragment mapFragment;
     private AlarmManager alarmManager;
+    private HashMap<String, Ramal> ramalesSeleccionados;
 
     public static NotificacionesNombreAdapter getNotificacionesNombreAdapter() {
         return notificacionesNombreAdapter;
@@ -111,4 +114,6 @@ public final class NotificacionFragment extends Fragment {
     public void setAlarmManager(AlarmManager alarmManager) {
         this.alarmManager = alarmManager;
     }
+
+
 }

@@ -55,6 +55,6 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/linearLayout2"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_bt_parada_not_disable" />
+        app:srcCompat="@mipmap/ic_bt_parada_not" />
 
 </android.support.constraint.ConstraintLayout>

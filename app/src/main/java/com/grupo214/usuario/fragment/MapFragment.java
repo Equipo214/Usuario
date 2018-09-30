@@ -36,10 +36,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 import com.grupo214.usuario.Dialog.DialogoParadaOnInfo;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
 import com.grupo214.usuario.alarma.NotificationBus;
-import com.grupo214.usuario.connserver.Dibujar;
+import com.grupo214.usuario.connserver.DondeEstaMiBondi;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Parada;
 import com.grupo214.usuario.objects.ParadaAlarma;
@@ -63,19 +62,20 @@ import static com.grupo214.usuario.activities.MainActivity.puntoPartida;
 public class MapFragment extends Fragment {
 
     public static final LatLng posInicial = new LatLng(-34.681496, -58.559774);
+    public static final int ZOOM = 13;
     private HashMap<String, LatLng> paradasConAlarmas;
     private HashMap<String, Ramal> ramalesSeleccionados;
     private Dialog startMenuDialog;
-    private Dibujar dibujar;
+    private DondeEstaMiBondi dondeEstaMiBondi;
+    private boolean isActive;
     private MapView mMapView;
     private GoogleMap googleMap;
     private ArrayList<Linea> mLinea;
     private Marker startMakerUser;
     private boolean selecionar = false; // por si las moscas.
     private HashMap<String, Marker> paradasCercanas;
-    private ArrayList<String> paradasCercanasId;
     private ArrayList<String> paradasAccId;
-    private boolean dondeEstaMiBondi = false;
+    private ArrayList<String> paradasNotificaciones;
     private ListView lv_listTiempoEstimado;
     private TiempoEstimadoAdapter adaptador;
     private boolean accesibilidad = false;
@@ -85,17 +85,13 @@ public class MapFragment extends Fragment {
     private TextView bottomSheetTextView;
     private NotificationBus notificationBus;
     private GoogleMap.InfoWindowAdapter infoWindowAdapterParadas;
-
-    public GoogleMap getGoogleMap() {
-        return googleMap;
-    }
+    private Boolean visible = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         paradasAccId = new ArrayList<String>();
-        paradasCercanasId = new ArrayList<String>();
         paradasCercanas = new HashMap<>();
         paradasConAlarmas = new HashMap<>();
         serviciosActivos = new HashMap<>();
@@ -133,9 +129,7 @@ public class MapFragment extends Fragment {
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
                 adaptador.setGoogleMap(mMap);
-
-                // Probar esto.
-                dibujar = new Dibujar(googleMap, getContext(), mLinea, ramalesSeleccionados, paradasCercanas, adaptador, serviciosActivos);
+                dondeEstaMiBondi = new DondeEstaMiBondi(googleMap, getContext(), mLinea, ramalesSeleccionados, paradasCercanas, adaptador, serviciosActivos);
 
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{
@@ -168,6 +162,12 @@ public class MapFragment extends Fragment {
                     }
                 });
 
+                googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+                    @Override
+                    public void onCameraIdle() {
+                        actulizarMarkers();
+                    }
+                });
 
                 googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
@@ -176,7 +176,7 @@ public class MapFragment extends Fragment {
                             return;
                         if (marker.getTitle().contains("Parada")) {
                             DialogoParadaOnInfo dialogoParadaOnInfo = new DialogoParadaOnInfo();
-                            dialogoParadaOnInfo.setParams(marker, paradasAccId, paradasConAlarmas, paradasCercanasId);
+                            dialogoParadaOnInfo.setParams(marker, paradasAccId, paradasConAlarmas, paradasCercanas);
                             dialogoParadaOnInfo.show(getFragmentManager(), "Parada");
                             // setear un adapter info para paradas si esta activado el swicht mostrar el boton de accesibliidad.
                         }
@@ -194,10 +194,6 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
-                        if (MainActivity.DEMO) {
-                            dibujar.DEMO();
-                            return true;
-                        }
                         return false;
                     }
                 });
@@ -205,7 +201,7 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                     @Override
                     public void onMarkerDragStart(Marker marker) {
-                        //stop() <->
+                        dondeEstaMiBondi.stop();
                     }
 
                     @Override
@@ -233,8 +229,7 @@ public class MapFragment extends Fragment {
                         .visible(false)
                         .position(new LatLng(0, 0))
                         .title("Punto de partida")
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_user_marker))
-                        .flat(true)
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_user_map_demo))
                         .anchor(0.5f, 0.5f)
                         .draggable(true);
 
@@ -261,14 +256,32 @@ public class MapFragment extends Fragment {
             }
         });
 
-
-        cargarMenuInferior(rootView);
-
-
         return rootView;
     }
 
-    private void cargarMenuInferior(View rootView) {
+    private void actulizarMarkers() {
+        float zoom = googleMap.getCameraPosition().zoom;
+
+        if (!visible && zoom < ZOOM) {
+            for (Linea l : mLinea) {
+                for (Ramal r : l.getRamales()) {
+                    if (r.isCheck()) {
+                        r.getDibujo().setAlpah(false);
+                        if (paradasCercanas.get(r.getIdRamal()) != null)
+                            paradasCercanas.get(r.getIdRamal()).setVisible(true);
+                    }
+                }
+            }
+            visible = !visible;
+        } else if (visible && zoom > ZOOM) {
+            for (Linea l : mLinea) {
+                for (Ramal r : l.getRamales()) {
+                    if (r.isCheck())
+                        r.getDibujo().setAlpah(true);
+                }
+            }
+            visible = !visible;
+        }
 
     }
 
@@ -277,30 +290,25 @@ public class MapFragment extends Fragment {
 
         for (Marker mk : paradasCercanas.values()) {
             mk.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi));
-
         }
+        actulizarMarkers();
         paradasCercanas.clear();
-        paradasCercanasId = new ArrayList<String>();
 
         for (Ramal r : ramalesSeleccionados.values()) {
             Log.d("MapFragment", "ramal numero: " + r.toString());
             Marker mk = r.paradaMasCercana(latLng);
             paradasCercanas.put(r.getIdRamal(), mk);
-            paradasCercanasId.add(mk.getId());
+            mk.setVisible(true);
+            r.setParadaCercana(((ParadaAlarma) mk.getTag()).getId_parada());
             mk.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_cercana));
-            //mk.showInfoWindow();
             if (paradasConAlarmas.get(mk.getId()) != null)
                 paradasConAlarmas.remove(mk.getId());
         }
-        if (MainActivity.DEMO) {
-            dibujar.DEMO();
-            return;
-        }
-        if (!dondeEstaMiBondi) {
-            dibujar.run();
-            dondeEstaMiBondi = true;
+        if (!isActive) {
+            dondeEstaMiBondi.run();
+            isActive = true;
         } else {
-            dibujar.reiniciar();
+            dondeEstaMiBondi.reiniciar();
         }
 
     }
@@ -357,6 +365,7 @@ public class MapFragment extends Fragment {
             for (Ramal r : l.getRamales()) {
                 Polyline p = googleMap.addPolyline(new PolylineOptions()
                         .color(R.color.tabSelect)
+                        .geodesic(true)
                         .addAll(PolyUtil.decode(r.getCode_recorrido())));
                 r.getDibujo().setPolyline(p);
 
@@ -369,7 +378,7 @@ public class MapFragment extends Fragment {
                             .anchor(0.5f, 0.5f)
                             .snippet("Ramal: " + r.getDescripcion()));
                     r.getDibujo().agregarParada(mk);
-                    ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), l.getLinea(), r.getDescripcion(),parada.getLatLng());
+                    ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), l.getLinea(), r.getDescripcion(), parada.getLatLng());
                     mk.setTag(paradaAlarma);
                 }
 
@@ -389,7 +398,6 @@ public class MapFragment extends Fragment {
                                 .anchor(0.5f, 0.5f)
                                 .snippet("Ramal: " + r.getDescripcion()));
                         r.getDibujo().addParadasAlternas(mk);
-
                     }
                 }
                 googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
@@ -495,7 +503,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(punto).zoom(15).build()));
+                        new CameraPosition.Builder().target(punto).zoom(20).build()));
 
             }
         });

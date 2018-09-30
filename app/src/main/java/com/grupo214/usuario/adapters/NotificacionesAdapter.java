@@ -1,12 +1,13 @@
 package com.grupo214.usuario.adapters;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +22,9 @@ import com.grupo214.usuario.Dialog.DialogoEliminarNotificacion;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.AMNotificacion;
-import com.grupo214.usuario.activities.MainActivity;
-import com.grupo214.usuario.alarma.CheckPostsReceiver;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.Alarm;
-import com.grupo214.usuario.objects.ParadaAlarma;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -41,11 +39,11 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
     private final TextView txServicioBack;
     private boolean heightAdjust = false;
     private FragmentManager fragmentManager;
-    private  ViewPager tabViewPager;
+    private ViewPager tabViewPager;
     private MapFragment mapFragment;
     private AlarmManager alarmManager;
 
-    public NotificacionesAdapter(@NonNull Context context, int resource, TextView txServicioBack, FragmentManager fragmentManager,ViewPager tabViewPager) {
+    public NotificacionesAdapter(@NonNull Context context, int resource, TextView txServicioBack, FragmentManager fragmentManager, ViewPager tabViewPager) {
         super(context, resource);
         this.txServicioBack = txServicioBack;
         this.fragmentManager = fragmentManager;
@@ -81,7 +79,7 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
         dias += diasActivos.get(Alarm.SAT) ? "Sa · " : "";
         dias += diasActivos.get(Alarm.SUN) ? "Do · " : "";
         int tamano = dias.length();
-        if (tamano > 4 )
+        if (tamano > 4)
             dias = dias.substring(0, tamano - 3);
 
         tx_dias.setText(dias);
@@ -126,9 +124,17 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
             }
         });
 
-        ImageButton bt_not_parada1 = (ImageButton) convertView.findViewById(R.id.bt_not_parada1);
+        RecyclerView rw_paradas = (RecyclerView) convertView.findViewById(R.id.horizontalList_paradas_noti);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        rw_paradas.setLayoutManager(layoutManager);
+        ParadasListaSimpleAdapter paradasListaSimpleAdapter = new ParadasListaSimpleAdapter(getContext(),curAlarm.getParadaAlarmas());
+        paradasListaSimpleAdapter.setMapFragment(mapFragment);
+        paradasListaSimpleAdapter.setTabViewPager(tabViewPager);
+        rw_paradas.setAdapter(paradasListaSimpleAdapter);
 
-        bt_not_parada1.setOnClickListener(new View.OnClickListener() {
+/*
+*   bt_not_parada1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // aca que vaya al mapa si la para ya esta setiada sino mensaje.
@@ -138,11 +144,9 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
                     tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
                 }
             }
-        });
-
+        });*/
         return convertView;
     }
-
 
 
     @Override
@@ -153,21 +157,6 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
         } else if (this.getCount() == 0) {
             txServicioBack.setVisibility(View.VISIBLE);
         }
-
-        /*
-        if (!heightAdjust && this.getCount() >= 4) { // asi entra una vez cuando sea mayor a tres.
-            ViewGroup.LayoutParams params = lv_listNotificaciones.getLayoutParams();
-            params.height = lv_listNotificaciones.getMeasuredHeight() + (lv_listNotificaciones.getDividerHeight() * (lv_listNotificaciones.getCount() - 1));
-            lv_listNotificaciones.setLayoutParams(params);
-            lv_listNotificaciones.requestLayout();
-            heightAdjust = true;
-        } else if (heightAdjust && this.getCount() < 4) {
-            ViewGroup.LayoutParams params = lv_listNotificaciones.getLayoutParams();
-            params.height = lv_listNotificaciones.getMeasuredHeight() + (lv_listNotificaciones.getDividerHeight() * (lv_listNotificaciones.getCount() - 1));
-            lv_listNotificaciones.setLayoutParams(params);
-            lv_listNotificaciones.requestLayout();
-            heightAdjust = false;
-        }*/
     }
 
 

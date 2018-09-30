@@ -22,11 +22,11 @@
 
             <EditText
                 android:id="@+id/edit_alarm_label"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_weight="1"
-                android:hint="Nombre"
+                android:hint="@string/etiqueta"
                 android:inputType="textCapWords"
                 android:maxLength="20"
                 android:textColor="@color/colorBlack"
@@ -37,7 +37,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="#00000000"
-                app:srcCompat="@android:drawable/ic_menu_save" />
+                app:srcCompat="@android:drawable/ic_menu_save"
+                android:contentDescription="@string/guardar_alarma" />
         </LinearLayout>
 
         <TimePicker
@@ -57,63 +58,91 @@
             android:layout_marginBottom="8dp"
             android:background="@color/tabSelect" />
 
-
         <LinearLayout
+            android:id="@+id/checkbox_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="7">
 
-
-            <CheckBox
+            <com.grupo214.usuario.alarma.DayViewCheckBox
                 android:id="@+id/edit_alarm_mon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lu" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_day_view"
+                android:button="@null"
+                android:gravity="center"
+                android:text="L" />
 
-            <CheckBox
+            <com.grupo214.usuario.alarma.DayViewCheckBox
                 android:id="@+id/edit_alarm_tues"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ma" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_day_view"
+                android:button="@null"
+                android:gravity="center"
+                android:text="M" />
 
-            <CheckBox
+
+            <com.grupo214.usuario.alarma.DayViewCheckBox
                 android:id="@+id/edit_alarm_wed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mi" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_day_view"
+                android:button="@null"
+                android:gravity="center"
+                android:text="M" />
 
-            <CheckBox
+            <com.grupo214.usuario.alarma.DayViewCheckBox
                 android:id="@+id/edit_alarm_thurs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ju" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_day_view"
+                android:button="@null"
+                android:gravity="center"
+                android:text="J" />
 
-            <CheckBox
+            <com.grupo214.usuario.alarma.DayViewCheckBox
                 android:id="@+id/edit_alarm_fri"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Vi" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_day_view"
+                android:button="@null"
+                android:gravity="center"
+                android:text="V" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <CheckBox
+            <com.grupo214.usuario.alarma.DayViewCheckBox
                 android:id="@+id/edit_alarm_sat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sa" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_day_view"
+                android:button="@null"
+                android:gravity="center"
+                android:text="S" />
 
-            <CheckBox
+
+            <com.grupo214.usuario.alarma.DayViewCheckBox
                 android:id="@+id/edit_alarm_sun"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Do" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_day_view"
+                android:button="@null"
+                android:gravity="center"
+                android:text="D" />
         </LinearLayout>
 
         <View
@@ -123,14 +152,16 @@
             android:background="@color/tabSelect" />
 
         <TextView
+            android:id="@+id/tx_parada_fixed_not_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Paradas" />
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/list_paradas_noti"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
+
 
     </LinearLayout>
 

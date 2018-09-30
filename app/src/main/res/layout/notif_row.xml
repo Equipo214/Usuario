@@ -1,158 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <TextView
-        android:id="@+id/ar_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:gravity="end|bottom"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout_simple"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6"
-        tools:text="2:14" />
-
-    <TextView
-        android:id="@+id/ar_am_pm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/ar_icon"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/ar_time"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:text="AM" />
-
+    android:layout_margin="8dp"
+    android:orientation="vertical"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/list_paradas_noti"
-        app:layout_constraintEnd_toStartOf="@+id/bt_edit_not"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ar_time_simple">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/ar_label"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textSize="18sp"
-            tools:text="¿Donde esta mi bondi?" />
-
-        <TextView
-            android:id="@+id/ar_days"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:shadowColor="@color/colorBlack"
-            tools:text="Lu Ma Mi Ju Vi Sa Do" />
-
-    </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/ar_icon"
-        android:layout_width="46dp"
-        android:layout_height="38dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        android:contentDescription="Alarma"
-        app:layout_constraintBottom_toTopOf="@+id/bt_delete_not"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_alarm_on_black_24dp" />
-
-    <ImageButton
-        android:id="@+id/bt_delete_not"
-        android:layout_width="54dp"
-        android:layout_height="37dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:background="#00000000"
-        app:layout_constraintBottom_toTopOf="@+id/list_paradas_noti"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ar_icon_simple"
-        app:srcCompat="@drawable/ic_delete_black_24dp" />
-
-    <ImageButton
-        android:id="@+id/bt_edit_not"
-        android:layout_width="47dp"
-        android:layout_height="39dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:background="#00000000"
-        app:layout_constraintBottom_toTopOf="@+id/list_paradas_noti"
-        app:layout_constraintEnd_toStartOf="@+id/bt_delete_not"
-        app:layout_constraintTop_toBottomOf="@+id/ar_icon_simple"
-        app:srcCompat="@drawable/ic_edit_black_24dp" />
-
-    <LinearLayout
-        android:id="@+id/list_paradas_noti"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout_simple">
-
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:orientation="horizontal"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
 
             <TextView
-                android:id="@+id/tx_not_label"
+                android:id="@+id/ar_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:text="406"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                app:layout_constraintBottom_toTopOf="@+id/bt_not_parada1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:gravity="end|bottom"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textSize="36sp"
+                tools:text="2:14" />
+
+            <TextView
+                android:id="@+id/ar_am_pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:text="AM" />
 
             <ImageButton
-                android:id="@+id/bt_not_parada1"
+                android:id="@+id/ar_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                android:contentDescription="@string/guardar_alarma"
+                app:srcCompat="@drawable/ic_alarm_on_black_24dp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -160,17 +73,67 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:background="#00000000"
-                android:contentDescription="Ir a la parada"
-                android:padding="0dp"
-                android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@mipmap/ic_bt_parada_not" />
-        </android.support.constraint.ConstraintLayout>
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@+id/bt_edit_not"
+                app:layout_constraintStart_toStartOf="parent">
 
+                <TextView
+                    android:id="@+id/ar_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAppearance="@style/TextAppearance.AppCompat"
+                    android:textSize="18sp"
+                    tools:text="¿Donde esta mi bondi?" />
+
+                <TextView
+                    android:id="@+id/ar_days"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:shadowColor="@color/colorBlack"
+                    tools:text="Lu Ma Mi Ju Vi Sa Do" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/bt_delete_not"
+                android:layout_width="76dp"
+                android:layout_height="37dp"
+                android:layout_centerVertical="true"
+                android:background="#00000000"
+                android:contentDescription="@string/guardar_alarma"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_delete_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/bt_edit_not"
+                android:layout_width="66dp"
+                android:layout_height="39dp"
+                android:layout_centerVertical="true"
+                android:background="#00000000"
+                android:contentDescription="@string/guardar_alarma"
+                app:srcCompat="@drawable/ic_edit_black_24dp" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/horizontalList_paradas_noti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent">
+
+        </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

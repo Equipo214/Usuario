@@ -91,7 +91,6 @@ public class LineasFragment extends Fragment {
                 }
         });
 
-
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
