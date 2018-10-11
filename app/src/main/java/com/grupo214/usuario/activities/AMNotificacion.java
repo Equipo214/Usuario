@@ -3,9 +3,9 @@ package com.grupo214.usuario.activities;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -200,17 +200,19 @@ public class AMNotificacion extends AppCompatActivity {
     }
 
     void crearAlarma(Alarm alarm) {
-        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        PendingIntent alarmIntent;
-        Intent intent = new Intent(this, CheckPostsReceiver.class);
-        intent.putExtra(EXTRA_ID_ALARMA, alarm.getId());
-        alarmIntent = PendingIntent.getBroadcast(this, alarm.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        AlarmManager alarmMgr;
+
         for (int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
 
-            if (!alarm.getAllDays().get(dayOfWeek)) {
-                continue; // PORQUE NO ES NECESARIO ESTO
+            if (!(alarm.getAllDays().get(dayOfWeek))) {
+                continue; // ¿¡PORQUE!?, NO ES NECESARIO ESTO
             }
-
+            PendingIntent pendingIntent;
+            Intent intent = new Intent(this, CheckPostsReceiver.class);
+            intent.putExtra(EXTRA_ID_ALARMA, alarm.getId());
+            pendingIntent = PendingIntent.getBroadcast(this, alarm.getId()+dayOfWeek, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             // seteo hora y dia.
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(alarm.getTime());
@@ -219,11 +221,18 @@ public class AMNotificacion extends AppCompatActivity {
             long alarm_time = calendar.getTimeInMillis();
 
             if (calendar.before(Calendar.getInstance()))
-                alarm_time += AlarmManager.INTERVAL_DAY * 7;
+                alarm_time += AlarmManager.INTERVAL_DAY * 7; // si la configuro antes de la hora actual, la crea lasemana que viene.
 
-            Log.d("AMN","La alarma sonara: " + alarm_time);
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm_time,
-                    AlarmManager.INTERVAL_DAY, alarmIntent);
+            alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
+            assert alarmMgr != null;
+
+            Log.d("AMN", "Creo esto: " + alarm_time);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                alarmMgr.setAlarmClock(new AlarmManager.AlarmClockInfo(alarm_time, pendingIntent), pendingIntent);
+            //    AlarmManager.AlarmClockInfo alarmClockInfo = alarmMgr.getNextAlarmClock();
+            //    Log.d("AMN", "Zonara esto: " + alarmClockInfo.getTriggerTime());
+            }
+
 
         }
 

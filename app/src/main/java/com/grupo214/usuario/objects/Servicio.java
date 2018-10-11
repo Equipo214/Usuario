@@ -3,7 +3,11 @@ package com.grupo214.usuario.objects;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 
 /**
  * Clase que representa un servicio de colectivo en tiempo real.
@@ -24,18 +28,17 @@ public class Servicio {
     private String ramal;
     private int tiempoEstimado;
     private Marker mk;
-    private LatLng paradaCercanaAlPasajero;
-    private LatLng ubicacionActual;
     private boolean activo;
+    private ArrayList<LatLng> paradas;
+    private String fecha;
 
-    public Servicio(String idServicio, String linea, String ramal, Marker mk, LatLng paradaCercanaAlPasajero, int ico, int minutos) {
+    public Servicio(String idServicio,String fecha, String linea, String ramal, Marker mk, int ico, int minutos) {
         this.idServicio = idServicio;
         this.linea = linea;
         this.ramal = ramal;
-        this.paradaCercanaAlPasajero = paradaCercanaAlPasajero;
-        this.ubicacionActual = mk.getPosition();
         this.tiempoEstimado = minutos;
         this.mk = mk;
+        this.fecha = fecha;
         this.ico = ico;
         this.activo = true;
         this.mk.setTitle("Servicio");
@@ -50,21 +53,10 @@ public class Servicio {
         this.activo = activo;
     }
 
-    public LatLng getParadaCercanaAlPasajero() {
-        return paradaCercanaAlPasajero;
-    }
-
     public Marker getMk() {
         return mk;
     }
 
-    public LatLng getUbicacionActual() {
-        return ubicacionActual;
-    }
-
-    public void setUbicacionActual(LatLng ubicacionActual) {
-        this.ubicacionActual = ubicacionActual;
-    }
 
     public String getLinea() {
         return linea;
@@ -82,6 +74,17 @@ public class Servicio {
         this.tiempoEstimado = tiempoEstimado;
     }
 
+    public int compararFechas(String fecha2){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date1 = sdf.parse(fecha);
+            Date date2 = sdf.parse(fecha2);
+            return  date1.compareTo(date2);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     public String getIdServicio() {
         return idServicio;
     }
@@ -90,8 +93,13 @@ public class Servicio {
         return ico;
     }
 
+
     public void setIco(int ico) {
         this.ico = ico;
 
+    }
+
+    public void setParadas(ArrayList<LatLng> paradas) {
+        this.paradas = paradas;
     }
 }

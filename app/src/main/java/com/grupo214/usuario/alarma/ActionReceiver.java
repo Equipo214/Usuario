@@ -6,28 +6,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.grupo214.usuario.activities.AMNotificacion;
+import com.grupo214.usuario.objects.Alarm;
+import com.grupo214.usuario.objects.ServicioAlarma;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.grupo214.usuario.activities.AMNotificacion.EXTRA_ID_ALARMA;
+
 public class ActionReceiver extends BroadcastReceiver {
 
+    Context context;
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        //  Toast.makeText(context, "recieved", Toast.LENGTH_SHORT).show();
+        this.context = context;
 
         String aceptar = intent.getStringExtra("aceptar");
         String posponer = intent.getStringExtra("posponer");
-
+        int idAlarma = intent.getIntExtra(AMNotificacion.EXTRA_ID_ALARMA,0);
 
         if (aceptar != null && aceptar.equals("Aceptar")) {
-            // que no suena mas alarma
-            Toast.makeText(context, "Entro como caballo Aceptar", Toast.LENGTH_LONG).show();
-
+            Toast.makeText(context, "¡Buen viaje!", Toast.LENGTH_LONG).show();
             clearNotification(context);
         } else if (posponer != null && posponer.equals("Posponer")) {
-            // crear tarea ansyncronica.
-            Toast.makeText(context, "Entro como caballo Posponer", Toast.LENGTH_LONG).show();
+            posponer(context,idAlarma);
             clearNotification(context);
         }
-        //This is used to close the notification tray
+
         Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(it);
     }
@@ -38,12 +44,18 @@ public class ActionReceiver extends BroadcastReceiver {
         notificationManager.cancel(NotificationBus.NOTIFICATION_ID);
     }
 
-    public void performAction1(Context context) {
-        Toast.makeText(context, "Entro como caballo", Toast.LENGTH_LONG);
+    public void posponer(Context context,int idAlarma) {
+        if( ! CheckPostsReceiver.checkNotificacion(context,idAlarma) ){
+            Intent intent = new Intent(context, CheckPostsReceiver.class);
+            intent.putExtra(EXTRA_ID_ALARMA, idAlarma);
+            context.startService(intent);
+        }
+
     }
 
     public void performAction2(Context context) {
         Toast.makeText(context, "Entro como caballo", Toast.LENGTH_LONG);
     }
+
 
 }

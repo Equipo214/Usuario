@@ -15,7 +15,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/linea"
+        android:text="@string/id_linea"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#f65034"
         android:textSize="21sp"

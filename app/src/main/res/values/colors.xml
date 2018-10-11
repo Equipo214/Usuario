@@ -10,4 +10,6 @@
     <color name="tabUnSelect">#999999</color>
     <color name="colorBackground">#f1f6ff</color>
     <color name="white">#ffffff</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

@@ -19,12 +19,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.objects.Alarm;
 import com.grupo214.usuario.objects.ParadaAlarma;
+import com.grupo214.usuario.objects.Ramal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_FRI;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_ALARMS;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_LINEA_ALARMS;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_PARADA;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_RAMAL_ALARMS;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_IS_ENABLED;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_LABEL;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_LAT;
+import static com.grupo214.usuario.Util.DatabaseAlarms.COL_LNG;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_MON;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_SAT;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_SUN;
@@ -33,12 +41,6 @@ import static com.grupo214.usuario.Util.DatabaseAlarms.COL_TIME;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_TUES;
 import static com.grupo214.usuario.Util.DatabaseAlarms.COL_WED;
 import static com.grupo214.usuario.Util.DatabaseAlarms._ID;
-import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_ALARMS;
-import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_LINEA;
-import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_PARADA;
-import static com.grupo214.usuario.Util.DatabaseAlarms.COL_ID_RAMAL;
-import static com.grupo214.usuario.Util.DatabaseAlarms.COL_LAT;
-import static com.grupo214.usuario.Util.DatabaseAlarms.COL_LNG;
 
 /**
  * Clase con metodos de apoyo para el map.
@@ -106,7 +108,7 @@ public class Util {
 
     public static ContentValues toContentValues(Alarm alarm) {
 
-        final ContentValues cv = new ContentValues(10);
+        final ContentValues cv = new ContentValues(11);
         cv.put(_ID, alarm.getId());
         cv.put(COL_TIME, alarm.getTime());
         cv.put(COL_LABEL, alarm.getLabel());
@@ -125,14 +127,32 @@ public class Util {
         return cv;
     }
 
+    public static ContentValues toContentValues(Ramal ramal) {
+
+        final ContentValues cv = new ContentValues(5);
+        cv.put(DatabaseAlarms.COL_ID_LINEA, ramal.getIdLinea());
+        cv.put(DatabaseAlarms.COL_LINEA, ramal.getLinea());
+        cv.put(DatabaseAlarms.COL_ID_RAMAL, ramal.getIdRamal());
+        cv.put(DatabaseAlarms.COL_DESCRIPCION, ramal.getDescripcion());
+        cv.put(DatabaseAlarms.COL_CHECKED, ramal.isCheck());
+        return cv;
+    }
+
+    public static ContentValues toContentValues(Boolean checkRamal) {
+
+        final ContentValues cv = new ContentValues(1);
+        cv.put(DatabaseAlarms.COL_CHECKED, checkRamal);
+        return cv;
+    }
+
     public static ContentValues toContentValues(ParadaAlarma paradaAlarma) {
 
         final ContentValues cv = new ContentValues(6);
 
         cv.put(COL_ID_ALARMS, paradaAlarma.getId_alarms());
         cv.put(COL_ID_PARADA, paradaAlarma.getId_parada());
-        cv.put(COL_ID_LINEA, paradaAlarma.getLinea());
-        cv.put(COL_ID_RAMAL, paradaAlarma.getRamal());
+        cv.put(COL_ID_LINEA_ALARMS, paradaAlarma.getId_linea());
+        cv.put(COL_ID_RAMAL_ALARMS, paradaAlarma.getIdRamal());
         cv.put(COL_LAT, paradaAlarma.getPunto().latitude);
         cv.put(COL_LNG, paradaAlarma.getPunto().longitude);
 
@@ -181,27 +201,27 @@ public class Util {
     }
 
 
-    public static ArrayList<ParadaAlarma> buildParadasList(Cursor c) {
+    public static HashMap<String, ParadaAlarma> buildParadasList(Cursor c) {
 
-        if (c == null) return new ArrayList<>();
+        if (c == null) return new HashMap<>();
 
         final int size = c.getCount();
 
-        final ArrayList<ParadaAlarma> paradas = new ArrayList<>(size);
+        final HashMap<String, ParadaAlarma> paradas = new HashMap<>(size);
 
         if (c.moveToFirst()) {
             do {
 
                 final String id_alarms = c.getString(c.getColumnIndex(COL_ID_ALARMS));
                 final String id_parada = c.getString(c.getColumnIndex(COL_ID_PARADA));
-                final String id_linea = c.getString(c.getColumnIndex(COL_ID_LINEA));
-                final String id_ramal = c.getString(c.getColumnIndex(COL_ID_RAMAL));
+                final String id_linea = c.getString(c.getColumnIndex(COL_ID_LINEA_ALARMS));
+                final String id_ramal = c.getString(c.getColumnIndex(COL_ID_RAMAL_ALARMS));
                 final double lat = c.getDouble(c.getColumnIndex(COL_LAT));
                 final double lng = c.getDouble(c.getColumnIndex(COL_LNG));
 
                 final ParadaAlarma parada = new ParadaAlarma(id_parada, id_linea, id_ramal, new LatLng(lat, lng), id_alarms);
 
-                paradas.add(parada);
+                paradas.put(id_parada, parada);
 
             } while (c.moveToNext());
         }
@@ -254,77 +274,39 @@ public class Util {
                 : picker.getCurrentHour();
     }
 
-    /*
-    public Parada calcularTiempoEstimado(LatLng ubicacion, final ArrayList<Parada> paradas, Parada proximaParada, Context context) {
-        // esto hay que afinarlo un poco mas.
-        if (calculateDistance(ubicacion, proximaParada.getLatLng()) < 50) {  // llegue a la proximaParada
-            if (paradas.size() == proximaParada.getOrden()) // si llegue a la ultima parada
-                return null; // termino el viaje
-            proximaParada = paradas.get(proximaParada.getOrden() + 1); // si no es la ultima agarra la siguiente.
+    public static Ramal buildRamal(Cursor c) {
+        if (c == null) return null;
+
+        Ramal ramal = null;
+        if (c.moveToFirst()) {
+            final String idLinea = c.getString(c.getColumnIndex(DatabaseAlarms.COL_ID_LINEA));
+            final String linea = c.getString(c.getColumnIndex(DatabaseAlarms.COL_LINEA));
+            final String idRamal = c.getString(c.getColumnIndex(DatabaseAlarms.COL_ID_RAMAL));
+            final String descripcion = c.getString(c.getColumnIndex(DatabaseAlarms.COL_DESCRIPCION));
+            final boolean isChecked = c.getInt(c.getColumnIndex(DatabaseAlarms.COL_CHECKED)) == 1;
+            ramal = new Ramal(idLinea, linea, idRamal, descripcion, isChecked);
         }
-        if (requestQueue_distanceMatrix != null) {
-            requestQueue_distanceMatrix.stop();
-            requestQueue_distanceMatrix = null;
+        return ramal;
+    }
+
+    public static HashMap<String,Ramal> buildRamales(Cursor c) {
+        if (c == null) return null;
+        final int size = c.getCount();
+
+        final HashMap<String,Ramal> ramales = new HashMap<>(size);
+        if (c.moveToFirst()) {
+            do {
+
+                final String idLinea = c.getString(c.getColumnIndex(DatabaseAlarms.COL_ID_LINEA));
+                final String linea = c.getString(c.getColumnIndex(DatabaseAlarms.COL_LINEA));
+                final String idRamal = c.getString(c.getColumnIndex(DatabaseAlarms.COL_ID_RAMAL));
+                final String descripcion = c.getString(c.getColumnIndex(DatabaseAlarms.COL_DESCRIPCION));
+                final boolean isChecked = c.getInt(c.getColumnIndex(DatabaseAlarms.COL_CHECKED)) == 1;
+                ramales.put(idRamal,new Ramal(idLinea, linea, idRamal, descripcion, isChecked));
+
+            } while (c.moveToNext());
         }
-        LatLng origen;
-        LatLng destino = null;
-        for (int i = 1; i <= paradas.size(); i++) { // lo hago aproposito para asegurar que vaya de forma ordenada.
-            final Parada parada = paradas.get(i);
-            final int finaI;
-            // solo agarro las paradas posteriores a que estoy. desde la prox para delante.
-            if (parada.getOrden() < proximaParada.getOrden())
-                continue; // pasa al siguiente elemento del for.
-            else if (parada.getOrden() == proximaParada.getOrden()) {
-                origen = ubicacion;
-                destino = parada.getLatLng();
-                finaI = -1;
-            } else { // if parada.getOrden() > proximaParada.getOrden()
-                origen = destino;
-                destino = parada.getLatLng();
-                finaI = i;
-            }
-
-            // armo el URL para llamar a google ( hay que agregar mas parametros VER ESTO JUANPI O ALFRED )
-            String outputFormat = "origins=" + origen.latitude + "," + origen.longitude +
-                    "&destinations=" + destino.latitude + "," + destino.longitude;
-            String parameters = "&language=es";
-            String url = "https://maps.googleapis.com/maps/api/distancematrix/json?" + outputFormat + parameters + "&key=" + context.getString(R.string.google_maps_key);
-
-
-            final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            JSONArray rows = response.optJSONArray("rows");
-                            try {
-                                long tiempoAux;
-                                if (finaI == -1)
-                                    tiempoAux = 0;
-                                else
-                                    tiempoAux = paradas.get(finaI - 1).getTiempoEstimado();
-
-                                // quizas vos en parada vas a tener un atributo nuevo llamado tiempo esperado que sea un value en segundos.
-                                parada.setTiempoEstimado(rows.getJSONObject(0).getJSONArray("elements")
-                                        .getJSONObject(0)
-                                        .getJSONObject("duration")
-                                        .getLong("value")
-                                        + tiempoAux );
-                            } catch (JSONException e) {
-                                Log.d("Json Error", e.toString());
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d("JSON:ERROR", error.toString());
-                }
-            });
-            requestQueue_distanceMatrix = Volley.newRequestQueue(context);
-            requestQueue_distanceMatrix.add(jsonRequest);
-        }
-
-        return proximaParada; // proxima parada debe estar inicializado en 2.
-        // luego de esto hacer un update de la tabla.
-    }*/
+        return ramales;
+    }
 
 }

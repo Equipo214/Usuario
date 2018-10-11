@@ -2,7 +2,6 @@ package com.grupo214.usuario.objects;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.grupo214.usuario.activities.MainActivity;
 
 import java.util.ArrayList;
 
@@ -20,16 +19,23 @@ public class Ramal {
 
     public Ramal(String idLinea, String linea, String idRamal, String ramal, Recorrido recorridoPrimario, ArrayList<Recorrido> recorridosAlternos) {
         this.idLinea = idLinea;
+        this.linea = linea;
         this.idRamal = idRamal;
         this.descripcion = ramal;
+        this.dibujo = new Dibujo();
         this.recorridoPrimario = recorridoPrimario;
         this.recorridosAlternos = recorridosAlternos;
-        this.dibujo = new Dibujo();
         this.checked = false;
-        this.linea = linea;
-        if (MainActivity.DEMO)
-            this.indexParadas = recorridoPrimario.getParadas().size() >= 7 ? 8 : 1;
     }
+
+    public Ramal(String idLinea, String linea, String idRamal, String ramal, boolean isChecked) {
+        this.idLinea = idLinea;
+        this.linea = linea;
+        this.idRamal = idRamal;
+        this.descripcion = ramal;
+        this.checked = isChecked;
+    }
+
 
     public String getParadaCercana() {
         return paradaCercana;
@@ -94,4 +100,9 @@ public class Ramal {
         paradasConexas[1] = getParadas().get(++indexParadas >= getParadas().size() ? 1 : indexParadas).getLatLng();
         return paradasConexas;
     }
+
+    public void setDibujo(Dibujo dibujo) {
+        this.dibujo = dibujo;
+    }
+
 }

@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -48,24 +50,30 @@
             android:name=".alarma.NotificationBus"
             android:enabled="true"
             android:exported="true" />
-        <service
-            android:name=".alarma.ServicioAlarmas"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".alarma.NotificacionServicio"
-            android:enabled="true"
-            android:exported="true" />
+        <service android:name=".alarma.LocationService"></service>
 
         <receiver
             android:name=".alarma.ActionReceiver"
             android:enabled="true"
             android:exported="true" />
+        <receiver
+            android:name=".alarma.CheckPostsReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.NOTIFY" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".activities.AMNotificacion"
             android:configChanges="screenSize|orientation"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activities.WarnActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_warn"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>

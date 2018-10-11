@@ -17,6 +17,7 @@ import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.objects.ParadaAlarma;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -33,10 +34,11 @@ public class ParadasListaSimpleAdapter extends RecyclerView.Adapter<ParadasLista
     }
 
     // data is passed into the constructor
-    ParadasListaSimpleAdapter(Context context, ArrayList<ParadaAlarma> data) {
+    ParadasListaSimpleAdapter(Context context, HashMap<String,ParadaAlarma> data) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
+        this.mData = new ArrayList<>();
+        this.mData.addAll(data.values());
 
     }
 
@@ -51,7 +53,7 @@ public class ParadasListaSimpleAdapter extends RecyclerView.Adapter<ParadasLista
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final ParadaAlarma paradaAlarma = mData.get(position);
-        holder.tx_linea.setText(paradaAlarma.getLinea());
+        holder.tx_linea.setText(paradaAlarma.getId_linea());
         holder.btImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

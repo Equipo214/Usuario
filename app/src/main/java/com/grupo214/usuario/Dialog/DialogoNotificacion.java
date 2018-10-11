@@ -37,7 +37,7 @@ public class DialogoNotificacion extends AppCompatDialogFragment {
                         ParadaAlarma paradaAlarma = (ParadaAlarma) marker.getTag();
 
 
-                        //alarm.addParada(paradaAlarma);
+                        //alarm.putParadaAlarma(paradaAlarma);
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

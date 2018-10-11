@@ -40,6 +40,10 @@ public class Dibujo {
         this.paradas.add(marker);
     }
 
+    /**
+     *  quizas lo hago de otra forma mucho mas optima si me sobra el tiempo
+     */
+    @Deprecated
     public void hide() {
         polyline.setVisible(false);
         for (Polyline polylineAlterna : polylinesAlternos)
@@ -53,6 +57,7 @@ public class Dibujo {
         }
     }
 
+    @Deprecated
     public void show() {
         polyline.setVisible(true);
         for (Polyline polylineAlterna : polylinesAlternos)
@@ -64,6 +69,7 @@ public class Dibujo {
         for (Marker mk : servicios.values())
             mk.setVisible(true);
     }
+
 
 
     public Marker paradaMasCercana(LatLng userStart) {

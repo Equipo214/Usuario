@@ -18,7 +18,6 @@ import com.grupo214.usuario.R;
 //                getContext().startService(new Intent(getContext(),NotificationBus.class)); <- forma de crear
 public class NotificationBus extends Service {
 
-    private String YES_ACTION = "se";
     public static int NOTIFICATION_ID = 1;
 
     @Nullable
@@ -40,24 +39,39 @@ public class NotificationBus extends Service {
 
         Context mContext = getBaseContext();
         Intent okReceive = new Intent(getBaseContext(), ActionReceiver.class);
+
+        int tiempoEstimado = intent.getIntExtra("tiempo", 0);
+        String ramal = intent.getStringExtra("ramal");
+        String linea = intent.getStringExtra("linea");
+        int ico = intent.getIntExtra("color", Color.GREEN);
+
+
+        String lineaRamal = "Linea " + linea + " - " + ramal;
+
         okReceive.putExtra("aceptar", "Aceptar");
         PendingIntent pendingIntentOk = PendingIntent.getBroadcast(this, 12345, okReceive, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationManager mNotificationManager;
         String NOTIFICATION_CHANNEL_ID = "notify_001";
 
+
         Intent posPonerReceive = new Intent(getBaseContext(), ActionReceiver.class);
         posPonerReceive.putExtra("posponer", "Posponer");
         PendingIntent pendingIntentPosponer = PendingIntent.getBroadcast(this, 12346, posPonerReceive, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
-        bigText.bigText("El colectivo esta a 5 minutos de la parada.");
-        bigText.setBigContentTitle("Linea 242 Ramal: D - Moron");
-        bigText.setSummaryText("¡Hay un Colectivo cerca!");
+        if (tiempoEstimado == 0)
+            bigText.bigText("El colectivo esta en la parada.");
+        else
+            bigText.bigText("El colectivo esta a " + tiempoEstimado + " minutos de la parada.");
+        bigText.setBigContentTitle(lineaRamal);
+        bigText.setSummaryText("¡Hay un bondi cerca!");
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext.getApplicationContext(), "notify_001")
-                .setSmallIcon(R.mipmap.ic_bus_1)
-                .setContentTitle("¿Donde esta mi bondi?")
-                .setContentText("Linea 242 Ramal A - Liners")
+                .setSmallIcon(R.mipmap.ic_buss)
+                .setContentTitle("¿Donde está mi bondi?")
+                .setContentText(lineaRamal)
+                .setColor(ico)
+                .setColorized(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(R.mipmap.ic_bus_1, "Aceptar", pendingIntentOk)
                 .addAction(R.drawable.ic_sync_black_24dp, "Posponer", pendingIntentPosponer)
@@ -67,7 +81,6 @@ public class NotificationBus extends Service {
                 .setVibrate(new long[]{100, 250, 100, 500})
                 .setStyle(bigText);
 
-
         mNotificationManager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -76,18 +89,19 @@ public class NotificationBus extends Service {
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "¡Bondi cerca!", importance);
             notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setLightColor(R.color.tabSelect);
             notificationChannel.enableVibration(true);
             notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             assert mNotificationManager != null;
             mBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
-
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
         return super.onStartCommand(intent, flags, startId);
     }
+
+
 /*
     public NotificationBus(Context context, HashMap<String, LatLng> paradasConAlarmas) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

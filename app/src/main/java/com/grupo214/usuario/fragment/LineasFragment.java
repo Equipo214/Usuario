@@ -14,6 +14,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.LineasAdapter;
 import com.grupo214.usuario.alarma.NotificationBus;
@@ -58,7 +59,11 @@ public class LineasFragment extends Fragment {
         testNot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getContext().startService(new Intent(getContext(), NotificationBus.class));
+                Intent i = new Intent(getContext(), NotificationBus.class);
+                i.putExtra("tiempo","5");
+                i.putExtra("ramal","Ramal");
+                i.putExtra("linea","linea");
+                getContext().startService(i);
             }
         });
 
@@ -108,13 +113,12 @@ public class LineasFragment extends Fragment {
                     r.getDibujo().hide();
                     ramales_seleccionados.remove(r.getIdRamal());
                 }
-
                 checkBox.setChecked(r.isCheck());
+                DatabaseAlarms.getInstance(getContext()).updateRamal(r.getIdRamal(),r.isCheck());
 
                 return false;
             }
         });
-
         return rootView;
     }
 

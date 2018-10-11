@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.adapters.SectionsPageAdapter;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
@@ -70,10 +71,6 @@ public class MainActivity extends AppCompatActivity
      */
     private final static String LINK_SUBE = "https://www.argentina.gob.ar/sube";
     public static LatLng puntoPartida;
-
-
-    public static Boolean DEMO = false;
-
 
     /**
      * Variable que contiene todas las lineas traidas desde el servidor o que esten guardadas
@@ -150,11 +147,12 @@ public class MainActivity extends AppCompatActivity
 
     private void inicializarFragments() {
         mLineas = SplashScreen.mLineas;  // cambiar por SQLite o algo mas objetoso
-        ramales_seleccionados = new HashMap<>();
+        ramales_seleccionados = DatabaseAlarms.getInstance(this).getRamales();
         startMenuDialog = new Dialog(this, R.style.Theme_AppCompat_Dialog_Alert);
         notificacionFragment = new NotificacionFragment();
         lineasFragment = new LineasFragment();
         lineasFragment.setStartMenuDialog(startMenuDialog);
+      //  lineasFragment.setMapFragment(mapFragment);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);
         lineasFragment.setTabViewPager(mViewPager);
         mapFragment = new MapFragment();

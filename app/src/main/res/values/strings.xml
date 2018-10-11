@@ -154,14 +154,19 @@
     <string name="pref_title_distance">Distancia</string>
     <string name="pref_title_time">Tiempo</string>
     <string name="alarma_en_parada">Alarma en paradaCercanaAlPasajero</string>
-    <string name="linea">Linea</string>
+    <string name="id_linea">Linea</string>
     <string name="ramal">Ramal</string>
-    <string name="serverRestBase">https://virginal-way.000webhostapp.com</string>
-    <string name="GET_UBICACION">https://virginal-way.000webhostapp.com/appPasajero/getUbicacionServicios.php</string>
-    <string name="GET_RECORRIDOS">https://virginal-way.000webhostapp.com/appPasajero/getRecorridos.php</string>
+    <string name="serverRestBase">http://dondeestamibondi.online</string>
+    <string name="GET_UBICACION">http://dondeestamibondi.online/appPasajero/getUbicacionServicios.php</string>
+    <string name="GET_RECORRIDOS">http://dondeestamibondi.online/appPasajero/getRecorridos.php</string>
     <string name="nav_destino">Alarma</string>
     <string name="etiqueta">Etiqueta</string>
     <string name="guardar_alarma">Guardar Alarma</string>
+
+    <string name="title_activity_warn">Warn</string>
+    <string name="warn_button">¡Enterado!</string>
+    <string name="warn_content">BAJATE PUTO</string>
+
 
 
 </resources>

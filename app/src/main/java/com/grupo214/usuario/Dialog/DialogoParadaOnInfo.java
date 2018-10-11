@@ -17,7 +17,6 @@ import com.grupo214.usuario.adapters.NotificacionesNombreAdapter;
 import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.Alarm;
 import com.grupo214.usuario.objects.ParadaAlarma;
-import com.grupo214.usuario.objects.Ramal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,7 +93,7 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
                 } else {
                     ParadaAlarma paradaAlarma = (ParadaAlarma) marker.getTag();
                     paradaAlarma.setId_alarms(Long.toString(alarm.getId()));
-                    alarm.addParada(paradaAlarma);
+                    alarm.putParadaAlarma(paradaAlarma.getIdRamal(),paradaAlarma);
                     DatabaseAlarms.getInstance(context).addParadaAlarma(paradaAlarma);
                 }
                 dialog.dismiss();

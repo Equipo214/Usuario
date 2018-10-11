@@ -133,12 +133,12 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
         paradasListaSimpleAdapter.setTabViewPager(tabViewPager);
         rw_paradas.setAdapter(paradasListaSimpleAdapter);
 
-/*
-*   bt_not_parada1.setOnClickListener(new View.OnClickListener() {
+    /*
+    *   bt_not_parada1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // aca que vaya al mapa si la para ya esta setiada sino mensaje.
-                ParadaAlarma paradaAlarma = curAlarm.getParada(0);
+                ParadaAlarma paradaAlarma = curAlarm.getParadaAlarma(0);
                 if( paradaAlarma != null ){
                     mapFragment.camare(paradaAlarma.getPunto());
                     tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);

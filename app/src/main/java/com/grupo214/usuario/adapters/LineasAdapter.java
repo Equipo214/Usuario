@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.grupo214.usuario.R;
@@ -20,7 +21,7 @@ import java.util.List;
 public class LineasAdapter extends BaseExpandableListAdapter {
 
     private Context _context;
-    private List<String> _listDataHeader; // header titles
+    private List<Linea> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<Ramal>> _listDataTextChild;
 
@@ -30,16 +31,16 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         this._listDataTextChild = new HashMap<>();
 
 //  ACA LLEGA NULL, DEBO VALIDAR PORQUE; DEBERIA LLEGAR SIEMPRE ALGO VALIDO A ESTA PARTE :(
-
+// creo que solo es cuando toco el truenito :3
         for (Linea l : mLineas) {
-            this._listDataHeader.add(l.getLinea());
+            this._listDataHeader.add(l);
             this._listDataTextChild.put(l.getLinea(), l.getRamales());
         }
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        return this._listDataTextChild.get(this._listDataHeader.get(groupPosition))
+        return this._listDataTextChild.get(this._listDataHeader.get(groupPosition).getLinea())
                 .get(childPosititon);
     }
 
@@ -75,7 +76,7 @@ public class LineasAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this._listDataTextChild.get(this._listDataHeader.get(groupPosition))
+        return this._listDataTextChild.get(this._listDataHeader.get(groupPosition).getLinea())
                 .size();
     }
 
@@ -97,17 +98,28 @@ public class LineasAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        String headerTitle = (String) getGroup(groupPosition);
+        final Linea l = (Linea) getGroup(groupPosition);
+
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.linea_fila, null);
         }
+        Boolean flag = false;
+        for (Ramal r : l.getRamales())
+            if (r.isCheck()) {
+                flag = true;
+                break;
+            }
+        ImageView check = (ImageView) convertView.findViewById(R.id.ic_check_linea);
+
+        if (flag) check.setVisibility(View.VISIBLE);
+        else check.setVisibility(View.INVISIBLE);
 
         TextView tx_linea = (TextView) convertView
                 .findViewById(R.id.header_text_linea);
         tx_linea.setTypeface(null, Typeface.BOLD);
-        tx_linea.setText(headerTitle);
+        tx_linea.setText(l.getLinea());
 
         return convertView;
     }
@@ -122,10 +134,4 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void setMlineas(ArrayList<Linea> mLineas) {
-        for (Linea l : mLineas) {
-            this._listDataHeader.add(l.getLinea());
-            this._listDataTextChild.put(l.getLinea(), l.getRamales());
-        }
-    }
 }

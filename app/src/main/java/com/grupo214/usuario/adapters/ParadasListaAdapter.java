@@ -12,6 +12,7 @@ import com.grupo214.usuario.R;
 import com.grupo214.usuario.objects.ParadaAlarma;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -21,9 +22,10 @@ public class ParadasListaAdapter extends RecyclerView.Adapter<ParadasListaAdapte
     private LayoutInflater mInflater;
 
     // data is passed into the constructor
-    public ParadasListaAdapter(Context context, ArrayList<ParadaAlarma> data) {
+    public ParadasListaAdapter(Context context, HashMap<String,ParadaAlarma> data) {
         this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
+        this.mData = new ArrayList<>();
+        this.mData.addAll(data.values());
     }
 
     // inflates the row layout from xml when needed
@@ -36,8 +38,8 @@ public class ParadasListaAdapter extends RecyclerView.Adapter<ParadasListaAdapte
     @Override
     public void onBindViewHolder(@NonNull ParadasListaAdapter.ViewHolder holder, int position) {
         ParadaAlarma paradaAlarma = mData.get(position);
-        holder.tx_linea.setText(paradaAlarma.getLinea());
-        holder.tx_ramal.setText(paradaAlarma.getRamal());
+        holder.tx_linea.setText(paradaAlarma.getId_linea());
+        holder.tx_ramal.setText(paradaAlarma.getIdRamal());
     }
 
 

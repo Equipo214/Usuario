@@ -7,39 +7,43 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.grupo214.usuario.objects.Alarm;
 import com.grupo214.usuario.objects.ParadaAlarma;
+import com.grupo214.usuario.objects.Ramal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public final class DatabaseAlarms extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "alarms.db";
-    private static DatabaseAlarms sInstance = null;
-    private static final int VERSION = 1;
     public static final String TABLE_PARADAS_ALARM = "paradas_alarm";
+    static final String _ID = "_ID";
+    static final String COL_TIME = "TIME";
+    static final String COL_LABEL = "LABEL";
+    static final String COL_MON = "LUNES";
+    static final String COL_TUES = "MARTES";
+    static final String COL_WED = "MIERCOLES";
+    static final String COL_THURS = "JUEVES";
+    static final String COL_FRI = "VIERNES";
+    static final String COL_SAT = "SABADO";
+    static final String COL_SUN = "DOMINGO";
+    static final String COL_IS_ENABLED = "IS_ENABLED";
+    static final String COL_ID_ALARMS = "ID_ALARMS";
+    static final String COL_ID_PARADA = "ID_PARADA";
+    static final String COL_ID_LINEA_ALARMS = "ID_LINEA_ALARMS";
+    static final String COL_ID_RAMAL_ALARMS = "ID_RAMAL_ALARMS";
+    static final String COL_LAT = "LAT";
+    static final String COL_LNG = "LNG";
+    static final String COL_ID_LINEA = "ID_LINEA";
+    static final String COL_ID_RAMAL = "ID_RAMAL";
+    static final String COL_DESCRIPCION = "DESCRIPCION";
+    static final String COL_LINEA = "LINEA";
+    static final String COL_CHECKED = "CHECKED";
+
+    private static final String DATABASE_NAME = "alarms.db";
+    private static final int VERSION = 1;
     private static final String TABLE_ALARM = "alarms";
-
-
-    static final String _ID = "_id";
-    static final String COL_TIME = "time";
-    static final String COL_LABEL = "label";
-    static final String COL_MON = "lunes";
-    static final String COL_TUES = "martes";
-    static final String COL_WED = "miercoles";
-    static final String COL_THURS = "jueves";
-    static final String COL_FRI = "viernes";
-    static final String COL_SAT = "sabado";
-    static final String COL_SUN = "domingo";
-    static final String COL_IS_ENABLED = "is_enabled";
-
-    static final String COL_ID_ALARMS = "id_alarms";
-    static final String COL_ID_PARADA = "id_parada";
-    static final String COL_ID_LINEA = "id_linea";
-    static final String COL_ID_RAMAL = "id_ramal";
-    static final String COL_LAT = "lat";
-    static final String COL_LNG = "lng";
-
-
+    private static final String TABLE_RAMAL = "ramal";
+    private static DatabaseAlarms sInstance = null;
     final String CREATE_ALARMS_TABLE = "CREATE TABLE " + TABLE_ALARM + " (" +
             _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COL_TIME + " INTEGER NOT NULL, " +
@@ -56,13 +60,21 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
 
     final String CREATE_PARADAS_TABLE = "CREATE TABLE " + TABLE_PARADAS_ALARM + " (" +
             COL_ID_ALARMS + " INTEGER NOT NULL, " +
-            COL_ID_LINEA + " INTEGER NOT NULL, " +
-            COL_ID_RAMAL + " INTEGER NOT NULL, " +
+            COL_ID_LINEA_ALARMS + " INTEGER NOT NULL, " +
+            COL_ID_RAMAL_ALARMS + " INTEGER NOT NULL, " +
             COL_LAT + " DOUBLE NOT NULL, " +
             COL_LNG + " DOUBLE NOT NULL, " +
             COL_ID_PARADA + " INTEGER PRIMARY KEY , " +
             " FOREIGN KEY(" + COL_ID_ALARMS + ") REFERENCES " +
             TABLE_PARADAS_ALARM + "(" + _ID + ") " +
+            ");";
+
+    private final String CREATE_TABLE_LINEAS = "CREATE TABLE " + TABLE_RAMAL + " (" +
+            COL_ID_LINEA + " INTEGER NOT NULL, " +
+            COL_ID_RAMAL + " INTEGER PRIMARY KEY, " +
+            COL_DESCRIPCION + " TEXT NOT NULL, " +
+            COL_LINEA + " TEXT NOT NULL, " +
+            COL_CHECKED + " INTEGER NOT NULL " +
             ");";
 
     private DatabaseAlarms(Context context) {
@@ -81,16 +93,51 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_ALARMS_TABLE);
         db.execSQL(CREATE_PARADAS_TABLE);
+        db.execSQL(CREATE_TABLE_LINEAS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS " + DatabaseAlarms.TABLE_ALARM);
         db.execSQL("DROP TABLE IF EXISTS " + DatabaseAlarms.TABLE_PARADAS_ALARM);
+        db.execSQL("DROP TABLE IF EXISTS " + DatabaseAlarms.TABLE_RAMAL);
         db.execSQL(CREATE_ALARMS_TABLE);
         db.execSQL(CREATE_PARADAS_TABLE);
+        db.execSQL(CREATE_TABLE_LINEAS);
     }
 
+
+    public int updateRamal(String idRamal, Boolean check) {
+        final String where = COL_ID_RAMAL + "=?";
+        final String[] whereArgs = new String[]{idRamal};
+        return getWritableDatabase()
+                .update(TABLE_RAMAL, Util.toContentValues(check), where, whereArgs);
+    }
+
+    public int updateRamal(Ramal ramal) {
+        final String where = COL_ID_RAMAL + "=?";
+        final String[] whereArgs = new String[]{ramal.getIdRamal()};
+        return getWritableDatabase()
+                .update(TABLE_RAMAL, Util.toContentValues(ramal), where, whereArgs);
+    }
+
+    public long addRamal(Ramal ramal) {
+        return getWritableDatabase().insert(TABLE_RAMAL, null, Util.toContentValues(ramal));
+    }
+
+    public Ramal getRamal(String id) {
+
+        Cursor c = null;
+        final String where = COL_ID_RAMAL + "=?";
+        final String[] whereArgs = new String[]{id};
+        try {
+            c = getReadableDatabase().query(TABLE_RAMAL, null, where, whereArgs,
+                    null, null, null);
+            return Util.buildRamal(c);
+        } finally {
+            if (c != null && !c.isClosed()) c.close();
+        }
+    }
 
     public long addAlarm(Alarm alarm) {
         return getWritableDatabase().insert(TABLE_ALARM, null, Util.toContentValues(alarm));
@@ -115,7 +162,8 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
 
         Cursor c = null;
         try {
-            c = getReadableDatabase().query(DatabaseAlarms.TABLE_ALARM, null, null, null, null, null, null);
+            c = getReadableDatabase().query(DatabaseAlarms.TABLE_ALARM, null, null, null,
+                    null, null, null);
             ArrayList<Alarm> alarms = Util.buildAlarmList(c);
             setParadas(alarms);
             return alarms;
@@ -134,7 +182,8 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
         final String where = _ID + "=?";
         final String[] whereArgs = new String[]{Long.toString(id)};
         try {
-            c = getReadableDatabase().query(TABLE_ALARM, null, where, whereArgs, null, null, null);
+            c = getReadableDatabase().query(TABLE_ALARM, null, where, whereArgs,
+                    null, null, null);
             Alarm alarm = Util.buildAlarm(c);
             alarm.setParadaAlarmas(getParadas(alarm.getId()));
             return alarm;
@@ -143,7 +192,7 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<ParadaAlarma> getParadas(int idAlarma) {
+    HashMap<String, ParadaAlarma> getParadas(int idAlarma) {
         Cursor c = null;
 
         final String where = COL_ID_ALARMS + "=?";
@@ -159,5 +208,18 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
     public void setParadas(ArrayList<Alarm> listAlarms) {
         for (Alarm alarm : listAlarms)
             alarm.setParadaAlarmas(getParadas(alarm.getId()));
+    }
+
+    public HashMap<String,Ramal> getRamales() {
+        Cursor c = null;
+        final String where = COL_CHECKED + "=?";
+        final String[] whereArgs = new String[]{"1"};
+        try {
+            c = getReadableDatabase().query(TABLE_RAMAL, null, where, whereArgs,
+                    null, null, null);
+            return Util.buildRamales(c);
+        } finally {
+            if (c != null && !c.isClosed()) c.close();
+        }
     }
 }

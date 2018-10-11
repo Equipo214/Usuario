@@ -129,7 +129,7 @@ public class MapFragment extends Fragment {
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
                 adaptador.setGoogleMap(mMap);
-                dondeEstaMiBondi = new DondeEstaMiBondi(googleMap, getContext(), mLinea, ramalesSeleccionados, paradasCercanas, adaptador, serviciosActivos);
+                dondeEstaMiBondi = new DondeEstaMiBondi(googleMap, getContext(), mLinea, ramalesSeleccionados, adaptador, serviciosActivos);
 
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{
@@ -194,6 +194,7 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
+                        Log.d("MAP","LLLLLLLLOOOOOOOOOGGGGG");
                         return false;
                     }
                 });
@@ -359,6 +360,11 @@ public class MapFragment extends Fragment {
         }
     }
 
+    public void show(){
+
+    }
+
+
     public void loadRoutes() {
 
         for (Linea l : mLinea) {
@@ -369,6 +375,9 @@ public class MapFragment extends Fragment {
                         .addAll(PolyUtil.decode(r.getCode_recorrido())));
                 r.getDibujo().setPolyline(p);
 
+                if(ramalesSeleccionados.get(r.getIdRamal())!=null)
+                    ramalesSeleccionados.get(r.getIdRamal()).setDibujo(r.getDibujo());
+
                 for (Parada parada : r.getParadas()) {
                     Marker mk = googleMap.addMarker(new MarkerOptions()
                             .position(parada.getLatLng())
@@ -378,7 +387,7 @@ public class MapFragment extends Fragment {
                             .anchor(0.5f, 0.5f)
                             .snippet("Ramal: " + r.getDescripcion()));
                     r.getDibujo().agregarParada(mk);
-                    ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), l.getLinea(), r.getDescripcion(), parada.getLatLng());
+                    ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), l.getIdLinea(), r.getIdRamal(), parada.getLatLng());
                     mk.setTag(paradaAlarma);
                 }
 
@@ -398,6 +407,8 @@ public class MapFragment extends Fragment {
                                 .anchor(0.5f, 0.5f)
                                 .snippet("Ramal: " + r.getDescripcion()));
                         r.getDibujo().addParadasAlternas(mk);
+                        ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), l.getIdLinea(), r.getIdRamal(), parada.getLatLng());
+                        mk.setTag(paradaAlarma);
                     }
                 }
                 googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
@@ -406,9 +417,9 @@ public class MapFragment extends Fragment {
         updateDrawingRoutes();
     }
 
-    public void setLineas(ArrayList<Linea> mLinea, HashMap<String, Ramal> ramales_seleccionados) {
+    public void setLineas(ArrayList<Linea> mLinea, HashMap<String, Ramal> ramalesSeleccionados) {
         this.mLinea = mLinea;
-        this.ramalesSeleccionados = ramales_seleccionados;
+        this.ramalesSeleccionados = ramalesSeleccionados;
     }
 
 

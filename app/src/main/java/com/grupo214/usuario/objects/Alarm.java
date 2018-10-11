@@ -6,24 +6,23 @@ import android.util.SparseBooleanArray;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class Alarm {
-    public static final int MON = Calendar.MONDAY;
-    public static final int TUES = Calendar.TUESDAY;
-    public static final int WED = Calendar.WEDNESDAY;
-    public static final int THURS = Calendar.THURSDAY;
-    public static final int FRI = Calendar.FRIDAY;
-    public static final int SAT = Calendar.SATURDAY;
-    public static final int SUN = Calendar.SUNDAY;
+    public static final int MON     =   Calendar.MONDAY;
+    public static final int TUES    =   Calendar.TUESDAY;
+    public static final int WED     =   Calendar.WEDNESDAY;
+    public static final int THURS   =   Calendar.THURSDAY;
+    public static final int FRI     =   Calendar.FRIDAY;
+    public static final int SAT     =   Calendar.SATURDAY;
+    public static final int SUN     =   Calendar.SUNDAY;
     private final int id;
     private long time;
     private String label;
     private SparseBooleanArray allDays;
     private boolean isEnabled;
-    private ArrayList<ParadaAlarma> paradaAlarmas;
-    private ParadaAlarma paradas;
+    private HashMap<String,ParadaAlarma> paradaAlarmas;
 
     public Alarm(int id, long time, String label, SparseBooleanArray allDays, boolean isEnabled) {
         this.id = id;
@@ -31,7 +30,7 @@ public class Alarm {
         this.label = label;
         this.allDays = allDays;
         this.isEnabled = isEnabled;
-        this.paradaAlarmas = new ArrayList<>();
+        this.paradaAlarmas = new HashMap<>();
     }
 
 
@@ -76,19 +75,19 @@ public class Alarm {
         isEnabled = enabled;
     }
 
-    public void addParada(ParadaAlarma paradaAlarma) {
-        this.paradaAlarmas.add(paradaAlarma);
+    public void putParadaAlarma(String idRamal, ParadaAlarma paradaAlarma) {
+        this.paradaAlarmas.put(idRamal,paradaAlarma);
     }
 
-    public ParadaAlarma getParada(int i) {
-        return paradaAlarmas.get(i);
+    public ParadaAlarma getParadaAlarma(String idParada) {
+        return paradaAlarmas.get(idParada);
     }
 
-    public ArrayList<ParadaAlarma> getParadaAlarmas() {
+    public HashMap<String,ParadaAlarma> getParadaAlarmas() {
         return paradaAlarmas;
     }
 
-    public void setParadaAlarmas(ArrayList<ParadaAlarma> paradaAlarmas) {
+    public void setParadaAlarmas(HashMap<String,ParadaAlarma> paradaAlarmas) {
         this.paradaAlarmas = paradaAlarmas;
     }
 

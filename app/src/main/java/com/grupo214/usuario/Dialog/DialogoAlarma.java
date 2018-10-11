@@ -3,13 +3,16 @@ package com.grupo214.usuario.Dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
+
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.alarma.LocationService;
 
 import java.util.HashMap;
 
@@ -41,10 +44,16 @@ public class DialogoAlarma extends AppCompatDialogFragment {
                                     .fromResource(R.mipmap.ic_parada_alarma_iv));
                             marker.setAlpha(1f);// ICONO ALARMA
                             paradasConAlarmas.put(marker.getId(), marker.getPosition());
+                            Intent intent = new Intent(getContext(), LocationService.class);
+                            intent.putExtra("lat",marker.getPosition().latitude);
+                            intent.putExtra("lng",marker.getPosition().longitude);
+                            getActivity().startService(intent);
                         } else {
                             marker.setIcon(BitmapDescriptorFactory
                                     .fromResource(R.mipmap.ic_parada_bondi)); // ICONO COMUN
                             paradasConAlarmas.remove(marker.getId());
+                            Intent intent = new Intent(getContext(), LocationService.class);
+                            getActivity().stopService(intent);
                         }
                     }
                 })

@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Parada;
 import com.grupo214.usuario.objects.Ramal;
@@ -32,17 +33,17 @@ import java.util.ArrayList;
 public class SplashScreen extends AppCompatActivity {
     public static ArrayList<Linea> mLineas;
     private RequestQueue requestQueue_getRecorrido;
+    final Context context = this;
 
     public void setmLineas(ArrayList<Linea> mLineas) {
         SplashScreen.mLineas = mLineas;
-        if (SplashScreen.mLineas != null){
+
+        if (SplashScreen.mLineas != null) {
             starttt();
-        }
-        else
+        } else
             getRecorrido();
 
     }
-
 
 
     @Override
@@ -58,7 +59,9 @@ public class SplashScreen extends AppCompatActivity {
             getRecorrido();
         } else {
             // No hay conexión a Internet en este momento
-            mensaje("Sin conexion a Internet. (Conectar y reiniciar)");
+
+
+            mensaje("Sin conexion a Internet. (Conectar y reitentar)");
 
         }
 
@@ -70,6 +73,11 @@ public class SplashScreen extends AppCompatActivity {
         Intent main = new Intent(SplashScreen.this, MainActivity.class);
         startActivity(main);
         requestQueue_getRecorrido = null;
+
+        String id = mLineas.get(0).getRamales().get(0).getIdLinea();
+
+        if (DatabaseAlarms.getInstance(this).getRamal(id) != null)
+            DatabaseAlarms.getInstance(this).updateRamal(id, true);
         finish();
     }
 
@@ -120,10 +128,12 @@ public class SplashScreen extends AppCompatActivity {
                                             recorridosAlternos.add(new Recorrido(idRecorrido, code, paradas));
                                         }
                                     }
-                                    ramales.add(new Ramal(lineaJson.getString("idLinea"), linea, ramal.getString("idRamal"),
+                                    Ramal r = new Ramal(lineaJson.getString("idLinea"), linea, ramal.getString("idRamal"),
                                             ramal.getString("descripcion"),
-                                            recorridoPrimario, recorridosAlternos));
-
+                                            recorridoPrimario, recorridosAlternos);
+                                    ramales.add(r);
+                                    if( DatabaseAlarms.getInstance(context).addRamal(r) == -1)
+                                        r.setChecked(DatabaseAlarms.getInstance(context).getRamal(r.getIdRamal()).isCheck());
                                 }
                                 listaLinea.add(new Linea(idLinea, linea, ramales));
                             }

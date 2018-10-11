@@ -71,7 +71,7 @@ public class CommentaryActivity extends AppCompatActivity {
                             requestQueue_enviarComentario.stop();
                             requestQueue_enviarComentario = null;
                         }
-                        String url = "https://virginal-way.000webhostapp.com/appPasajero/addComentario.php?idLinea=" + idLinea + "&idRamal=" + idRamal + "&comentario=" + comentario;
+                        String url = "http://dondeestamibondi.online/appPasajero/addComentario.php?idLinea=" + idLinea + "&idRamal=" + idRamal + "&comentario=" + comentario;
 
                         final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null, null, null);
                         requestQueue_enviarComentario = Volley.newRequestQueue(getApplicationContext());
