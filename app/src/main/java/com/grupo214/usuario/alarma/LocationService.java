@@ -10,18 +10,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -63,33 +61,54 @@ public class LocationService extends Service implements
     private FusedLocationProviderClient mFusedLocationClient;
     private LatLng destino;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    private double lat;
+    private double lng;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String CHANNEL_ONE_ID = "Where is my bondi";
         String CHANNEL_ONE_NAME = "Channel One";
 
+        lat = intent.getDoubleExtra("lat", 0);
+        lng = intent.getDoubleExtra("lng", 0);
+        Log.d(TAG, "LAT: " + lat + "LNG: " + lng);
+
+
         NotificationChannel notificationChannel = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Notification notification = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
                     CHANNEL_ONE_NAME, IMPORTANCE_HIGH);
             notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
             notificationChannel.setShowBadge(true);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             manager.createNotificationChannel(notificationChannel);
+            notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ONE_ID)
+                    .setContentTitle("Gota fast")
+                    .setContentText("Duerme tranquilo, nosotros te avisamos para bajar.")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(icon)
+                    .build();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+
+            notification = new Notification.Builder(getApplicationContext())
+                    .setContentTitle("Gota fast")
+                    .setContentText("Duerme tranquilo, nosotros te avisamos para bajar.")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(icon)
+                    .build();
+        } else{
+            notification = new Notification.Builder(getApplicationContext())
+                    .setContentTitle("Gota fast")
+                    .setContentText("Duerme tranquilo, nosotros te avisamos para bajar.")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(icon)
+                    .getNotification();
         }
 
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        Notification notification = new Notification.Builder(getApplicationContext())
-                .setChannelId(CHANNEL_ONE_ID)
-                .setContentTitle("Gota fast")
-                .setContentText("Duerme tranquilo, nosotros te avisamos para bajar.")
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(icon)
-                .build();
 
         Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -161,14 +180,16 @@ public class LocationService extends Service implements
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Location changed");
 
+
         if (location != null) {
-            Log.d(TAG, "== location != null");
-            destino = new LatLng(location.getLatitude(), location.getLongitude());
+            Log.d(TAG, "location not null and: " + location.getLatitude() + " , " + location.getLongitude()); // > usuario
+            destino = new LatLng(lat, lng);
             //  Toast.makeText(getBaseContext(), location.getLatitude() + " , " + location.getLongitude(), Toast.LENGTH_SHORT).show();
             //  Toast.makeText(getBaseContext(), "destino: " + destino.toString(), Toast.LENGTH_SHORT).show();
             //  Send result to activities
-            if (test++ == 1 && Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) < 200) {
-
+            if (test++ == 1) {
+                //&& < 200
+                Log.d(TAG, "Distancia: " + Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) + " metros.");
                 Intent intent = new Intent(this, WarnActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);

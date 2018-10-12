@@ -40,6 +40,23 @@ public class WarnActivity extends AppCompatActivity {
     private final Handler mHideHandler = new Handler();
     private Vibrator mVibrator;
     private MediaPlayer mMediaPlayer;
+    /**
+     * Touch listener to use for in-layout UI controls to delay hiding the
+     * system UI. This is to prevent the jarring behavior of controls going away
+     * while interacting with activity UI.
+     */
+    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+          //      stopMedialPlayer();
+          //     stopVibrator();
+                finish();
+            }
+            return false;
+        }
+    };
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -75,23 +92,6 @@ public class WarnActivity extends AppCompatActivity {
         @Override
         public void run() {
             hide();
-        }
-    };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                stopMedialPlayer();
-                stopVibrator();
-                finish();
-            }
-            return false;
         }
     };
 
@@ -132,7 +132,9 @@ public class WarnActivity extends AppCompatActivity {
 
 
     private void stopMedialPlayer() {
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+        if (mMediaPlayer != null
+                && mMediaPlayer.isPlaying()) {
+
             mMediaPlayer.stop();
             mMediaPlayer.release();
         }
