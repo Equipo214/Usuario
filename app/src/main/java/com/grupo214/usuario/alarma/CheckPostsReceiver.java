@@ -115,7 +115,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         if (alarm.getParadaAlarmas().size() > 0) {
             timer.schedule(obtenerUbicacionTask, 0, TIME_OBTENER_UBICACIONES_NOTIFICACIONES);
         } else {
-            Toast.makeText(context, "No hay paradas para crear las notificaciones (anita mira esto)", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "No hay paradas para crear las notificaciones.", Toast.LENGTH_LONG).show();
         }
 
 

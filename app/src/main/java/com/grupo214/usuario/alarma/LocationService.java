@@ -1,13 +1,11 @@
 package com.grupo214.usuario.alarma;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -71,6 +69,7 @@ public class LocationService extends Service implements
 
         String CHANNEL_ONE_ID = "Where is my bondi";
         String CHANNEL_ONE_NAME = "Channel One";
+
         NotificationChannel notificationChannel = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
@@ -86,8 +85,8 @@ public class LocationService extends Service implements
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Notification notification = new Notification.Builder(getApplicationContext())
                 .setChannelId(CHANNEL_ONE_ID)
-                .setContentTitle("Bodni")
-                .setContentText("----")
+                .setContentTitle("Gota fast")
+                .setContentText("Duerme tranquilo, nosotros te avisamos para bajar.")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(icon)
                 .build();
@@ -165,26 +164,16 @@ public class LocationService extends Service implements
         if (location != null) {
             Log.d(TAG, "== location != null");
             destino = new LatLng(location.getLatitude(), location.getLongitude());
-           //   Toast.makeText(getBaseContext(), location.getLatitude() + " , " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-              //  Toast.makeText(getBaseContext(), "destino: " + destino.toString(), Toast.LENGTH_SHORT).show();
-            //Send result to activities
+            //  Toast.makeText(getBaseContext(), location.getLatitude() + " , " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+            //  Toast.makeText(getBaseContext(), "destino: " + destino.toString(), Toast.LENGTH_SHORT).show();
+            //  Send result to activities
             if (test++ == 1 && Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) < 200) {
 
                 Intent intent = new Intent(this, WarnActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 215, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
-                AlarmManager manager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    assert manager != null;
-                    long alarm_time = System.currentTimeMillis() + 10 * 1000;
-                    Log.d(TAG,"time: " + alarm_time);
-                    // manager.setAlarmClock(new AlarmManager.AlarmClockInfo(alarm_time, pendingIntent), pendingIntent);
-                    startActivity(intent);
-                }
+                startActivity(intent);
 
-                //manager.set(AlarmManager.ELAPSED_REALTIME, System.currentTimeMillis() + 5 * 1000, pIntent);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Toast.makeText(getBaseContext(),"ENTRO" ,Toast.LENGTH_SHORT).show();
                     stopForeground(STOP_FOREGROUND_REMOVE);
                 }
             }

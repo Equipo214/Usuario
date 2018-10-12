@@ -207,7 +207,7 @@ public class AMNotificacion extends AppCompatActivity {
         for (int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
 
             if (!(alarm.getAllDays().get(dayOfWeek))) {
-                continue; // ¿¡PORQUE!?, NO ES NECESARIO ESTO
+                continue;
             }
             PendingIntent pendingIntent;
             Intent intent = new Intent(this, CheckPostsReceiver.class);

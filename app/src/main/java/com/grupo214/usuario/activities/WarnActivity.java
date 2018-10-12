@@ -1,12 +1,13 @@
 package com.grupo214.usuario.activities;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -37,21 +38,8 @@ public class WarnActivity extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                finish();
-            }
-            return false;
-        }
-    };
+    private Vibrator mVibrator;
+    private MediaPlayer mMediaPlayer;
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -89,6 +77,23 @@ public class WarnActivity extends AppCompatActivity {
             hide();
         }
     };
+    /**
+     * Touch listener to use for in-layout UI controls to delay hiding the
+     * system UI. This is to prevent the jarring behavior of controls going away
+     * while interacting with activity UI.
+     */
+    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+                stopMedialPlayer();
+                stopVibrator();
+                finish();
+            }
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +128,20 @@ public class WarnActivity extends AppCompatActivity {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(100);
+    }
+
+
+    private void stopMedialPlayer() {
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+        }
+    }
+
+    private void stopVibrator() {
+        if (mVibrator != null) {
+            mVibrator.cancel();
+        }
     }
 
     private void toggle() {
@@ -169,7 +188,22 @@ public class WarnActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        stopMedialPlayer();
+        stopVibrator();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onStart() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        long[] pattern = {0, 1000, 10000};
+        mVibrator.vibrate(pattern, 0);
+        mMediaPlayer = MediaPlayer.create(this, Uri.parse(pref.getString("notifications_new_message_ringtone", "content://settings/system/notification_sound")));
+        mMediaPlayer.setLooping(true);
+        mMediaPlayer.start();
         super.onStart();
 
     }

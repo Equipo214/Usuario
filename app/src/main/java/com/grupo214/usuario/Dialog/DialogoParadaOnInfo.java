@@ -6,12 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
-import android.support.v7.widget.SwitchCompat;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.adapters.NotificacionesNombreAdapter;
 import com.grupo214.usuario.fragment.NotificacionFragment;
@@ -26,15 +24,15 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
 
 
     private Marker marker;
-    private ArrayList<String> paradasAccId;
-    private HashMap<String, Marker>  paradasCercanas;
+ //  private ArrayList<String> paradasAccId;
+    private HashMap<String, Marker> paradasCercanas;
     private HashMap<String, LatLng> paradasConAlarmas;
 
-    public void setParams(Marker marker, ArrayList<String> paradasAccId,
+    public void setParams(Marker marker,
                           HashMap<String, LatLng> paradasConAlarmas,
-                          HashMap<String, Marker>  paradasCercanas) {
+                          HashMap<String, Marker> paradasCercanas) {
         this.marker = marker;
-        this.paradasAccId = paradasAccId;
+     //   this.paradasAccId = paradasAccId;
         this.paradasConAlarmas = paradasConAlarmas;
         this.paradasCercanas = paradasCercanas;
     }
@@ -63,6 +61,7 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
                 }
             });
 
+        /*
         SwitchCompat switchCompat = getActivity().findViewById(R.id.accesibilidad_Switch);
         if (switchCompat.isChecked())
             builder.setPositiveButton("Accesibilidad", new DialogInterface.OnClickListener() {
@@ -73,7 +72,7 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
                     dialogoAccesibilidad.show(getFragmentManager(), "Dialog Accesibilidad");
                 }
             });
-
+        */
         return builder.create();
     }
 
@@ -93,7 +92,7 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
                 } else {
                     ParadaAlarma paradaAlarma = (ParadaAlarma) marker.getTag();
                     paradaAlarma.setId_alarms(Long.toString(alarm.getId()));
-                    alarm.putParadaAlarma(paradaAlarma.getIdRamal(),paradaAlarma);
+                    alarm.putParadaAlarma(paradaAlarma.getIdRamal(), paradaAlarma);
                     DatabaseAlarms.getInstance(context).addParadaAlarma(paradaAlarma);
                 }
                 dialog.dismiss();
