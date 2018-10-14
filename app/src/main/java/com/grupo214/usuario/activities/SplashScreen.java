@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -132,8 +133,11 @@ public class SplashScreen extends AppCompatActivity {
                                             ramal.getString("descripcion"),
                                             recorridoPrimario, recorridosAlternos);
                                     ramales.add(r);
-                                    if( DatabaseAlarms.getInstance(context).addRamal(r) == -1)
+                                    if( DatabaseAlarms.getInstance(context).exist(r)){
                                         r.setChecked(DatabaseAlarms.getInstance(context).getRamal(r.getIdRamal()).isCheck());
+                                    }else{
+                                        DatabaseAlarms.getInstance(context).addRamal(r);
+                                    }
                                 }
                                 listaLinea.add(new Linea(idLinea, linea, ramales));
                             }
@@ -147,6 +151,7 @@ public class SplashScreen extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("JSON:ERROR", error.toString());
+                Toast.makeText(getBaseContext(),"Conexion lenta",Toast.LENGTH_SHORT).show();
                 getRecorrido();
             }
         });

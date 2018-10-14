@@ -71,7 +71,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/header_text_linea"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_user_marker" />
+        app:srcCompat="@drawable/ic_playlist_add_check_black_24dp" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -39,7 +39,7 @@ import static android.app.NotificationManager.IMPORTANCE_HIGH;
 
 
 /**
- * Created by devdeeds.com on 27-09-2017.
+ * Created by Coffee - [214].-
  */
 
 public class LocationService extends Service implements
@@ -58,6 +58,7 @@ public class LocationService extends Service implements
      * Variable para testear la alarma destino.-
      */
     int test = 0;
+
     private FusedLocationProviderClient mFusedLocationClient;
     private LatLng destino;
 
@@ -78,6 +79,9 @@ public class LocationService extends Service implements
         NotificationChannel notificationChannel = null;
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Notification notification = null;
+        String title = "Alarma Destino Iniciada";
+        String mensaje = "Duerme tranquilo, nosotros te avisamos cuando bajar.";
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
                     CHANNEL_ONE_NAME, IMPORTANCE_HIGH);
@@ -87,23 +91,23 @@ public class LocationService extends Service implements
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             manager.createNotificationChannel(notificationChannel);
             notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ONE_ID)
-                    .setContentTitle("Gota fast")
-                    .setContentText("Duerme tranquilo, nosotros te avisamos para bajar.")
+                    .setContentTitle(title + "8.1")
+                    .setContentText(mensaje)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(icon)
+                    .setOngoing(false)
                     .build();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-
             notification = new Notification.Builder(getApplicationContext())
-                    .setContentTitle("Gota fast")
-                    .setContentText("Duerme tranquilo, nosotros te avisamos para bajar.")
+                    .setContentTitle(title)
+                    .setContentText(mensaje)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(icon)
                     .build();
-        } else{
+        } else {
             notification = new Notification.Builder(getApplicationContext())
-                    .setContentTitle("Gota fast")
-                    .setContentText("Duerme tranquilo, nosotros te avisamos para bajar.")
+                    .setContentTitle(title)
+                    .setContentText(mensaje)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(icon)
                     .getNotification();
@@ -126,10 +130,8 @@ public class LocationService extends Service implements
         mLocationRequest.setInterval(LOCATION_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_LOCATION_INTERVAL);
 
-
         int priority = LocationRequest.PRIORITY_HIGH_ACCURACY; //by default
         //PRIORITY_BALANCED_POWER_ACCURACY, PRIORITY_LOW_POWER, PRIORITY_NO_POWER are the other priority modes
-
 
         mLocationRequest.setPriority(priority);
         mLocationClient.connect();
@@ -187,39 +189,35 @@ public class LocationService extends Service implements
             //  Toast.makeText(getBaseContext(), location.getLatitude() + " , " + location.getLongitude(), Toast.LENGTH_SHORT).show();
             //  Toast.makeText(getBaseContext(), "destino: " + destino.toString(), Toast.LENGTH_SHORT).show();
             //  Send result to activities
-            if (test++ == 1) {
-                //&& < 200
-                Log.d(TAG, "Distancia: " + Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) + " metros.");
+            // if (test++ == 1) {
+            if (Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) < 200) {
+                // && < 200
+                // Log.d(TAG, "Distancia: " + Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) + " metros.");
                 Intent intent = new Intent(this, WarnActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     stopForeground(STOP_FOREGROUND_REMOVE);
                 }
             }
-
-            //   sendMessageToUI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+            // sendMessageToUI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
         }
-
     }
 
     private void sendMessageToUI(String lat, String lng) {
-
         Log.d(TAG, "Sending info...");
-
         Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
         intent.putExtra(EXTRA_LATITUDE, lat);
         intent.putExtra(EXTRA_LONGITUDE, lng);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
     }
 
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "Failed to connect to Google API");
-
     }
 
+    /*
+     */
 }

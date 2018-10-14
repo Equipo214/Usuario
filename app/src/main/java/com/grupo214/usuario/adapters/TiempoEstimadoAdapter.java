@@ -1,7 +1,6 @@
 package com.grupo214.usuario.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,7 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
     private boolean heightAdjust = false;
 
 
-    public TiempoEstimadoAdapter(@NonNull Context context, int resource,TextView txServicioBack) {
+    public TiempoEstimadoAdapter(@NonNull Context context, int resource, TextView txServicioBack) {
         super(context, resource);
         this.txServicioBack = txServicioBack;
     }
@@ -49,7 +48,7 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
         tx_ramal.setText(s.getRamal());
 
         TextView tiempoEstimado = (TextView) convertView.findViewById(R.id.tx_te);
-        tiempoEstimado.setText(s.getTiempoEstimado()+"'");
+        tiempoEstimado.setText(s.getTiempoEstimado() + "'");
 
         ImageButton imageButton = (ImageButton) convertView.findViewById(R.id.bt_te_servicio);
         imageButton.setImageResource(s.getIco());
@@ -59,7 +58,12 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
             @Override
             public void onClick(View v) {
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(s.getMk().getPosition()).zoom(13).build()));
+                        new CameraPosition.Builder().target(s.getMk()
+                                .getPosition())
+                                .zoom(20)
+                                .tilt(60)
+                                .bearing(0)
+                                .build()));
             }
         });
 
@@ -70,10 +74,9 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        if(this.getCount() > 0){
+        if (this.getCount() > 0) {
             txServicioBack.setVisibility(View.INVISIBLE);
-        }
-        else if( this.getCount()==0){
+        } else if (this.getCount() == 0) {
             txServicioBack.setVisibility(View.VISIBLE);
         }
 

@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -48,7 +49,7 @@ import static com.grupo214.usuario.Util.DatabaseAlarms._ID;
  * @author Daniel Boullon
  */
 public class Util {
-
+    private static String TAG = "Util";
     private RequestQueue requestQueue_distanceMatrix;
 
     /**
@@ -60,7 +61,6 @@ public class Util {
      */
     public static double calculateDistance(LatLng StartP, LatLng EndP) {
         int Radius = 6371000;// radio de la tierra en  metros.
-
         double lat1 = StartP.latitude;
         double lat2 = EndP.latitude;
         double lon1 = StartP.longitude;
@@ -289,20 +289,20 @@ public class Util {
         return ramal;
     }
 
-    public static HashMap<String,Ramal> buildRamales(Cursor c) {
+    public static HashMap<String, Ramal> buildRamales(Cursor c) {
         if (c == null) return null;
         final int size = c.getCount();
 
-        final HashMap<String,Ramal> ramales = new HashMap<>(size);
+        final HashMap<String, Ramal> ramales = new HashMap<>(size);
         if (c.moveToFirst()) {
-            do {
 
+            do {
                 final String idLinea = c.getString(c.getColumnIndex(DatabaseAlarms.COL_ID_LINEA));
                 final String linea = c.getString(c.getColumnIndex(DatabaseAlarms.COL_LINEA));
                 final String idRamal = c.getString(c.getColumnIndex(DatabaseAlarms.COL_ID_RAMAL));
                 final String descripcion = c.getString(c.getColumnIndex(DatabaseAlarms.COL_DESCRIPCION));
                 final boolean isChecked = c.getInt(c.getColumnIndex(DatabaseAlarms.COL_CHECKED)) == 1;
-                ramales.put(idRamal,new Ramal(idLinea, linea, idRamal, descripcion, isChecked));
+                ramales.put(idRamal, new Ramal(idLinea, linea, idRamal, descripcion, isChecked));
 
             } while (c.moveToNext());
         }

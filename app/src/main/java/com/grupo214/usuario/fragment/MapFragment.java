@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -69,7 +68,9 @@ public class MapFragment extends Fragment {
 
     public static final LatLng posInicial = new LatLng(-34.681496, -58.559774);
     public static final int ZOOM = 13;
-    SwitchCompat switchAcc;
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    private static final String TAG = "MapFragment";
+    private SwitchCompat switchAcc;
     private HashMap<String, LatLng> paradasConAlarmas;
     private HashMap<String, Ramal> ramalesSeleccionados;
     private Dialog startMenuDialog;
@@ -80,7 +81,8 @@ public class MapFragment extends Fragment {
     private ArrayList<Linea> mLinea;
     private Marker startMakerUser;
     private boolean selecionar = false; // por si las moscas.
-    private HashMap<String, Marker> paradasCercanas;
+    private HashMap<String, Marker> markerCercanos;
+    private HashMap<String, ParadaAlarma> paradasCercanas;
     private ArrayList<String> paradasAccId;
     private ArrayList<String> paradasNotificaciones;
     private ListView lv_listTiempoEstimado;
@@ -102,6 +104,7 @@ public class MapFragment extends Fragment {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         paradasAccId = new ArrayList<String>();
+        markerCercanos = new HashMap<>();
         paradasCercanas = new HashMap<>();
         paradasConAlarmas = new HashMap<>();
         serviciosActivos = new HashMap<>();
@@ -186,7 +189,7 @@ public class MapFragment extends Fragment {
                             return;
                         if (marker.getTitle().contains("Parada")) {
                             DialogoParadaOnInfo dialogoParadaOnInfo = new DialogoParadaOnInfo();
-                            dialogoParadaOnInfo.setParams(marker, paradasConAlarmas, paradasCercanas);
+                            dialogoParadaOnInfo.setParams(marker, paradasConAlarmas, markerCercanos);
                             dialogoParadaOnInfo.show(getFragmentManager(), "Parada");
                             // setear un adapter info para paradas si esta activado el swicht mostrar el boton de accesibliidad.
                         }
@@ -204,6 +207,9 @@ public class MapFragment extends Fragment {
                 googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                     @Override
                     public boolean onMyLocationButtonClick() {
+                        // Dialog que te haga habilitar el mapa.-
+                        Location location = getLastKnownLocation();
+                        Log.d(TAG, location.getLatitude() + " " + location.getLongitude());
                         return false;
                     }
                 });
@@ -277,8 +283,8 @@ public class MapFragment extends Fragment {
                 for (Ramal r : l.getRamales()) {
                     if (r.isCheck()) {
                         r.getDibujo().setAlpah(false);
-                        if (paradasCercanas.get(r.getIdRamal()) != null)
-                            paradasCercanas.get(r.getIdRamal()).setVisible(true);
+                        if (markerCercanos.get(r.getIdRamal()) != null)
+                            markerCercanos.get(r.getIdRamal()).setVisible(true);
                     }
                 }
             }
@@ -298,31 +304,39 @@ public class MapFragment extends Fragment {
 
     public void dondeEstaMiBondi(LatLng latLng) {
 
-        for (Marker mk : paradasCercanas.values()) {
+        for (Marker mk : markerCercanos.values()) {
             mk.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi));
         }
         actulizarMarkers();
+        markerCercanos.clear();
         paradasCercanas.clear();
-
         switchAcc = (SwitchCompat) getActivity().findViewById(R.id.accesibilidad_Switch);
-        BitmapDescriptor paradaCercana;
+
+        BitmapDescriptor icoMakerParadaCercana;
         if (switchAcc.isChecked()) {
-            paradaCercana = BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_acc);
+            icoMakerParadaCercana = BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_acc);
         } else {
-            paradaCercana = BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_cercana);
+            icoMakerParadaCercana = BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_cercana);
         }
 
         for (Ramal r : ramalesSeleccionados.values()) {
             Log.d("MapFragment", "ramal numero: " + r.toString());
             Marker mk = r.paradaMasCercana(latLng);
-            paradasCercanas.put(r.getIdRamal(), mk);
+            markerCercanos.put(r.getIdRamal(), mk);
+            paradasCercanas.put(r.getIdRamal(),((ParadaAlarma) mk.getTag()));
             mk.setVisible(true);
             r.setParadaCercana(((ParadaAlarma) mk.getTag()).getId_parada());
-            mk.setIcon(paradaCercana);
+            mk.setIcon(icoMakerParadaCercana);
             if (paradasConAlarmas.get(mk.getId()) != null)
                 paradasConAlarmas.remove(mk.getId());
         }
+
+
         if (!isActive) {
+            dondeEstaMiBondi.setSwitchAcc(switchAcc);
+            if (switchAcc.isChecked()) {
+                dondeEstaMiBondi.setParadasCercanas(paradasCercanas);
+            }
             dondeEstaMiBondi.run();
             isActive = true;
         } else {
@@ -376,11 +390,6 @@ public class MapFragment extends Fragment {
                     r.getDibujo().hide();
         }
     }
-
-    public void show() {
-
-    }
-
 
     public void loadRoutes() {
 
@@ -466,7 +475,7 @@ public class MapFragment extends Fragment {
                             @Override
                             public void onSuccess(Location location) {
                                 // Got last known location. In some rare situations this can be null.
-                                if (location != null){
+                                if (location != null) {
                                     puntoPartida = new LatLng(location.getLatitude(), location.getLongitude());
                                     dondeEstaMiBondi(puntoPartida);
                                 }
@@ -488,12 +497,6 @@ public class MapFragment extends Fragment {
 
     }
 
-    public void setAccesibilidad(boolean accesibilidad) {
-        mensaje("Selecione la parada donde solicite accesibilidad");
-        this.accesibilidad = accesibilidad;
-
-    }
-
     public void setStartMenuDialog(Dialog startMenuDialog) {
         this.startMenuDialog = startMenuDialog;
     }
@@ -507,7 +510,7 @@ public class MapFragment extends Fragment {
 
     private Location getLastKnownLocation() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            mensaje("Amigo no tenes permisos.");
+            mensaje("No tenes activo el gps.");
         } else {
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
                 mensaje("Sin permisos");
@@ -535,9 +538,10 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(punto).zoom(20).build()));
-
+                        new CameraPosition.Builder().target(punto).zoom(5).build()));
             }
         });
     }
+
 }
+

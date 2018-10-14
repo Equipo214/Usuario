@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.grupo214.usuario.objects.Alarm;
 import com.grupo214.usuario.objects.ParadaAlarma;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 
 
 public final class DatabaseAlarms extends SQLiteOpenHelper {
-
+    private static String TAG = "DatabaseAlarms";
     public static final String TABLE_PARADAS_ALARM = "paradas_alarm";
     static final String _ID = "_ID";
     static final String COL_TIME = "TIME";
@@ -121,7 +122,7 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
                 .update(TABLE_RAMAL, Util.toContentValues(ramal), where, whereArgs);
     }
 
-    public long addRamal(Ramal ramal) {
+    public long addRamal(Ramal ramal){
         return getWritableDatabase().insert(TABLE_RAMAL, null, Util.toContentValues(ramal));
     }
 
@@ -221,5 +222,17 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
         } finally {
             if (c != null && !c.isClosed()) c.close();
         }
+    }
+
+    public boolean exist(Ramal r) {
+        Cursor c =  getReadableDatabase().query(TABLE_RAMAL, new String[] {"1"},
+                COL_ID_RAMAL + "=\'" + r.getIdRamal()+"\'", null, null, null, null);
+        c.moveToFirst();
+        int count = c.getCount();
+        Log.d(TAG,"cantidad: " + count );
+       // if( count == 1 ){
+         //   Log.d(TAG,c.getString(c.getColumnIndex(DatabaseAlarms.COL_DESCRIPCION)));
+       // }
+        return  c.getCount() == 1;
     }
 }

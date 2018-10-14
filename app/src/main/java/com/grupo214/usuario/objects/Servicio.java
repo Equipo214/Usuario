@@ -31,13 +31,15 @@ public class Servicio {
     private boolean activo;
     private ArrayList<LatLng> paradas;
     private String fecha;
+    private String idRamal;
 
-    public Servicio(String idServicio,String fecha, String linea, String ramal, Marker mk, int ico, int minutos) {
+    public Servicio(String idServicio,String fecha,String idRamal, String linea, String ramal, Marker mk, int ico, int minutos) {
         this.idServicio = idServicio;
         this.linea = linea;
         this.ramal = ramal;
         this.tiempoEstimado = minutos;
         this.mk = mk;
+        this.idRamal = idRamal;
         this.fecha = fecha;
         this.ico = ico;
         this.activo = true;
@@ -101,5 +103,13 @@ public class Servicio {
 
     public void setParadas(ArrayList<LatLng> paradas) {
         this.paradas = paradas;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public String getIdRamal() {
+        return idRamal;
     }
 }

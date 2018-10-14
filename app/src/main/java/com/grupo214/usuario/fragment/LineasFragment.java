@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import java.util.HashMap;
  */
 public class LineasFragment extends Fragment {
 
+    private static String TAG = "LineasFragment";
     private ExpandableListView expandableListView;
     private ArrayList<Linea> mLineas;
     private HashMap<String, Ramal> ramales_seleccionados;
@@ -104,7 +106,7 @@ public class LineasFragment extends Fragment {
                 Ramal r = mLineas.get(groupPosition).getRamales().get(childPosition);
                 CheckBox checkBox = v.findViewById(R.id.list_checkBox);
 
-
+                Log.d(TAG,ramales_seleccionados.toString());
                 r.setChecked(!r.isCheck());
                 if (r.isCheck()) {
                     r.getDibujo().show();
@@ -113,6 +115,7 @@ public class LineasFragment extends Fragment {
                     r.getDibujo().hide();
                     ramales_seleccionados.remove(r.getIdRamal());
                 }
+                Log.d(TAG,r.toString());
                 checkBox.setChecked(r.isCheck());
                 DatabaseAlarms.getInstance(getContext()).updateRamal(r.getIdRamal(),r.isCheck());
 

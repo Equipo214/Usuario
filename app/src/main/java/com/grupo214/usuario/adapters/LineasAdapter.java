@@ -2,6 +2,7 @@ package com.grupo214.usuario.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import java.util.List;
 
 public class LineasAdapter extends BaseExpandableListAdapter {
 
+    private static String TAG = "LineasAdapter";
     private Context _context;
     private List<Linea> _listDataHeader; // header titles
     // child data in format of header title, child title
@@ -54,7 +56,7 @@ public class LineasAdapter extends BaseExpandableListAdapter {
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
         final Ramal r = (Ramal) getChild(groupPosition, childPosition);
-
+        Log.d(TAG,r.toString());
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context

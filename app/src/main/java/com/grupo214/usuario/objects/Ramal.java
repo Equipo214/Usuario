@@ -51,7 +51,7 @@ public class Ramal {
 
     @Override
     public String toString() {
-        return idRamal;
+        return "Linea " + idLinea + " Ramal " + idRamal + " descripcion: " + descripcion;
     }
 
     public String getIdLinea() {
