@@ -395,54 +395,57 @@ public class MapFragment extends Fragment {
 
     public void loadRoutes() {
 
-        for (Linea l : mLinea) {
-            for (Ramal r : l.getRamales()) {
-                Polyline p = googleMap.addPolyline(new PolylineOptions()
-                        .color(R.color.tabSelect)
-                        .geodesic(true)
-                        .addAll(PolyUtil.decode(r.getCode_recorrido())));
-                r.getDibujo().setPolyline(p);
+        for (Linea l : mLinea)
+            for (Ramal r : l.getRamales())
+                cargarRamal(r);
 
-                if (ramalesSeleccionados.get(r.getIdRamal()) != null)
-                    ramalesSeleccionados.get(r.getIdRamal()).setDibujo(r.getDibujo());
+        googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
+        updateDrawingRoutes();
+    }
 
-                for (Parada parada : r.getParadas()) {
-                    Marker mk = googleMap.addMarker(new MarkerOptions()
-                            .position(parada.getLatLng())
-                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi))
-                            .alpha(0.9f)
-                            .title("Parada línea " + l.getLinea())
-                            .anchor(0.5f, 0.5f)
-                            .snippet("Ramal: " + r.getDescripcion()));
-                    r.getDibujo().agregarParada(mk);
-                    ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), l.getIdLinea(), r.getIdRamal(), parada.getLatLng());
-                    mk.setTag(paradaAlarma);
-                }
+    private void cargarRamal(Ramal r) {
+        Polyline p = googleMap.addPolyline(new PolylineOptions()
+                .color(R.color.tabSelect)
+                .geodesic(true)
+                .addAll(PolyUtil.decode(r.getCode_recorrido())));
+        r.getDibujo().setPolyline(p);
 
-                for (Recorrido recorridoAlterno : r.getRecorridosAlternos()) {
-                    Log.d("MapFragment", "Recorrido alterno: " + recorridoAlterno.getRecorridoCompleto());
-                    Polyline pa = googleMap.addPolyline(new PolylineOptions()
-                            .color(Color.RED)
-                            .addAll(
-                                    PolyUtil.decode(recorridoAlterno.getRecorridoCompleto())));
-                    r.getDibujo().addPolylineAlternative(pa);
-                    for (Parada parada : recorridoAlterno.getParadas()) {
-                        Marker mk = googleMap.addMarker(new MarkerOptions()
-                                .position(parada.getLatLng())
-                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi))
-                                .alpha(0.9f)
-                                .title("Parada línea " + l.getLinea())
-                                .anchor(0.5f, 0.5f)
-                                .snippet("Ramal: " + r.getDescripcion()));
-                        r.getDibujo().addParadasAlternas(mk);
-                        ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), l.getIdLinea(), r.getIdRamal(), parada.getLatLng());
-                        mk.setTag(paradaAlarma);
-                    }
-                }
-                googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
+        if (ramalesSeleccionados.get(r.getIdRamal()) != null)
+            ramalesSeleccionados.get(r.getIdRamal()).setDibujo(r.getDibujo());
+
+        for (Parada parada : r.getParadas()) {
+            Marker mk = googleMap.addMarker(new MarkerOptions()
+                    .position(parada.getLatLng())
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi))
+                    .alpha(0.9f)
+                    .title("Parada línea " + r.getLinea())
+                    .anchor(0.5f, 0.5f)
+                    .snippet("Ramal: " + r.getDescripcion()));
+            r.getDibujo().agregarParada(mk);
+            ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), r.getIdLinea(), r.getIdRamal(), parada.getLatLng());
+            mk.setTag(paradaAlarma);
+        }
+
+        for (Recorrido recorridoAlterno : r.getRecorridosAlternos()) {
+            Log.d("MapFragment", "Recorrido alterno: " + recorridoAlterno.getRecorridoCompleto());
+            Polyline pa = googleMap.addPolyline(new PolylineOptions()
+                    .color(Color.RED)
+                    .addAll(
+                            PolyUtil.decode(recorridoAlterno.getRecorridoCompleto())));
+            r.getDibujo().addPolylineAlternative(pa);
+            for (Parada parada : recorridoAlterno.getParadas()) {
+                Marker mk = googleMap.addMarker(new MarkerOptions()
+                        .position(parada.getLatLng())
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi))
+                        .alpha(0.9f)
+                        .title("Parada línea " + r.getLinea())
+                        .anchor(0.5f, 0.5f)
+                        .snippet("Ramal: " + r.getDescripcion()));
+                r.getDibujo().addParadasAlternas(mk);
+                ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), r.getIdLinea(), r.getIdRamal(), parada.getLatLng());
+                mk.setTag(paradaAlarma);
             }
         }
-        updateDrawingRoutes();
     }
 
     public void setLineas(ArrayList<Linea> mLinea, HashMap<String, Ramal> ramalesSeleccionados) {
@@ -572,7 +575,10 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(punto).zoom(14).build()));
+                        new CameraPosition.Builder().target(punto)
+                                .zoom(15)
+                                .tilt(0)
+                                .build()));
             }
         });
     }

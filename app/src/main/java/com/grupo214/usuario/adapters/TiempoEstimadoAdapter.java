@@ -60,8 +60,8 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder().target(s.getMk()
                                 .getPosition())
-                                .zoom(20)
-                                .tilt(60)
+                                .zoom(15)
+                                .tilt(30)
                                 .bearing(0)
                                 .build()));
             }

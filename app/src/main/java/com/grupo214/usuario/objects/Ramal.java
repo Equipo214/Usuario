@@ -6,7 +6,6 @@ import com.google.android.gms.maps.model.Marker;
 import java.util.ArrayList;
 
 public class Ramal {
-    private int indexParadas;
     private String idLinea;
     private String idRamal;
     private String descripcion;
@@ -92,13 +91,6 @@ public class Ramal {
 
     public String getLinea() {
         return linea;
-    }
-
-    public LatLng[] sigParada() {
-        LatLng[] paradasConexas = new LatLng[2];
-        paradasConexas[0] = getParadas().get(indexParadas).getLatLng();
-        paradasConexas[1] = getParadas().get(++indexParadas >= getParadas().size() ? 1 : indexParadas).getLatLng();
-        return paradasConexas;
     }
 
     public void setDibujo(Dibujo dibujo) {
