@@ -2,14 +2,16 @@ package com.grupo214.usuario.fragment;
 
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
@@ -38,7 +40,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.PolyUtil;
 import com.grupo214.usuario.Dialog.DialogoParadaOnInfo;
 import com.grupo214.usuario.R;
@@ -72,6 +73,7 @@ public class MapFragment extends Fragment {
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     //   Location myLocation = getLastKnownLocation();
     private static final String TAG = "MapFragment";
+    private static final String TITLE_USER_MAKER = "Punto de partida";
     private SwitchCompat switchAcc;
     private HashMap<String, LatLng> paradasConAlarmas;
     private HashMap<String, Ramal> ramalesSeleccionados;
@@ -173,6 +175,9 @@ public class MapFragment extends Fragment {
                         if (marker.getTitle().contains("Parada")) {
                             return false; // quizas mueva todo aca() AHRE LOCO CUANDO ESCRIBO "TODO" CAMBIA DE COLOR
                         }
+                        if (marker.getTitle().contains(TITLE_USER_MAKER)) {
+                            return false;
+                        }
                         return false;
                     }
                 });
@@ -195,10 +200,11 @@ public class MapFragment extends Fragment {
                             dialogoParadaOnInfo.show(getFragmentManager(), "Parada");
                             // setear un adapter info para paradas si esta activado el swicht mostrar el boton de accesibliidad.
                         }
-                        if (marker.getTitle().contains("Servicio")) {
-                            // setar un adapter info para servicio, asi puede activar las alarmas de ese ramal con ese servicio.
+                        if (marker.getTitle().contains(TITLE_USER_MAKER)) {
+                            startMakerUser.setVisible(false);
+                            selecionar = true;
+                            mensaje("Seleccioné una nueva ubicación para esperar el Bondi.");
                         }
-
 
                     }
                 });
@@ -210,14 +216,11 @@ public class MapFragment extends Fragment {
                     @Override
                     public boolean onMyLocationButtonClick() {
                         // Dialog que te haga habilitar el mapa.-
-                        Location location = getLastKnownLocation();
-                        if (location != null)
-                            Log.d(TAG, location.getLatitude() + " " + location.getLongitude());
                         return false;
                     }
                 });
 
-                googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+       /*         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                     @Override
                     public void onMarkerDragStart(Marker marker) {
                         dondeEstaMiBondi.stop();
@@ -234,12 +237,12 @@ public class MapFragment extends Fragment {
                         dondeEstaMiBondi(puntoPartida);
                     }
                 });
+        */
+                LatLng pos = getLastKnownLocation();
 
-                Location location = getLastKnownLocation();
-
-                if (location != null)
+                if (pos != null)
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                            new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15).build()));
+                            new CameraPosition.Builder().target(pos).zoom(15).build()));
                 else
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                             new CameraPosition.Builder().target(posInicial).zoom(12).build()));
@@ -247,10 +250,11 @@ public class MapFragment extends Fragment {
                 MarkerOptions markerOptions = new MarkerOptions()
                         .visible(false)
                         .position(new LatLng(0, 0))
-                        .title("Punto de partida")
+                        .title(TITLE_USER_MAKER)
+                        .snippet("Haga click para cambiar la posición.")
+                        //.draggable(true)
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_user_map_demo))
-                        .anchor(0.5f, 0.5f)
-                        .draggable(true);
+                        .anchor(0.5f, 0.5f);
 
                 startMakerUser = googleMap.addMarker(markerOptions);
                 googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -460,27 +464,9 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 startMenuDialog.dismiss();
-
-                //puntoPartida = new LatLng(location.getLatitude(), location.getLongitude());
-                //       dondeEstaMiBondi(posInicial);
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getContext(), "No se han concedidos los permisos del GPS.", Toast.LENGTH_SHORT).show();
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                    return;
-                }
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                // Got last known location. In some rare situations this can be null.
-                                if (location != null) {
-                                    puntoPartida = new LatLng(location.getLatitude(), location.getLongitude());
-                                    dondeEstaMiBondi(puntoPartida);
-                                }
-                            }
-                        });
-
+                puntoPartida = getLastKnownLocation();
+                if (puntoPartida != null)
+                    dondeEstaMiBondi(puntoPartida);
             }
         });
 
@@ -496,25 +482,35 @@ public class MapFragment extends Fragment {
 
     }
 
-    public void setStartMenuDialog(Dialog startMenuDialog) {
-        this.startMenuDialog = startMenuDialog;
-    }
+/*
+    void test() {
+        //       dondeEstaMiBondi(posInicial);
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getContext(), "No se han concedidos los permisos del GPS.", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            puntoPartida = new LatLng(location.getLatitude(), location.getLongitude());
+                        }
+                    }
+                });
+    }*/
 
-    public void setAlarmaDestino(boolean alarmaDestino) {
-        this.alarmaDestino = alarmaDestino;
-    }
-
-
-    private Location getLastKnownLocation() {
+    private LatLng getLastKnownLocation() {
         mensaje("Entro LastKnown");
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             mensaje("Sin permisos");
             return null;
         } else {
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                mensaje("No tenes activo el gps.");
-                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(myIntent);
+                requerirGPS();
                 return null;
             }
         }
@@ -531,9 +527,45 @@ public class MapFragment extends Fragment {
                 bestLocation = l;
             }
         }
-
-        return bestLocation;
+        assert bestLocation != null;
+        return new LatLng(bestLocation.getLatitude(), bestLocation.getLongitude());
     }
+
+    private void requerirGPS() {
+        final Activity activity = getActivity();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                activity);
+        alertDialogBuilder
+                .setMessage("GPS está deshabilitado en su dispositivo. ¿Desea habilitarlo?")
+                .setCancelable(false)
+                .setPositiveButton("Activar GPS",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int id) {
+                                Intent callGPSSettingIntent = new Intent(
+                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                activity.startActivity(callGPSSettingIntent);
+                            }
+                        });
+        alertDialogBuilder.setNegativeButton("Cancelar",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+
+
+    public void setStartMenuDialog(Dialog startMenuDialog) {
+        this.startMenuDialog = startMenuDialog;
+    }
+
+    public void setAlarmaDestino(boolean alarmaDestino) {
+        this.alarmaDestino = alarmaDestino;
+    }
+
 
     public void camare(final LatLng punto) {
         getmMapView().getMapAsync(new OnMapReadyCallback() {

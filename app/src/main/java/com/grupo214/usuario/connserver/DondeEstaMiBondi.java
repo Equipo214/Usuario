@@ -186,7 +186,7 @@ public class DondeEstaMiBondi implements Runnable {
                                     // PD: recuerda que la luz que te ilumina te hace mas fuerte attee: QUEWE
                                     tiempoEstimadoAdapter.add(serviciosActivos.get(idServicio));
                                 } else {
-                                    if (idServicio.equals(servicio.getIdServicio()))
+                                  /*  if (idServicio.equals(servicio.getIdServicio()))
                                         if (servicio.compararFechas(fecha) != 0) {
                                             idServicio += "D";
                                             servicio = serviciosActivos.get(idServicio);
@@ -198,7 +198,7 @@ public class DondeEstaMiBondi implements Runnable {
                                                 servicio = new Servicio(idServicio, fecha, r.getIdRamal(), r.getLinea(), r.getDescripcion(), mk, resource, minutos);
                                                 serviciosActivos.put(idServicio, servicio);
                                             }
-                                        }
+                                        }*/
                                     servicio.setActivo(true);
                                 }
 
@@ -208,8 +208,9 @@ public class DondeEstaMiBondi implements Runnable {
                                 servicio.setTiempoEstimado(minutos);
                                 tiempoEstimadoAdapter.notifyDataSetChanged();
 
-                                  animateMarker(servicio.getMk(), destino, googleMap);
-                               // MarkerAnimation.animateMarkerToGB(servicio.getMk(),destino,LatLngInterpolator.Spherical());
+                                if (!destino.equals(servicio.getMk().getPosition()))
+                                    animateMarker(servicio.getMk(), destino, googleMap);
+                                // MarkerAnimation.animateMarkerToGB(servicio.getMk(),destino,LatLngInterpolator.Spherical());
                             }
 
                             tiempoEstimadoAdapter.sort(Servicio.COMPARATOR);
@@ -230,6 +231,8 @@ public class DondeEstaMiBondi implements Runnable {
         requestQueue_getUbicacion.add(jsonRequest);
 
     }
+
+
 
     private void animateMarker(final Marker marker, final LatLng toPosition, GoogleMap googleMap) {
 
