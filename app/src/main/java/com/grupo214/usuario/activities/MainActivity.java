@@ -6,19 +6,25 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -111,20 +117,40 @@ public class MainActivity extends AppCompatActivity
 
         //Set Tab:
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-        mSectionsPageAdapter.addFragment(lineasFragment, "Lineas");     // 0
-        mSectionsPageAdapter.addFragment(mapFragment, "Mapa");          // 1
-        mSectionsPageAdapter.addFragment(notificacionFragment, "Notif.");       // 2
+        final LayoutInflater inflater = LayoutInflater.from(tabLayout.getContext());
+
+    /*   tabLayout.setCustomTabView(new SmartTabLayout.TabProvider() {
+            @Override
+            public View createTabView(ViewGroup container, int position, PagerAdapter adapter) {
+                ImageView icon = (ImageView) inflater.inflate(R.layout.custom_tab_icon1, container,
+                        false);
+                switch (position) {
+                    case 0:
+                        icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_bus_black_24dp));
+                        break;
+                    case 1:
+                        icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_map_unselect_24dp));
+                        break;
+                    case 2:
+                        icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_notifications_black_24dp));
+                        break;
+                    default:
+                        throw new IllegalStateException("Invalid position: " + position);
+                }
+                return null;
+            }
+        });*/
+        tabLayout.setDividerColors(Color.BLUE);
+
+        mSectionsPageAdapter.addFragment(lineasFragment, "LINEAS");     // 0
+        mSectionsPageAdapter.addFragment(mapFragment, "MAPA");          // 1
+        mSectionsPageAdapter.addFragment(notificacionFragment, "NOTIF.");       // 2
+
+
         mViewPager.setAdapter(mSectionsPageAdapter);
         mViewPager.setCurrentItem(TAB_LINEA); // para que inicie la tab de Mapas --> temporalmente cambiado.
+
         tabLayout.setViewPager(mViewPager);
-        tabLayout.setOnTabClickListener(new SmartTabLayout.OnTabClickListener() {
-            @Override
-            public void onTabClicked(int position) {
-                if (position == TAB_MAPA)
-                    if (puntoPartida != null)
-                        mapFragment.dondeEstaMiBondi(puntoPartida);
-            }
-        });
 
         //   tabLayout.getTabAt(TAB_LINEA).setPointerIcon(new PointerIcon());
         //   tabLayout.getTabAt(TAB_MAPA).setIcon(R.drawable.ic_map_unselect_24dp);
@@ -146,7 +172,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     private void inicializarFragments() {
         mLineas = SplashScreen.mLineas;  // cambiar por SQLite o algo mas objetoso
         ramales_seleccionados = DatabaseAlarms.getInstance(this).getRamales();
@@ -154,7 +179,7 @@ public class MainActivity extends AppCompatActivity
         notificacionFragment = new NotificacionFragment();
         lineasFragment = new LineasFragment();
         lineasFragment.setStartMenuDialog(startMenuDialog);
-      //  lineasFragment.setMapFragment(mapFragment);
+        //  lineasFragment.setMapFragment(mapFragment);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);
         lineasFragment.setTabViewPager(mViewPager);
         mapFragment = new MapFragment();
@@ -225,9 +250,7 @@ public class MainActivity extends AppCompatActivity
      * @param msj
      */
     private void mensaje(String msj) {
-        Snackbar.make(getWindow().getDecorView().findViewById(android.R.id.content)
-                , msj, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        Toast.makeText(this,msj,Toast.LENGTH_SHORT).show();
     }
 
 

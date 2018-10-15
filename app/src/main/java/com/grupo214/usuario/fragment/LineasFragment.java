@@ -115,6 +115,9 @@ public class LineasFragment extends Fragment {
                     r.getDibujo().hide();
                     ramales_seleccionados.remove(r.getIdRamal());
                 }
+
+
+
                 Log.d(TAG,r.toString());
                 checkBox.setChecked(r.isCheck());
                 DatabaseAlarms.getInstance(getContext()).updateRamal(r.getIdRamal(),r.isCheck());

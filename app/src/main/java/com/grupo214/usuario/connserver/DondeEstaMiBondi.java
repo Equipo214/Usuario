@@ -25,7 +25,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
 import com.grupo214.usuario.objects.Linea;
-import com.grupo214.usuario.objects.Parada;
 import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Servicio;
@@ -36,6 +35,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -135,13 +135,14 @@ public class DondeEstaMiBondi implements Runnable {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        for (Servicio s : serviciosActivos.values()) {
+                        Iterator<Servicio> servicioIterator = serviciosActivos.values().iterator();
+                        while (servicioIterator.hasNext()) {
+                            Servicio s = servicioIterator.next();
                             if (!s.isActivo()) {
                                 serviciosActivos.get(s.getIdServicio()).getMk().remove();
                                 serviciosActivos.remove(s.getIdServicio());
                                 tiempoEstimadoAdapter.remove(s);
                             }
-                            s.setActivo(false);
                         }
                         JSONArray serviciosJson = response.optJSONArray("servicios");
                         try {
@@ -154,6 +155,7 @@ public class DondeEstaMiBondi implements Runnable {
                                 String fecha = serviciosJson.getJSONObject(i).getString("fecha");
                                 String color = serviciosJson.getJSONObject(i).getString("color");
                                 int minutos = serviciosJson.getJSONObject(i).getInt("minutos");
+                                idServicio += fecha;
 
                                 LatLng destino = new LatLng(lat, log);
                                 Ramal r = ramales_seleccionados.get(idRamal);
@@ -206,10 +208,8 @@ public class DondeEstaMiBondi implements Runnable {
                                 servicio.setTiempoEstimado(minutos);
                                 tiempoEstimadoAdapter.notifyDataSetChanged();
 
-
-                                animateMarker(servicio.getMk(), destino, googleMap);
-
-
+                                  animateMarker(servicio.getMk(), destino, googleMap);
+                               // MarkerAnimation.animateMarkerToGB(servicio.getMk(),destino,LatLngInterpolator.Spherical());
                             }
 
                             tiempoEstimadoAdapter.sort(Servicio.COMPARATOR);

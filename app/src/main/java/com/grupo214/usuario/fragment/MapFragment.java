@@ -3,12 +3,13 @@ package com.grupo214.usuario.fragment;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
@@ -69,6 +70,7 @@ public class MapFragment extends Fragment {
     public static final LatLng posInicial = new LatLng(-34.681496, -58.559774);
     public static final int ZOOM = 13;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    //   Location myLocation = getLastKnownLocation();
     private static final String TAG = "MapFragment";
     private SwitchCompat switchAcc;
     private HashMap<String, LatLng> paradasConAlarmas;
@@ -209,7 +211,8 @@ public class MapFragment extends Fragment {
                     public boolean onMyLocationButtonClick() {
                         // Dialog que te haga habilitar el mapa.-
                         Location location = getLastKnownLocation();
-                        Log.d(TAG, location.getLatitude() + " " + location.getLongitude());
+                        if (location != null)
+                            Log.d(TAG, location.getLatitude() + " " + location.getLongitude());
                         return false;
                     }
                 });
@@ -301,7 +304,6 @@ public class MapFragment extends Fragment {
 
     }
 
-
     public void dondeEstaMiBondi(LatLng latLng) {
 
         for (Marker mk : markerCercanos.values()) {
@@ -323,7 +325,7 @@ public class MapFragment extends Fragment {
             Log.d("MapFragment", "ramal numero: " + r.toString());
             Marker mk = r.paradaMasCercana(latLng);
             markerCercanos.put(r.getIdRamal(), mk);
-            paradasCercanas.put(r.getIdRamal(),((ParadaAlarma) mk.getTag()));
+            paradasCercanas.put(r.getIdRamal(), ((ParadaAlarma) mk.getTag()));
             mk.setVisible(true);
             r.setParadaCercana(((ParadaAlarma) mk.getTag()).getId_parada());
             mk.setIcon(icoMakerParadaCercana);
@@ -334,9 +336,9 @@ public class MapFragment extends Fragment {
 
         if (!isActive) {
             dondeEstaMiBondi.setSwitchAcc(switchAcc);
-            if (switchAcc.isChecked()) {
+            if (switchAcc.isChecked())
                 dondeEstaMiBondi.setParadasCercanas(paradasCercanas);
-            }
+
             dondeEstaMiBondi.run();
             isActive = true;
         } else {
@@ -345,11 +347,8 @@ public class MapFragment extends Fragment {
 
     }
 
-
     void mensaje(String msj) {
-        Snackbar.make(getActivity().getWindow().getDecorView().findViewById(android.R.id.content)
-                , msj, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        Toast.makeText(getContext(), msj, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -379,7 +378,6 @@ public class MapFragment extends Fragment {
     public MapView getmMapView() {
         return mMapView;
     }
-
 
     public void updateDrawingRoutes() {
         for (Linea l : mLinea) {
@@ -448,7 +446,6 @@ public class MapFragment extends Fragment {
         this.ramalesSeleccionados = ramalesSeleccionados;
     }
 
-
     public void dialogDondeEstaMiBondi() {
 
         //deshabilitamos el título por defecto
@@ -463,11 +460,13 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 startMenuDialog.dismiss();
-                Toast.makeText(getContext(), "Ubicacion", Toast.LENGTH_SHORT).show();
 
                 //puntoPartida = new LatLng(location.getLatitude(), location.getLongitude());
                 //       dondeEstaMiBondi(posInicial);
                 if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getContext(), "No se han concedidos los permisos del GPS.", Toast.LENGTH_SHORT).show();
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                     return;
                 }
                 mFusedLocationClient.getLastLocation()
@@ -506,15 +505,18 @@ public class MapFragment extends Fragment {
     }
 
 
-    //   Location myLocation = getLastKnownLocation();
-
     private Location getLastKnownLocation() {
+        mensaje("Entro LastKnown");
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            mensaje("No tenes activo el gps.");
-        } else {
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-                mensaje("Sin permisos");
+            mensaje("Sin permisos");
             return null;
+        } else {
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                mensaje("No tenes activo el gps.");
+                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(myIntent);
+                return null;
+            }
         }
         locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
@@ -538,7 +540,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(punto).zoom(5).build()));
+                        new CameraPosition.Builder().target(punto).zoom(14).build()));
             }
         });
     }

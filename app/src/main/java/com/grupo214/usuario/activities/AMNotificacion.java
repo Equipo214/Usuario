@@ -51,6 +51,7 @@ public class AMNotificacion extends AppCompatActivity {
     RecyclerView rw_paradas;
     String modo;
     ParadasListaAdapter paradasListaAdapter;
+    private static final int ZONE_HOUR = -3;
 
 
     @Override
@@ -86,6 +87,19 @@ public class AMNotificacion extends AppCompatActivity {
             viernes.setChecked(alarm.getDay(Alarm.FRI));
             sabado.setChecked(alarm.getDay(Alarm.SAT));
             domingo.setChecked(alarm.getDay(Alarm.SUN));
+
+            long milis = alarm.getTime();
+            int minutos = (int) ((milis / (1000 * 60)) % 60);
+            int horas = (int) ((milis / (1000 * 60 * 60)) % 24);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                timePicker.setHour(horas + ZONE_HOUR);
+                timePicker.setMinute(minutos);
+            }else{
+                timePicker.setCurrentHour(horas + ZONE_HOUR);
+                timePicker.setCurrentMinute(minutos);
+            }
+
             if (alarm.getParadaAlarmas().size() > 0) {
                 String mensaje = "Paradas: " + alarm.getParadaAlarmas().size() + ".";
                 tx_parada_fixed_not_add.setVisibility(TextView.VISIBLE);
@@ -104,15 +118,12 @@ public class AMNotificacion extends AppCompatActivity {
             }
             paradasListaAdapter.notifyDataSetChanged();
         }
-
-
         bt_guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 guardar();
             }
         });
-
     }
 
     @Override
@@ -120,11 +131,12 @@ public class AMNotificacion extends AppCompatActivity {
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
 
         alt_bld.setTitle("Salir");
-        alt_bld.setMessage("¿Desea guardar los cambios?");
+        alt_bld.setMessage("¿Desea salir? Los cambios no guardados se perderan");
         alt_bld.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                guardar();
+                //guardar();
+                AMNotificacion.super.onBackPressed();
                 dialog.dismiss();
             }
         });
@@ -132,7 +144,6 @@ public class AMNotificacion extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                AMNotificacion.super.onBackPressed();
             }
         });
 
@@ -186,6 +197,8 @@ public class AMNotificacion extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         alarm.setTime(calendar.getTimeInMillis());
+
+
         final int rowsUpdated = DatabaseAlarms.getInstance(this).updateAlarm(alarm);
         String messageId;
         if (rowsUpdated == 1) {
@@ -201,7 +214,6 @@ public class AMNotificacion extends AppCompatActivity {
 
     void crearAlarma(Alarm alarm) {
 
-
         AlarmManager alarmMgr;
 
         for (int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
@@ -212,7 +224,7 @@ public class AMNotificacion extends AppCompatActivity {
             PendingIntent pendingIntent;
             Intent intent = new Intent(this, CheckPostsReceiver.class);
             intent.putExtra(EXTRA_ID_ALARMA, alarm.getId());
-            pendingIntent = PendingIntent.getBroadcast(this, alarm.getId()+dayOfWeek, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            pendingIntent = PendingIntent.getBroadcast(this, alarm.getId() + dayOfWeek, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             // seteo hora y dia.
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(alarm.getTime());
@@ -229,8 +241,8 @@ public class AMNotificacion extends AppCompatActivity {
             Log.d("AMN", "Creo esto: " + alarm_time);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 alarmMgr.setAlarmClock(new AlarmManager.AlarmClockInfo(alarm_time, pendingIntent), pendingIntent);
-            //    AlarmManager.AlarmClockInfo alarmClockInfo = alarmMgr.getNextAlarmClock();
-            //    Log.d("AMN", "Zonara esto: " + alarmClockInfo.getTriggerTime());
+                //    AlarmManager.AlarmClockInfo alarmClockInfo = alarmMgr.getNextAlarmClock();
+                //    Log.d("AMN", "Zonara esto: " + alarmClockInfo.getTriggerTime());
             }
 
 

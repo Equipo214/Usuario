@@ -64,13 +64,14 @@ public class LocationService extends Service implements
 
     private double lat;
     private double lng;
+    private boolean flag;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String CHANNEL_ONE_ID = "Where is my bondi";
         String CHANNEL_ONE_NAME = "Channel One";
-
+        flag = true;
         lat = intent.getDoubleExtra("lat", 0);
         lng = intent.getDoubleExtra("lng", 0);
         Log.d(TAG, "LAT: " + lat + "LNG: " + lng);
@@ -190,7 +191,8 @@ public class LocationService extends Service implements
             //  Toast.makeText(getBaseContext(), "destino: " + destino.toString(), Toast.LENGTH_SHORT).show();
             //  Send result to activities
             // if (test++ == 1) {
-            if (Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) < 200) {
+            if (flag && Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) < 80) {
+                flag = false;
                 // && < 200
                 // Log.d(TAG, "Distancia: " + Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) + " metros.");
                 Intent intent = new Intent(this, WarnActivity.class);
