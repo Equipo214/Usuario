@@ -3,15 +3,18 @@ package com.grupo214.usuario.adapters;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.AnimationFactory;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 
@@ -26,6 +29,9 @@ public class LineasAdapter extends BaseExpandableListAdapter {
     private List<Linea> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<Ramal>> _listDataTextChild;
+    private int displayWidth;
+    private int prevPosition;
+
 
     public LineasAdapter(Context context, List<Linea> mLineas) {
         this._context = context;
@@ -56,8 +62,8 @@ public class LineasAdapter extends BaseExpandableListAdapter {
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
         final Ramal r = (Ramal) getChild(groupPosition, childPosition);
-        Log.d(TAG,r.toString());
 
+        displayWidth = getDisplayWidth(_context);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -72,6 +78,10 @@ public class LineasAdapter extends BaseExpandableListAdapter {
 
         tx_ramal.setText(r.getDescripcion());
         checkBox.setChecked(r.isCheck());
+
+        AnimationFactory.doFade(convertView);
+        prevPosition = childPosition;
+
 
         return convertView;
     }
@@ -134,6 +144,12 @@ public class LineasAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    int getDisplayWidth(Context context) {
+        final Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay();
+        return display.getWidth();
     }
 
 }

@@ -129,7 +129,7 @@ public class DondeEstaMiBondi implements Runnable {
             }
         }
 
-        String url = "http://dondeestamibondi.online/appPasajero/getUbicacionServicios.php?" + parameters + "&top=3";
+        String url = "http://dondeestamibondi.online/appPasajero/getUbicacionServicios.php?" + parameters + "&top=5";
         url = url.replace("?&", "?");
 
         Log.d("URL", url);
@@ -138,8 +138,6 @@ public class DondeEstaMiBondi implements Runnable {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        limpiar();
 
                         JSONArray serviciosJson = response.optJSONArray("servicios");
                         try {
@@ -198,6 +196,7 @@ public class DondeEstaMiBondi implements Runnable {
                             }
                             tiempoEstimadoAdapter.sort(Servicio.COMPARATOR);
                             tiempoEstimadoAdapter.notifyDataSetChanged();
+                            limpiar();
                         } catch (JSONException e) {
                             Log.d("Json Error", e.toString());
                         }
@@ -211,12 +210,13 @@ public class DondeEstaMiBondi implements Runnable {
         });
 
 
+
         requestQueue_getUbicacion = Volley.newRequestQueue(context);
         requestQueue_getUbicacion.add(jsonRequest);
 
     }
 
-    private void limpiar() {
+    public void limpiar() {
         ArrayList<Servicio> serviciosEliminar = new ArrayList<>();
         for (Servicio s : serviciosActivos.values()) {
             Log.d(TAG, s.getIdServicio());

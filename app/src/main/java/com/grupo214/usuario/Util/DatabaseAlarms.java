@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 
 public final class DatabaseAlarms extends SQLiteOpenHelper {
-    private static String TAG = "DatabaseAlarms";
     public static final String TABLE_PARADAS_ALARM = "paradas_alarm";
     static final String _ID = "_ID";
     static final String COL_TIME = "TIME";
@@ -39,11 +38,11 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
     static final String COL_DESCRIPCION = "DESCRIPCION";
     static final String COL_LINEA = "LINEA";
     static final String COL_CHECKED = "CHECKED";
-
     private static final String DATABASE_NAME = "alarms.db";
     private static final int VERSION = 1;
     private static final String TABLE_ALARM = "alarms";
     private static final String TABLE_RAMAL = "ramal";
+    private static String TAG = "DatabaseAlarms";
     private static DatabaseAlarms sInstance = null;
     final String CREATE_ALARMS_TABLE = "CREATE TABLE " + TABLE_ALARM + " (" +
             _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -109,6 +108,12 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
 
 
     public int updateRamal(String idRamal, Boolean check) {
+        Log.d(
+                TAG,
+                "idRamal" + idRamal +
+                "Check " + check +
+                        "updateRamal()"
+        );
         final String where = COL_ID_RAMAL + "=?";
         final String[] whereArgs = new String[]{idRamal};
         return getWritableDatabase()
@@ -122,7 +127,7 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
                 .update(TABLE_RAMAL, Util.toContentValues(ramal), where, whereArgs);
     }
 
-    public long addRamal(Ramal ramal){
+    public long addRamal(Ramal ramal) {
         return getWritableDatabase().insert(TABLE_RAMAL, null, Util.toContentValues(ramal));
     }
 
@@ -211,7 +216,7 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
             alarm.setParadaAlarmas(getParadas(alarm.getId()));
     }
 
-    public HashMap<String,Ramal> getRamales() {
+    public HashMap<String, Ramal> getRamales() {
         Cursor c = null;
         final String where = COL_CHECKED + "=?";
         final String[] whereArgs = new String[]{"1"};
@@ -225,14 +230,10 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
     }
 
     public boolean exist(Ramal r) {
-        Cursor c =  getReadableDatabase().query(TABLE_RAMAL, new String[] {"1"},
-                COL_ID_RAMAL + "=\'" + r.getIdRamal()+"\'", null, null, null, null);
+        Cursor c = getReadableDatabase().query(TABLE_RAMAL, new String[]{"1"},
+                COL_ID_RAMAL + "=\'" + r.getIdRamal() + "\'", null, null, null, null);
         c.moveToFirst();
         int count = c.getCount();
-        Log.d(TAG,"cantidad: " + count );
-       // if( count == 1 ){
-         //   Log.d(TAG,c.getString(c.getColumnIndex(DatabaseAlarms.COL_DESCRIPCION)));
-       // }
-        return  c.getCount() == 1;
+        return c.getCount() == 1;
     }
 }

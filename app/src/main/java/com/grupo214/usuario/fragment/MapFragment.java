@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -352,7 +353,9 @@ public class MapFragment extends Fragment {
     }
 
     void mensaje(String msj) {
-        Toast.makeText(getContext(), msj, Toast.LENGTH_SHORT).show();
+        Toast toast = Toast.makeText(getContext(), msj, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
     }
 
     @Override
@@ -507,7 +510,6 @@ public class MapFragment extends Fragment {
     }*/
 
     private LatLng getLastKnownLocation() {
-        mensaje("Entro LastKnown");
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             mensaje("Sin permisos");
             return null;

@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -35,6 +36,7 @@ import static com.grupo214.usuario.fragment.NotificacionFragment.EDITAR;
 
 public class AMNotificacion extends AppCompatActivity {
 
+    private static final int ZONE_HOUR = -3;
     public static String EXTRA_ID_ALARMA = "EXTRA_ID_ALARMA";
     SparseBooleanArray dias;
     EditText editText;
@@ -51,8 +53,6 @@ public class AMNotificacion extends AppCompatActivity {
     RecyclerView rw_paradas;
     String modo;
     ParadasListaAdapter paradasListaAdapter;
-    private static final int ZONE_HOUR = -3;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class AMNotificacion extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 timePicker.setHour(horas + ZONE_HOUR);
                 timePicker.setMinute(minutos);
-            }else{
+            } else {
                 timePicker.setCurrentHour(horas + ZONE_HOUR);
                 timePicker.setCurrentMinute(minutos);
             }
@@ -105,16 +105,16 @@ public class AMNotificacion extends AppCompatActivity {
                 tx_parada_fixed_not_add.setVisibility(TextView.VISIBLE);
                 tx_parada_fixed_not_add.setText(mensaje);
                 // ACA TENGO FIXEAR.
-                //        rw_paradas.setOnTouchListener(new View.OnTouchListener() {
-                //            // Setting on Touch Listener for handling the touch inside ScrollView
-                //            @Override
-                //            public boolean onTouch(View v, MotionEvent event) {
-                //                // Disallow the touch request for parent scroll on touch of child view
-                //                v.getParent().requestDisallowInterceptTouchEvent(true);
-                //                return false;
-                //            }
-                //        });
-                //setListViewHeightBasedOnChildren(rw_paradas);
+                rw_paradas.setOnTouchListener(new View.OnTouchListener() {
+                    // Setting on Touch Listener for handling the touch inside ScrollView
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        // Disallow the touch request for parent scroll on touch of child view
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        return false;
+                    }
+                });
+                // setListViewHeightBasedOnChildren(rw_paradas);
             }
             paradasListaAdapter.notifyDataSetChanged();
         }

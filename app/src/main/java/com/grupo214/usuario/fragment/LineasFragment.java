@@ -1,7 +1,6 @@
 package com.grupo214.usuario.fragment;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -9,16 +8,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.AnimationFactory;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.LineasAdapter;
-import com.grupo214.usuario.alarma.NotificationBus;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.Ramal;
 
@@ -56,7 +57,10 @@ public class LineasFragment extends Fragment {
 
         // ¿ DONDE ESTA MI BONDI ?
         bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
+
+        /*
         Button testNot = (Button) rootView.findViewById(R.id.bt_testNOt);
+
 
         testNot.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +71,8 @@ public class LineasFragment extends Fragment {
                 i.putExtra("linea","linea");
                 getContext().startService(i);
             }
-        });
-
+        });*/
+        final Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
 
         bt_dondeEstaMiBondi.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,23 +83,23 @@ public class LineasFragment extends Fragment {
                     Toast.makeText(getContext(), "Seleciona por lo menos un ramal.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (MainActivity.puntoPartida == null)
+                if (MainActivity.puntoPartida == null) {
                     startMenuDialog.show();
+                }
 
                 tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
             }
         });
 
-
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
 
             @Override
             public void onGroupExpand(int groupPosition) {
+
                 for (int i = 0; i < mLineas.size(); i++)
                     if (i != groupPosition)
                         expandableListView.collapseGroup(i);
-                }
+            }
         });
 
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -106,7 +110,7 @@ public class LineasFragment extends Fragment {
                 Ramal r = mLineas.get(groupPosition).getRamales().get(childPosition);
                 CheckBox checkBox = v.findViewById(R.id.list_checkBox);
 
-                Log.d(TAG,ramales_seleccionados.toString());
+                Log.d(TAG, ramales_seleccionados.toString());
                 r.setChecked(!r.isCheck());
                 if (r.isCheck()) {
                     r.getDibujo().show();
@@ -114,13 +118,13 @@ public class LineasFragment extends Fragment {
                 } else {
                     r.getDibujo().hide();
                     ramales_seleccionados.remove(r.getIdRamal());
+
                 }
 
 
-
-                Log.d(TAG,r.toString());
+                Log.d(TAG, r.toString());
                 checkBox.setChecked(r.isCheck());
-                DatabaseAlarms.getInstance(getContext()).updateRamal(r.getIdRamal(),r.isCheck());
+                DatabaseAlarms.getInstance(getContext()).updateRamal(r.getIdRamal(), r.isCheck());
 
                 return false;
             }

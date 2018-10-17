@@ -304,7 +304,6 @@ public class Util {
                 final String descripcion = c.getString(c.getColumnIndex(DatabaseAlarms.COL_DESCRIPCION));
                 final boolean isChecked = c.getInt(c.getColumnIndex(DatabaseAlarms.COL_CHECKED)) == 1;
                 ramales.put(idRamal, new Ramal(idLinea, linea, idRamal, descripcion, isChecked));
-
             } while (c.moveToNext());
         }
         return ramales;

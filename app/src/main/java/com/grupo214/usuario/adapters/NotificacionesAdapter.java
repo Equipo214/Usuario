@@ -12,6 +12,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.grupo214.usuario.Dialog.DialogoEliminarNotificacion;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.AnimationFactory;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.AMNotificacion;
 import com.grupo214.usuario.fragment.MapFragment;
@@ -85,6 +87,7 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
         tx_dias.setText(dias);
 
         ImageView bt_onOff = (ImageButton) convertView.findViewById(R.id.ar_icon);
+
         bt_onOff.setImageResource(curAlarm.isEnabled() ? R.drawable.ic_alarm_on_black_24dp : R.drawable.ic_alarm_off_black_24dp);
         bt_onOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +148,8 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
                 }
             }
         });*/
+
+//        AnimationFactory.doGrow(convertView);
         return convertView;
     }
 

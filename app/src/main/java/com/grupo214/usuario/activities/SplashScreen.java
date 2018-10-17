@@ -32,9 +32,11 @@ import java.util.ArrayList;
 
 
 public class SplashScreen extends AppCompatActivity {
+
     public static ArrayList<Linea> mLineas;
-    private RequestQueue requestQueue_getRecorrido;
+    private static String TAG = "SplashScreen";
     final Context context = this;
+    private RequestQueue requestQueue_getRecorrido;
 
     public void setmLineas(ArrayList<Linea> mLineas) {
         SplashScreen.mLineas = mLineas;
@@ -75,10 +77,6 @@ public class SplashScreen extends AppCompatActivity {
         startActivity(main);
         requestQueue_getRecorrido = null;
 
-        String id = mLineas.get(0).getRamales().get(0).getIdLinea();
-
-        if (DatabaseAlarms.getInstance(this).getRamal(id) != null)
-            DatabaseAlarms.getInstance(this).updateRamal(id, true);
         finish();
     }
 
@@ -133,9 +131,11 @@ public class SplashScreen extends AppCompatActivity {
                                             ramal.getString("descripcion"),
                                             recorridoPrimario, recorridosAlternos);
                                     ramales.add(r);
-                                    if( DatabaseAlarms.getInstance(context).exist(r)){
+                                    if (DatabaseAlarms.getInstance(context).exist(r)) {
+                                        Log.d(TAG, "Existe: " + r.getDescripcion() + "Check: " + r.isCheck());
                                         r.setChecked(DatabaseAlarms.getInstance(context).getRamal(r.getIdRamal()).isCheck());
-                                    }else{
+                                    } else {
+                                        Log.d(TAG, "No existe: " + r.getDescripcion() + "Check: " + r.isCheck());
                                         DatabaseAlarms.getInstance(context).addRamal(r);
                                     }
                                 }
@@ -151,7 +151,7 @@ public class SplashScreen extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("JSON:ERROR", error.toString());
-                Toast.makeText(getBaseContext(),"Conexion lenta",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Conexion lenta", Toast.LENGTH_SHORT).show();
                 getRecorrido();
             }
         });

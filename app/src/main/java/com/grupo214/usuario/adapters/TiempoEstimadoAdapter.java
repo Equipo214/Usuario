@@ -14,6 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.AnimationFactory;
 import com.grupo214.usuario.objects.Servicio;
 
 
@@ -66,6 +67,8 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
                                 .build()));
             }
         });
+
+        AnimationFactory.doGrow(convertView);
 
         return convertView;
     }

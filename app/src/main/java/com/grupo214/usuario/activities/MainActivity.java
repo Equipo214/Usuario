@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity
                         false);
                 switch (position) {
                     case 0:
-                        icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_bus_black_24dp));
+                        icon.setImageDrawable(getResources().getDrawabl e(R.drawable.ic_directions_bus_black_24dp));
                         break;
                     case 1:
                         icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_map_unselect_24dp));

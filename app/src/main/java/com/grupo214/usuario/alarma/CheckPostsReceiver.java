@@ -20,7 +20,6 @@ import com.grupo214.usuario.activities.AMNotificacion;
 import com.grupo214.usuario.objects.Alarm;
 import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
-import com.grupo214.usuario.objects.Servicio;
 import com.grupo214.usuario.objects.ServicioAlarma;
 
 import org.json.JSONArray;
@@ -31,13 +30,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class CheckPostsReceiver extends BroadcastReceiver {
 
+    private static final String TAG = "CheckPostReceiver";
     private static final HashMap<String, ServicioAlarma> serviciosActivos = new HashMap<>();
     private static final List<String> serviciosPospuestos = new ArrayList<>();
     private static Timer timer;
@@ -138,11 +137,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Iterator<ServicioAlarma> servicioIterator = serviciosActivos.values().iterator();
-                        while (servicioIterator.hasNext()) {
-                            ServicioAlarma s = servicioIterator.next();
-                            s.setActivo(false);
-                        }
+                        limpiar();
 
                         JSONArray serviciosJson = response.optJSONArray("servicios");
                         try {
@@ -155,7 +150,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
                                 String fecha = serviciosJson.getJSONObject(i).getString("fecha");
                                 String color = serviciosJson.getJSONObject(i).getString("color");
                                 int minutos = serviciosJson.getJSONObject(i).getInt("minutos");
-                                idServicio+=fecha;
+                                idServicio += fecha;
 
                                 LatLng ubicacion = new LatLng(lat, log);
                                 ServicioAlarma servicio = serviciosActivos.get(idServicio);
@@ -217,5 +212,18 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         });
         requestQueue_getUbicacion = Volley.newRequestQueue(context);
         requestQueue_getUbicacion.add(jsonRequest);
+    }
+
+    private void limpiar() {
+        ArrayList<ServicioAlarma> serviciosEliminar = new ArrayList<>();
+        for (ServicioAlarma s : serviciosActivos.values())
+            if (!s.isActivo())
+                serviciosEliminar.add(s);
+            else
+                s.setActivo(false);
+        for (ServicioAlarma s : serviciosEliminar)
+            serviciosActivos.remove(s.getIdServicio());
+
+
     }
 }

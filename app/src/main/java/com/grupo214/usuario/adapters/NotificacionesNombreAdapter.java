@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.Util.AnimationFactory;
 import com.grupo214.usuario.objects.Alarm;
 
 import java.text.SimpleDateFormat;
@@ -65,6 +66,8 @@ public class NotificacionesNombreAdapter extends ArrayAdapter<Alarm> {
 
         ImageView bt_onOff = (ImageView) convertView.findViewById(R.id.ar_icon_simple);
         bt_onOff.setImageResource(curAlarm.isEnabled() ? R.drawable.ic_alarm_on_black_24dp : R.drawable.ic_alarm_off_black_24dp);
+
+        AnimationFactory.doFade(convertView);
 
         return convertView;
     }
