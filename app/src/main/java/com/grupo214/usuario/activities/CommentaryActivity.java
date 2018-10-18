@@ -47,6 +47,7 @@ public class CommentaryActivity extends AppCompatActivity {
         ImageButton bt_backComm = (ImageButton) findViewById(R.id.bt_backComm);
         tx_comentario = findViewById(R.id.tx_comentario);
 
+
         spinner_linea = findViewById(R.id.spinner_linea);
         spinner_ramal = findViewById(R.id.spinner_ramal);
 
@@ -63,8 +64,12 @@ public class CommentaryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String comentario = tx_comentario.getText().toString();
                 if (idLinea != null && idRamal != null)
-                    if (comentario.length() < CANT_CARACTERES) {
-                        Toast.makeText(getApplicationContext(), "Ingresar  un minimo de " + CANT_CARACTERES + " caracteres.", Toast.LENGTH_LONG).show();
+                    if (spinner_linea.getSelectedItem().toString().equals("")) {
+                        Toast.makeText(getApplicationContext(), "Selecione una linea.", Toast.LENGTH_LONG).show();
+                    } else if (spinner_ramal.getSelectedItem().toString().equals("")) {
+                        Toast.makeText(getApplicationContext(), "Selecione un ramal.", Toast.LENGTH_LONG).show();
+                    } else if (comentario.length() < CANT_CARACTERES) {
+                        Toast.makeText(getApplicationContext(), "Ingresar un minimo de " + CANT_CARACTERES + " caracteres.", Toast.LENGTH_LONG).show();
                     } else {
 
                         if (requestQueue_enviarComentario != null) {
@@ -78,7 +83,7 @@ public class CommentaryActivity extends AppCompatActivity {
                         requestQueue_enviarComentario.add(jsonRequest);
                         Toast.makeText(getApplicationContext(), "Enviado", Toast.LENGTH_LONG).show();
                         CommentaryActivity.super.onBackPressed();
-                }
+                    }
             }
         });
 
@@ -89,6 +94,7 @@ public class CommentaryActivity extends AppCompatActivity {
                 String item = adapter.getItemAtPosition(position).toString();
                 idLinea = lineas_id_nombres.get(lineas_nombres.indexOf(item));
                 traerRamal(idLinea);
+
             }
 
             @Override
@@ -115,11 +121,13 @@ public class CommentaryActivity extends AppCompatActivity {
 
         lineas_nombres = new ArrayList<>();
         lineas_id_nombres = new ArrayList<>();
+        lineas_nombres.add("");
+        lineas_id_nombres.add("-1");
         for (Linea l : mLinea) {
             lineas_nombres.add(l.getLinea());
             lineas_id_nombres.add(l.getIdLinea());
         }
-        myAdapterLinea = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lineas_nombres);
+        myAdapterLinea = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, lineas_nombres);
         myAdapterLinea.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner_linea.setAdapter(myAdapterLinea);
     }
@@ -130,12 +138,15 @@ public class CommentaryActivity extends AppCompatActivity {
         ramal_nombres = new ArrayList<>();
         ramal_id_nombres = new ArrayList<>();
 
-        for (Ramal r : linea.getRamales()) {
-            ramal_nombres.add(r.getDescripcion());
-            ramal_id_nombres.add(r.getIdRamal());
-        }
+        ramal_nombres.add("");
+        ramal_id_nombres.add("-1");
+        if (linea != null)
+            for (Ramal r : linea.getRamales()) {
+                ramal_nombres.add(r.getDescripcion());
+                ramal_id_nombres.add(r.getIdRamal());
+            }
 
-        myAdapterRamal = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ramal_nombres);
+        myAdapterRamal = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line, ramal_nombres);
         myAdapterRamal.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner_ramal.setAdapter(myAdapterRamal);
     }

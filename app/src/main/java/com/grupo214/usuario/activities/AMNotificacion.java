@@ -104,7 +104,9 @@ public class AMNotificacion extends AppCompatActivity {
                 String mensaje = "Paradas: " + alarm.getParadaAlarmas().size() + ".";
                 tx_parada_fixed_not_add.setVisibility(TextView.VISIBLE);
                 tx_parada_fixed_not_add.setText(mensaje);
+
                 // ACA TENGO FIXEAR.
+                /*
                 rw_paradas.setOnTouchListener(new View.OnTouchListener() {
                     // Setting on Touch Listener for handling the touch inside ScrollView
                     @Override
@@ -113,7 +115,7 @@ public class AMNotificacion extends AppCompatActivity {
                         v.getParent().requestDisallowInterceptTouchEvent(true);
                         return false;
                     }
-                });
+                });*/
                 // setListViewHeightBasedOnChildren(rw_paradas);
             }
             paradasListaAdapter.notifyDataSetChanged();

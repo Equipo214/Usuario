@@ -24,6 +24,7 @@ import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.AnimationFactory;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.AMNotificacion;
+import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.Alarm;
@@ -44,6 +45,7 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
     private ViewPager tabViewPager;
     private MapFragment mapFragment;
     private AlarmManager alarmManager;
+    private LineasFragment lineasFragment;
 
     public NotificacionesAdapter(@NonNull Context context, int resource, TextView txServicioBack, FragmentManager fragmentManager, ViewPager tabViewPager) {
         super(context, resource);
@@ -133,6 +135,7 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
         rw_paradas.setLayoutManager(layoutManager);
         ParadasListaSimpleAdapter paradasListaSimpleAdapter = new ParadasListaSimpleAdapter(getContext(),curAlarm.getParadaAlarmas());
         paradasListaSimpleAdapter.setMapFragment(mapFragment);
+        paradasListaSimpleAdapter.setLineasFragment(lineasFragment);
         paradasListaSimpleAdapter.setTabViewPager(tabViewPager);
         rw_paradas.setAdapter(paradasListaSimpleAdapter);
 
@@ -171,6 +174,10 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
 
     public void setAlarmManager(AlarmManager alarmManager) {
         this.alarmManager = alarmManager;
+    }
+
+    public void setLineasFragment(LineasFragment lineasFragment) {
+        this.lineasFragment = lineasFragment;
     }
 }
 

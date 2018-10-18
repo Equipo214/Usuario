@@ -8,19 +8,24 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ListView
             android:id="@+id/listaNotificaciones"
-            style="@style/Widget.AppCompat.ListView.DropDown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@color/tabUnSelect"
-            android:dividerHeight="1dp"
-            android:headerDividersEnabled="true"
             android:clickable="true"
+            android:divider="@color/tabUnSelect"
+            android:dividerHeight="0dp"
             android:focusable="true"
+            android:headerDividersEnabled="true"
             android:scrollbars="vertical" />
 
     </RelativeLayout>

@@ -44,6 +44,7 @@ public final class NotificacionFragment extends Fragment {
     private MapFragment mapFragment;
     private AlarmManager alarmManager;
     private HashMap<String, Ramal> ramalesSeleccionados;
+    private LineasFragment lineasFragment;
 
     public static NotificacionesNombreAdapter getNotificacionesNombreAdapter() {
         return notificacionesNombreAdapter;
@@ -90,6 +91,8 @@ public final class NotificacionFragment extends Fragment {
 
         lv_listNotificaciones = (ListView) view.findViewById(R.id.listaNotificaciones);
         notificacionesAdapter.setMapFragment(mapFragment);
+        notificacionesAdapter.setLineasFragment(lineasFragment);
+
         notificacionesAdapter.setAlarmManager(alarmManager);
         lv_listNotificaciones.setAdapter(notificacionesAdapter);
         ArrayList<Alarm> listAlarms = DatabaseAlarms.getInstance(getContext()).getAlarms();
@@ -116,4 +119,7 @@ public final class NotificacionFragment extends Fragment {
     }
 
 
+    public void setLineasFragment(LineasFragment lineasFragment) {
+        this.lineasFragment = lineasFragment;
+    }
 }

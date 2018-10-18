@@ -1,5 +1,7 @@
 package com.grupo214.usuario.objects;
 
+import android.annotation.SuppressLint;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.Util.Util;
 
@@ -40,10 +42,10 @@ public class ServicioAlarma {
     }
 
     public int compararFechas(String fecha2){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            Date date1 = sdf.parse(fecha);
-            Date date2 = sdf.parse(fecha2);
+            Date date1 = simpleDateFormat.parse(fecha);
+            Date date2 = simpleDateFormat.parse(fecha2);
             return  date1.compareTo(date2);
         } catch (ParseException e) {
             e.printStackTrace();

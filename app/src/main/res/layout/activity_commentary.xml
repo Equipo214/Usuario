@@ -4,17 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@color/white"
     tools:context=".activities.CommentaryActivity">
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="238dp"
         android:layout_height="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="24dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:text="Comentario:"
+        app:layout_constraintBottom_toTopOf="@+id/tx_comentario"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner_ramal" />
 
@@ -28,8 +33,10 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="4dp"
-        android:background="@color/white"
         android:gravity="top|start"
+        style="@style/Widget.AppCompat.EditText"
+        android:shadowColor="@color/tabSelect"
+        android:background="@color/white"
         android:hint="Ingrese su comentario aqui..."
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintBottom_toTopOf="@+id/bt_enviar"
@@ -40,36 +47,36 @@
         app:layout_constraintVertical_bias="0.121" />
 
 
-    <ImageButton
-        android:id="@+id/bt_enviar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_send_black_24dp" />
-
     <Spinner
+        style="@style/Widget.AppCompat.Spinner"
         android:id="@+id/spinner_linea"
-        android:layout_width="240dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="24dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/textView3"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <Spinner
+        style="@style/Widget.AppCompat.Spinner"
         android:id="@+id/spinner_ramal"
-        android:layout_width="239dp"
-        android:layout_height="32dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="24dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/textView6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -77,10 +84,14 @@
         android:id="@+id/textView3"
         android:layout_width="238dp"
         android:layout_height="20dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="24dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:text="Seleccione un ramal"
+        android:text="Ramal:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner_linea" />
 
@@ -88,12 +99,28 @@
         android:id="@+id/textView4"
         android:layout_width="238dp"
         android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="24dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:text="Seleccione una id_linea"
+        android:text="Linea:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/bt_enviar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@android:drawable/edit_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_send_black_24dp" />
 
     <ImageButton
         android:id="@+id/bt_backComm"
@@ -102,6 +129,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
+        android:background="@android:drawable/edit_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tx_comentario"
         app:srcCompat="@drawable/ic_undo_black_24dp" />

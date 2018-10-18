@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.activities.MainActivity;
+import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.objects.ParadaAlarma;
 
@@ -28,6 +29,7 @@ public class ParadasListaSimpleAdapter extends RecyclerView.Adapter<ParadasLista
     private MapFragment mapFragment;
     private ViewPager tabViewPager;
     private Context context;
+    private LineasFragment lineasFragment;
 
     public void setTabViewPager(ViewPager tabViewPager) {
         this.tabViewPager = tabViewPager;
@@ -60,6 +62,8 @@ public class ParadasListaSimpleAdapter extends RecyclerView.Adapter<ParadasLista
                 Toast.makeText(context,"Entro",Toast.LENGTH_LONG).show();
                 tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
                 mapFragment.camare(paradaAlarma.getPunto());
+                // VER MAÑANA todo
+                // lineasFragment
             }
         });
     }
@@ -72,6 +76,10 @@ public class ParadasListaSimpleAdapter extends RecyclerView.Adapter<ParadasLista
 
     public void setMapFragment(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
+    }
+
+    public void setLineasFragment(LineasFragment lineasFragment) {
+        this.lineasFragment = lineasFragment;
     }
 
 

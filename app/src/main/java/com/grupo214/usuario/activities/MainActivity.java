@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity
         mapFragment.setLineas(mLineas, ramales_seleccionados);
         notificacionFragment.setTabViewPage(mViewPager);
         notificacionFragment.setMapFragment(mapFragment);
+        notificacionFragment.setLineasFragment(lineasFragment);
         notificacionFragment.setAlarmManager(manager);
     }
 
@@ -233,10 +234,6 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.nav_comentario:
                 startActivity(new Intent(this, CommentaryActivity.class));
-                break;
-
-            case R.id.nav_acc:
-                Toast.makeText(this, "hola", Toast.LENGTH_LONG).show();
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

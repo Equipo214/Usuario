@@ -43,17 +43,26 @@ public class CheckPostsReceiver extends BroadcastReceiver {
     final long TIME_OBTENER_UBICACIONES_NOTIFICACIONES = 60000; // un minuto <-
     private Context context;
 
+    /**
+     *
+     * @param context
+     * @param idAlarma
+     * @return
+     */
     static boolean checkNotificacion(Context context, int idAlarma) {
         List<ServicioAlarma> serviciosOrdenados = new ArrayList<>(serviciosActivos.values());
         Collections.sort(serviciosOrdenados, ServicioAlarma.COMPARATOR);
         for (ServicioAlarma s : serviciosOrdenados) {
             Log.d("CHECK", "primero: " + s.getTiempoEstimado());
             if (s.isActivo()) {
-                if (s.isNearByTime(15)) {
-                    crearNotificacion(context, s, idAlarma);        // 15 minutos levantar configuracion usuario -1
-                    serviciosPospuestos.add(s.getIdServicio());
-                    serviciosActivos.remove(s.getIdServicio());
+                // obtener configuarcion usuario para saber si es distancia o tiempo
+                if (s.isNearByTime(15)) {  // 15 minutos levantar configuracion usuario -1
+                    crearNotificacion(context, s, idAlarma);
                     return true;
+                }
+                // seri depende el caso
+                if(s.isNearByDistance(300)){// 300 metros.
+                    crearNotificacion(context, s, idAlarma);
                 }
             } else
                 serviciosActivos.remove(s.getIdServicio());
@@ -62,6 +71,8 @@ public class CheckPostsReceiver extends BroadcastReceiver {
     }
 
     private static void crearNotificacion(final Context context, ServicioAlarma s, int idAlarma) {
+        serviciosPospuestos.add(s.getIdServicio());
+        serviciosActivos.remove(s.getIdServicio());
         Intent intent = new Intent(context, NotificationBus.class);
         intent.putExtra("linea", s.getLinea());
         intent.putExtra("ramal", s.getRamal());
@@ -130,7 +141,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         for (ParadaAlarma paradaAlarma : paradaAlarmas.values()) {
             parameters += "&puntos%5B%5D=" + paradaAlarma.getId_parada();
         }
-        String url = "http://dondeestamibondi.online/appPasajero/getUbicacionServicios.php?" + parameters;
+        String url = "http://dondeestamibondi.online/appPasajero/getUbicacionServicios.php?" + parameters + "&top=5";
         url = url.replace("?&", "?");
         Log.d("Check", url);
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -212,6 +223,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         });
         requestQueue_getUbicacion = Volley.newRequestQueue(context);
         requestQueue_getUbicacion.add(jsonRequest);
+
     }
 
     private void limpiar() {
@@ -223,7 +235,5 @@ public class CheckPostsReceiver extends BroadcastReceiver {
                 s.setActivo(false);
         for (ServicioAlarma s : serviciosEliminar)
             serviciosActivos.remove(s.getIdServicio());
-
-
-    }
+   }
 }
