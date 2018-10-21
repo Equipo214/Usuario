@@ -197,9 +197,8 @@ public class WarnActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-
         mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        long[] pattern = {0, 1000, 10000};
+        long[] pattern = {0, 1000, 10000,1000,100,0,1000,0,1000};
         mVibrator.vibrate(pattern, 0);
         mMediaPlayer = MediaPlayer.create(this, Uri.parse(pref.getString("notifications_new_message_ringtone", "content://settings/system/notification_sound")));
         mMediaPlayer.setLooping(true);

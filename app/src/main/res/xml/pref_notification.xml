@@ -38,7 +38,7 @@
             android:entryValues="@array/pref_parameter_titles"
             android:key="list_preference_parameter"
             android:summary="%s"
-            android:title="List preference" />
+            android:title="Tiempo o Distancia" />
 
         <ListPreference
             android:defaultValue="300"

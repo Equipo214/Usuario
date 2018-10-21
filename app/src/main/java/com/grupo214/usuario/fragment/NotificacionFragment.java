@@ -49,6 +49,9 @@ public final class NotificacionFragment extends Fragment {
     public static NotificacionesNombreAdapter getNotificacionesNombreAdapter() {
         return notificacionesNombreAdapter;
     }
+    public static NotificacionesAdapter getNotificacionesAdapter() {
+        return notificacionesAdapter;
+    }
 
     public static void addNotificacion(Alarm alarm) {
         notificacionesAdapter.add(alarm);
@@ -80,7 +83,6 @@ public final class NotificacionFragment extends Fragment {
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_notificaciones, container, false);
         FloatingActionButton bt_float = view.findViewById(R.id.agregarNotificacion);
-
         notificacionesAdapter = new NotificacionesAdapter(getContext(),
                 android.R.layout.simple_list_item_2,
                 (TextView) view.findViewById(R.id.tx_notificaciones_back),
@@ -92,8 +94,6 @@ public final class NotificacionFragment extends Fragment {
         lv_listNotificaciones = (ListView) view.findViewById(R.id.listaNotificaciones);
         notificacionesAdapter.setMapFragment(mapFragment);
         notificacionesAdapter.setLineasFragment(lineasFragment);
-
-        notificacionesAdapter.setAlarmManager(alarmManager);
         lv_listNotificaciones.setAdapter(notificacionesAdapter);
         ArrayList<Alarm> listAlarms = DatabaseAlarms.getInstance(getContext()).getAlarms();
         notificacionesAdapter.addAll(listAlarms);

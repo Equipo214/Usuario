@@ -47,5 +47,5 @@
         android:text="testNot"
         app:layout_constraintEnd_toEndOf="@+id/expandableListView"
         app:layout_constraintTop_toTopOf="@+id/expandableListView" />
-        -->
+-->
 </android.support.constraint.ConstraintLayout>

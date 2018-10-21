@@ -24,6 +24,10 @@ public class Dibujo {
         servicios = new HashMap<>();
     }
 
+    public List<Marker> getParadas() {
+        return paradas;
+    }
+
     public void setPolyline(Polyline polyline) {
         this.polyline = polyline;
     }
@@ -41,7 +45,7 @@ public class Dibujo {
     }
 
     /**
-     *  quizas lo hago de otra forma mucho mas optima si me sobra el tiempo
+     * quizas lo hago de otra forma mucho mas optima si me sobra el tiempo
      */
     @Deprecated
     public void hide() {
@@ -69,7 +73,6 @@ public class Dibujo {
         for (Marker mk : servicios.values())
             mk.setVisible(true);
     }
-
 
 
     public Marker paradaMasCercana(LatLng userStart) {

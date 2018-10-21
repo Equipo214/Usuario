@@ -2,6 +2,7 @@ package com.grupo214.usuario.connserver;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -23,11 +24,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.R;
+import com.grupo214.usuario.activities.AMNotificacion;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
+import com.grupo214.usuario.alarma.NotificationBus;
 import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Servicio;
+import com.grupo214.usuario.objects.ServicioAlarma;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,6 +89,16 @@ public class DondeEstaMiBondi implements Runnable {
         inicializarTasks();
     }
 
+    private static void crearNotificacion(final Context context, Servicio s, int idAlarma) {
+        Intent intent = new  Intent(context, NotificationBus.class);
+        intent.putExtra("linea", s.getLinea());
+        intent.putExtra("ramal", s.getRamal());
+        intent.putExtra("tiempo", s.getTiempoEstimado());
+        intent.putExtra("color", s.getIco());
+        intent.putExtra(AMNotificacion.EXTRA_ID_ALARMA, idAlarma);
+        context.startService(intent);
+    }
+
     private void inicializarTasks() {
         obtenerUbicacionTask = new TimerTask() {
             @Override
@@ -95,6 +109,7 @@ public class DondeEstaMiBondi implements Runnable {
         accTask = new TimerTask() {
             @Override
             public void run() {
+                RequestQueue requestQueueSolicitarAcc = Volley.newRequestQueue(context);
 
                 String parametros = "";
                 for (Servicio s : serviciosActivos.values())
@@ -102,7 +117,23 @@ public class DondeEstaMiBondi implements Runnable {
 
                 String url = "http://dondeestamibondi.online/appPasajero/solicitarAsistenciaEnParada.php?" + parametros;
                 url.replace("?&", "&");
+
                 Log.d("DONDEESTAMIBONDI", url);
+                JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                String idAcc = response.toString();
+                                Log.d(TAG, "ACC: " + idAcc);
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("JSON:ERROR", error.toString());
+                    }
+                });
+                requestQueueSolicitarAcc.add(jsonRequest);
             }
         };
     }
@@ -180,8 +211,9 @@ public class DondeEstaMiBondi implements Runnable {
                                     // att: dani del pasado :)
                                     // PD: recuerda que la luz que te ilumina te hace mas fuerte attee: QUEWE
                                     tiempoEstimadoAdapter.add(serviciosActivos.get(idServicio));
-                                } else
+                                } else{
                                     servicio.setActivo(true);
+                                }
 
 
                                 servicio.getMk().setIcon(BitmapDescriptorFactory.fromResource(resource));
@@ -210,7 +242,6 @@ public class DondeEstaMiBondi implements Runnable {
         });
 
 
-
         requestQueue_getUbicacion = Volley.newRequestQueue(context);
         requestQueue_getUbicacion.add(jsonRequest);
 
@@ -233,7 +264,6 @@ public class DondeEstaMiBondi implements Runnable {
         }
 
     }
-
 
     private void animateMarker(final Marker marker, final LatLng toPosition, GoogleMap googleMap) {
 
@@ -298,4 +328,6 @@ public class DondeEstaMiBondi implements Runnable {
     public void setParadasCercanas(HashMap<String, ParadaAlarma> paradasCercanas) {
         this.paradasCercanas = paradasCercanas;
     }
+
+
 }

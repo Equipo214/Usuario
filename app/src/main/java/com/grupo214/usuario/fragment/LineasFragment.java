@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +16,13 @@ import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Marker;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.Util.AnimationFactory;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.adapters.LineasAdapter;
 import com.grupo214.usuario.objects.Linea;
+import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
 
 import java.util.ArrayList;
@@ -45,6 +45,57 @@ public class LineasFragment extends Fragment {
     private ViewPager tabViewPager;
     private Dialog startMenuDialog;
 
+    public static void expand(final View v) {
+        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+                        : (int) (targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    v.setVisibility(View.GONE);
+                } else {
+                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,17 +111,15 @@ public class LineasFragment extends Fragment {
         // ¿ DONDE ESTA MI BONDI ?
         bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
 
-        /*
+  /*
         Button testNot = (Button) rootView.findViewById(R.id.bt_testNOt);
-
-
         testNot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), NotificationBus.class);
                 i.putExtra("tiempo","5");
-                i.putExtra("ramal","Ramal");
-                i.putExtra("linea","linea");
+                i.putExtra("ramal","Lomas de Zamora");
+                i.putExtra("linea","406");
                 getContext().startService(i);
             }
         });*/
@@ -97,15 +146,11 @@ public class LineasFragment extends Fragment {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-              // for (int i = 0; i < mLineas.size(); i++)
-             //       if (i != groupPosition)
-             //            expandableListView.collapseGroup(i);
+                for (int i = 0; i < mLineas.size(); i++)
+                    if (i != groupPosition)
+                        expandableListView.collapseGroup(i);
             }
         });
-
-
-
-
 
 
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -124,9 +169,7 @@ public class LineasFragment extends Fragment {
                 } else {
                     r.getDibujo().hide();
                     ramales_seleccionados.remove(r.getIdRamal());
-
                 }
-
 
                 Log.d(TAG, r.toString());
                 checkBox.setChecked(r.isCheck());
@@ -151,57 +194,19 @@ public class LineasFragment extends Fragment {
         this.startMenuDialog = startMenuDialog;
     }
 
-    public static void expand(final View v) {
-        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-        v.getLayoutParams().height = 1;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? ViewGroup.LayoutParams.WRAP_CONTENT
-                        : (int)(targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    public static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if(interpolatedTime == 1){
-                    v.setVisibility(View.GONE);
-                }else{
-                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
-                    v.requestLayout();
+    public void checkRamal(String idRamal, String idParada) {
+        for (Linea l : mLineas)
+            for (Ramal r : l.getRamales())
+                if (r.getIdRamal().equals(idRamal)) {
+                    r.setChecked(true);
+                    r.getDibujo().show();
+                    ramales_seleccionados.put(r.getIdRamal(), r);
+                    DatabaseAlarms.getInstance(getContext()).updateRamal(r.getIdRamal(), r.isCheck());
+                    for (Marker mk : r.getDibujo().getParadas())
+                        if (((ParadaAlarma) (mk.getTag())).getId_parada().equals(idParada)) {
+                            mk.showInfoWindow();
+                        }
+                    return;
                 }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
     }
 }

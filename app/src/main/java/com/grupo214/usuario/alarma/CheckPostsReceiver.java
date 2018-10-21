@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -34,6 +36,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.grupo214.usuario.activities.AMNotificacion.EXTRA_ID_ALARMA;
+
 public class CheckPostsReceiver extends BroadcastReceiver {
 
     private static final String TAG = "CheckPostReceiver";
@@ -44,7 +48,6 @@ public class CheckPostsReceiver extends BroadcastReceiver {
     private Context context;
 
     /**
-     *
      * @param context
      * @param idAlarma
      * @return
@@ -53,16 +56,20 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         List<ServicioAlarma> serviciosOrdenados = new ArrayList<>(serviciosActivos.values());
         Collections.sort(serviciosOrdenados, ServicioAlarma.COMPARATOR);
         for (ServicioAlarma s : serviciosOrdenados) {
-            Log.d("CHECK", "primero: " + s.getTiempoEstimado());
             if (s.isActivo()) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                String tipo = preferences.getString("pref_parameter_values", "nope");
                 // obtener configuarcion usuario para saber si es distancia o tiempo
-                if (s.isNearByTime(15)) {  // 15 minutos levantar configuracion usuario -1
-                    crearNotificacion(context, s, idAlarma);
-                    return true;
-                }
-                // seri depende el caso
-                if(s.isNearByDistance(300)){// 300 metros.
-                    crearNotificacion(context, s, idAlarma);
+                if (tipo.equals("time")) {
+                    if (s.isNearByTime(15)) {  // 15 minutos levantar configuracion usuario -1
+                        crearNotificacion(context, s, idAlarma);
+                        return true;
+                    }
+                } else {
+                    if (s.isNearByDistance(300)) {// 300 metros.
+                        crearNotificacion(context, s, idAlarma);
+                        return true;
+                    }
                 }
             } else
                 serviciosActivos.remove(s.getIdServicio());
@@ -70,7 +77,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         return false;
     }
 
-    private static void crearNotificacion(final Context context, ServicioAlarma s, int idAlarma) {
+    private static void crearNotificacion(final Context context, ServicioAlarma s, final int idAlarma) {
         serviciosPospuestos.add(s.getIdServicio());
         serviciosActivos.remove(s.getIdServicio());
         Intent intent = new Intent(context, NotificationBus.class);
@@ -81,19 +88,27 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         intent.putExtra(AMNotificacion.EXTRA_ID_ALARMA, idAlarma);
         context.startService(intent);
         timer.cancel();
-        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 clearNotification(context);
+                posponer(context, idAlarma);
             }
-        }, 1000 * 60); // en un minuto se borra la notificacion.
+        }, 1000 * 60);
     }
 
     public static void clearNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NotificationBus.NOTIFICATION_ID);
+    }
+
+    public static void posponer(Context context, int idAlarma) {
+        if (!CheckPostsReceiver.checkNotificacion(context, idAlarma)) {
+            Intent intent = new Intent(context, CheckPostsReceiver.class);
+            intent.putExtra(EXTRA_ID_ALARMA, idAlarma);
+            context.startService(intent);
+        }
     }
 
 
@@ -189,18 +204,9 @@ public class CheckPostsReceiver extends BroadcastReceiver {
                                     if (servicio == null) {
                                         servicio = new ServicioAlarma(idServicio, fecha, r.getLinea(), r.getDescripcion(), paradasDelRamal);
                                         serviciosActivos.put(idServicio, servicio);
-                                    } else {
-                                        if (idServicio.equals(servicio.getIdServicio()))
-                                            if (servicio.compararFechas(fecha) != 0) {
-                                                idServicio += "D";
-                                                servicio = serviciosActivos.get(idServicio);
-                                                if (servicio == null) {
-                                                    servicio = new ServicioAlarma(idServicio, fecha, r.getLinea(), r.getDescripcion(), paradasDelRamal);
-                                                    serviciosActivos.put(idServicio, servicio);
-                                                }
-                                            }
+                                    } else
                                         servicio.setActivo(true);
-                                    }
+
 
                                     servicio.setIco(resource);
                                     servicio.setTiempoEstimado(minutos);
@@ -235,5 +241,5 @@ public class CheckPostsReceiver extends BroadcastReceiver {
                 s.setActivo(false);
         for (ServicioAlarma s : serviciosEliminar)
             serviciosActivos.remove(s.getIdServicio());
-   }
+    }
 }

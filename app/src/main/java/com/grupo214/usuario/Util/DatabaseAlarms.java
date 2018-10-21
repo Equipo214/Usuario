@@ -111,7 +111,7 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
         Log.d(
                 TAG,
                 "idRamal" + idRamal +
-                "Check " + check +
+                        "Check " + check +
                         "updateRamal()"
         );
         final String where = COL_ID_RAMAL + "=?";
@@ -182,6 +182,14 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
         return getWritableDatabase().insert(TABLE_PARADAS_ALARM, null, Util.toContentValues(paradaAlarma));
     }
 
+    public void deleteParadaAlarma(ParadaAlarma paradaAlarma) {
+
+        String sql = "DELETE FROM " + TABLE_PARADAS_ALARM +
+                " WHERE " + COL_ID_PARADA + "=" + paradaAlarma.getId_parada() +
+                " AND " + COL_ID_ALARMS + "=" + paradaAlarma.getId_alarms();
+        getWritableDatabase().execSQL(sql);
+    }
+
     public Alarm getAlarm(long id) {
 
         Cursor c = null;
@@ -216,7 +224,7 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
             alarm.setParadaAlarmas(getParadas(alarm.getId()));
     }
 
-    public HashMap<String, Ramal> getRamales() {
+    public HashMap<String, Ramal> getRamalesSeleccionados() {
         Cursor c = null;
         final String where = COL_CHECKED + "=?";
         final String[] whereArgs = new String[]{"1"};
@@ -233,7 +241,6 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
         Cursor c = getReadableDatabase().query(TABLE_RAMAL, new String[]{"1"},
                 COL_ID_RAMAL + "=\'" + r.getIdRamal() + "\'", null, null, null, null);
         c.moveToFirst();
-        int count = c.getCount();
         return c.getCount() == 1;
     }
 }

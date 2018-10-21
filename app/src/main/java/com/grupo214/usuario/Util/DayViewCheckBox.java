@@ -1,4 +1,4 @@
-package com.grupo214.usuario.alarma;
+package com.grupo214.usuario.Util;
 
 import android.content.Context;
 import android.graphics.Color;

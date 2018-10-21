@@ -9,4 +9,8 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+
+    <declare-styleable name="TintableImageView">
+        <attr name="tinte" format="reference|color"/>
+    </declare-styleable>
 </resources>

@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -117,29 +116,32 @@ public class MainActivity extends AppCompatActivity
 
         //Set Tab:
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-        final LayoutInflater inflater = LayoutInflater.from(tabLayout.getContext());
+        final LayoutInflater inflater = LayoutInflater.from(this);
+        final Resources res = getResources();
 
-    /*   tabLayout.setCustomTabView(new SmartTabLayout.TabProvider() {
+        tabLayout.setCustomTabView(new SmartTabLayout.TabProvider() {
             @Override
             public View createTabView(ViewGroup container, int position, PagerAdapter adapter) {
-                ImageView icon = (ImageView) inflater.inflate(R.layout.custom_tab_icon1, container,
-                        false);
+                View itemView = inflater.inflate(R.layout.tab_item, container, false);
+                ImageView icon = (ImageView) itemView.findViewById(R.id.custom_tab_icon);
                 switch (position) {
                     case 0:
-                        icon.setImageDrawable(getResources().getDrawabl e(R.drawable.ic_directions_bus_black_24dp));
+                        icon.setImageDrawable(res.getDrawable(R.mipmap.ic_tab_linea));
                         break;
                     case 1:
-                        icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_map_unselect_24dp));
+                        icon.setImageDrawable(res.getDrawable(R.mipmap.ic_tab_map));
                         break;
                     case 2:
-                        icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_notifications_black_24dp));
+                        icon.setImageDrawable(res.getDrawable(R.drawable.ic_notifications_black_24dp));
                         break;
                     default:
                         throw new IllegalStateException("Invalid position: " + position);
                 }
-                return null;
+                return itemView;
             }
-        });*/
+        });
+
+
         tabLayout.setDividerColors(Color.BLUE);
 
         mSectionsPageAdapter.addFragment(lineasFragment, "LINEAS");     // 0
@@ -169,12 +171,22 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        tabLayout.setOnTabClickListener(new SmartTabLayout.OnTabClickListener() {
+            @Override
+            public void onTabClicked(int position) {
+                if (position == TAB_MAPA) {
+                    if (mapFragment.isDondeEstaMiBondiActive()){
+                        mapFragment.dondeEstaMiBondi(puntoPartida);
+                    }
+                }
+            }
+        });
     }
 
 
     private void inicializarFragments() {
         mLineas = SplashScreen.mLineas;  // cambiar por SQLite o algo mas objetoso
-        ramales_seleccionados = DatabaseAlarms.getInstance(this).getRamales();
+        ramales_seleccionados = DatabaseAlarms.getInstance(this).getRamalesSeleccionados();
         startMenuDialog = new Dialog(this, R.style.Theme_AppCompat_Dialog_Alert);
         notificacionFragment = new NotificacionFragment();
         lineasFragment = new LineasFragment();
@@ -247,7 +259,7 @@ public class MainActivity extends AppCompatActivity
      * @param msj
      */
     private void mensaje(String msj) {
-        Toast.makeText(this,msj,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, msj, Toast.LENGTH_SHORT).show();
     }
 
 

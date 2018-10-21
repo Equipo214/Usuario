@@ -39,12 +39,12 @@ public class DialogoAlarma extends AppCompatDialogFragment {
                 .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(getContext(), LocationService.class);
                         if (modo) {
                             marker.setIcon(BitmapDescriptorFactory
                                     .fromResource(R.mipmap.ic_parada_alarma_iv));
                             marker.setAlpha(1f);// ICONO ALARMA
                             paradasConAlarmas.put(marker.getId(), marker.getPosition());
-                            Intent intent = new Intent(getContext(), LocationService.class);
                             intent.putExtra("lat",marker.getPosition().latitude);
                             intent.putExtra("lng",marker.getPosition().longitude);
                             getActivity().startService(intent);
@@ -52,7 +52,6 @@ public class DialogoAlarma extends AppCompatDialogFragment {
                             marker.setIcon(BitmapDescriptorFactory
                                     .fromResource(R.mipmap.ic_parada_bondi)); // ICONO COMUN
                             paradasConAlarmas.remove(marker.getId());
-                            Intent intent = new Intent(getContext(), LocationService.class);
                             getActivity().stopService(intent);
                         }
                     }

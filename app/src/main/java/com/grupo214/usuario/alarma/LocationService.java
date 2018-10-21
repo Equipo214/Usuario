@@ -50,14 +50,10 @@ public class LocationService extends Service implements
     public static final String ACTION_LOCATION_BROADCAST = LocationService.class.getName() + "LocationBroadcast";
     public static final String EXTRA_LATITUDE = "extra_latitude";
     public static final String EXTRA_LONGITUDE = "extra_longitude";
+    public static final int ID_LOCATION_SERVICE = 214;
     private static final String TAG = LocationService.class.getSimpleName();
-    private static final int ID_LOCATION_SERVICE = 214;
     GoogleApiClient mLocationClient;
     LocationRequest mLocationRequest = new LocationRequest();
-    /**
-     * Variable para testear la alarma destino.-
-     */
-    int test = 0;
 
     private FusedLocationProviderClient mFusedLocationClient;
     private LatLng destino;
@@ -66,11 +62,13 @@ public class LocationService extends Service implements
     private double lng;
     private boolean flag;
 
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String CHANNEL_ONE_ID = "Where is my bondi";
-        String CHANNEL_ONE_NAME = "Channel One";
+        String CHANNEL_ONE_NAME = "Alarma destino";
         flag = true;
         lat = intent.getDoubleExtra("lat", 0);
         lng = intent.getDoubleExtra("lng", 0);
@@ -83,6 +81,13 @@ public class LocationService extends Service implements
         String title = "Alarma Destino Iniciada";
         String mensaje = "Duerme tranquilo, nosotros te avisamos cuando bajar.";
 
+
+        Intent cancelarIntent = new Intent(getBaseContext(), ActionReceiver.class);
+        cancelarIntent.putExtra("cancelar", "Cancelar");
+        PendingIntent cancelarPendingIntent =
+                PendingIntent.getBroadcast(this, 12347, cancelarIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
                     CHANNEL_ONE_NAME, IMPORTANCE_HIGH);
@@ -92,10 +97,11 @@ public class LocationService extends Service implements
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             manager.createNotificationChannel(notificationChannel);
             notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ONE_ID)
-                    .setContentTitle(title + "8.1")
+                    .setContentTitle(title)
                     .setContentText(mensaje)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(icon)
+                    .addAction(R.drawable.ic_alarm, "Cancelar", cancelarPendingIntent)
                     .setOngoing(false)
                     .build();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -104,6 +110,7 @@ public class LocationService extends Service implements
                     .setContentText(mensaje)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(icon)
+                    .addAction(R.drawable.ic_alarm, "Cancelar", cancelarPendingIntent)
                     .build();
         } else {
             notification = new Notification.Builder(getApplicationContext())
@@ -121,6 +128,8 @@ public class LocationService extends Service implements
 
         startForeground(ID_LOCATION_SERVICE, notification);
         ///////////////
+
+
         mLocationClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -193,13 +202,13 @@ public class LocationService extends Service implements
             // if (test++ == 1) {
             if (flag && Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) < 80) {
                 flag = false;
-                // && < 200
-                // Log.d(TAG, "Distancia: " + Util.calculateDistance(new LatLng(location.getLatitude(), location.getLongitude()), destino) + " metros.");
                 Intent intent = new Intent(this, WarnActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     stopForeground(STOP_FOREGROUND_REMOVE);
+                }else{
+                    stopService(new Intent(this, LocationService.class));
                 }
             }
             // sendMessageToUI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));

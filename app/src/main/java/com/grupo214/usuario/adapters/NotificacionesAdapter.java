@@ -1,6 +1,5 @@
 package com.grupo214.usuario.adapters;
 
-import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -12,7 +11,6 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,7 +19,6 @@ import android.widget.Toast;
 
 import com.grupo214.usuario.Dialog.DialogoEliminarNotificacion;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.Util.AnimationFactory;
 import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.AMNotificacion;
 import com.grupo214.usuario.fragment.LineasFragment;
@@ -40,11 +37,9 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
     private static final SimpleDateFormat AM_PM_FORMAT =
             new SimpleDateFormat("a", Locale.getDefault());
     private final TextView txServicioBack;
-    private boolean heightAdjust = false;
     private FragmentManager fragmentManager;
     private ViewPager tabViewPager;
     private MapFragment mapFragment;
-    private AlarmManager alarmManager;
     private LineasFragment lineasFragment;
 
     public NotificacionesAdapter(@NonNull Context context, int resource, TextView txServicioBack, FragmentManager fragmentManager, ViewPager tabViewPager) {
@@ -72,7 +67,6 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
         tx_label.setText(curAlarm.getLabel());
 
         final TextView tx_dias = (TextView) convertView.findViewById(R.id.ar_days);
-
         SparseBooleanArray diasActivos = curAlarm.getAllDays();
         String dias = "";
         dias += diasActivos.get(Alarm.MON) ? "Lu · " : "";
@@ -106,7 +100,6 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
                 notifyDataSetChanged();
             }
         });
-
         ImageView bt_delete_not = (ImageView) convertView.findViewById(R.id.bt_delete_not);
         bt_delete_not.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,11 +122,19 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
             }
         });
 
+
+        final TextView tx_paradas_not = (TextView) convertView.findViewById(R.id.tx_paradas_not);
+
+        if (curAlarm.getParadaAlarmas().size() == 0)
+            tx_paradas_not.setVisibility(View.INVISIBLE);
+        else
+            tx_paradas_not.setVisibility(View.VISIBLE);
+
         RecyclerView rw_paradas = (RecyclerView) convertView.findViewById(R.id.horizontalList_paradas_noti);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rw_paradas.setLayoutManager(layoutManager);
-        ParadasListaSimpleAdapter paradasListaSimpleAdapter = new ParadasListaSimpleAdapter(getContext(),curAlarm.getParadaAlarmas());
+        ParadasListaSimpleAdapter paradasListaSimpleAdapter = new ParadasListaSimpleAdapter(getContext(), curAlarm.getParadaAlarmas());
         paradasListaSimpleAdapter.setMapFragment(mapFragment);
         paradasListaSimpleAdapter.setLineasFragment(lineasFragment);
         paradasListaSimpleAdapter.setTabViewPager(tabViewPager);
@@ -170,10 +171,6 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
 
     public void setMapFragment(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
-    }
-
-    public void setAlarmManager(AlarmManager alarmManager) {
-        this.alarmManager = alarmManager;
     }
 
     public void setLineasFragment(LineasFragment lineasFragment) {
