@@ -68,7 +68,7 @@ public class TiempoEstimadoAdapter extends ArrayAdapter<Servicio> {
             }
         });
 
-        AnimationFactory.doGrow(convertView);
+        AnimationFactory.doUpdate(convertView);
 
         return convertView;
     }

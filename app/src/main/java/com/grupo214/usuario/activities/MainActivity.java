@@ -126,13 +126,13 @@ public class MainActivity extends AppCompatActivity
                 ImageView icon = (ImageView) itemView.findViewById(R.id.custom_tab_icon);
                 switch (position) {
                     case 0:
-                        icon.setImageDrawable(res.getDrawable(R.mipmap.ic_tab_linea));
+                        icon.setImageDrawable(res.getDrawable(R.drawable.ic_tab_linea));
                         break;
                     case 1:
-                        icon.setImageDrawable(res.getDrawable(R.mipmap.ic_tab_map));
+                        icon.setImageDrawable(res.getDrawable(R.drawable.ic_tab_map));
                         break;
                     case 2:
-                        icon.setImageDrawable(res.getDrawable(R.drawable.ic_notifications_black_24dp));
+                        icon.setImageDrawable(res.getDrawable(R.drawable.ic_tab_notf));
                         break;
                     default:
                         throw new IllegalStateException("Invalid position: " + position);
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity
                 return itemView;
             }
         });
+
 
 
         tabLayout.setDividerColors(Color.BLUE);
@@ -181,6 +182,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
     }
 
 
@@ -190,11 +192,11 @@ public class MainActivity extends AppCompatActivity
         startMenuDialog = new Dialog(this, R.style.Theme_AppCompat_Dialog_Alert);
         notificacionFragment = new NotificacionFragment();
         lineasFragment = new LineasFragment();
+        mapFragment = new MapFragment();
         lineasFragment.setStartMenuDialog(startMenuDialog);
         //  lineasFragment.setMapFragment(mapFragment);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);
-        lineasFragment.setTabViewPager(mViewPager);
-        mapFragment = new MapFragment();
+        lineasFragment.setParams(mViewPager,mapFragment);
         mapFragment.setStartMenuDialog(startMenuDialog);
         mapFragment.setLineas(mLineas, ramales_seleccionados);
         notificacionFragment.setTabViewPage(mViewPager);
@@ -218,7 +220,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -236,7 +237,6 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_destino:
-                mapFragment.setAlarmaDestino(true);
                 break;
 
             case R.id.nav_ajustes:

@@ -99,4 +99,10 @@ public class AnimationFactory {
 		view.setScaleX(0.0f);
 		view.animate().scaleY(1.0f).scaleX(1.0f).start();
 	}
+
+	public static void doUpdate(View view) {
+		view.setScaleY(0.9f);
+		view.setScaleX(0.9f);
+		view.animate().scaleY(1.0f).scaleX(1.0f).start();
+	}
 }

@@ -27,30 +27,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/icoColorColectivo"
-        android:layout_width="12dp"
-        android:layout_height="15dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:contentDescription="Bus"
-        android:src="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="@+id/icoColectivo2"
-        app:layout_constraintEnd_toEndOf="@+id/icoColectivo2"
-        app:layout_constraintStart_toStartOf="@+id/icoColectivo2"
-        app:layout_constraintTop_toTopOf="@+id/icoColectivo2" />
-
-    <ImageView
         android:id="@+id/icoColectivo2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:contentDescription="color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_directions_bus_black_24dp" />

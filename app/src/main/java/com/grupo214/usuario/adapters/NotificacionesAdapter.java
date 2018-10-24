@@ -160,12 +160,12 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
 
     @Override
     public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
         if (this.getCount() > 0) {
             txServicioBack.setVisibility(View.INVISIBLE);
         } else if (this.getCount() == 0) {
             txServicioBack.setVisibility(View.VISIBLE);
         }
+        super.notifyDataSetChanged();
     }
 
 

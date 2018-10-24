@@ -1,6 +1,7 @@
 package com.grupo214.usuario.objects;
 
 
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
@@ -14,14 +15,16 @@ public class Dibujo {
     private Polyline polyline;
     private ArrayList<Polyline> polylinesAlternos;
     private List<Marker> paradas;
+    private List<Marker> servicios;
     private List<Marker> paradasAlternas;
-    private HashMap<String, Marker> servicios;
+    private ArrayList<Marker> arrows;
 
-    public Dibujo() {
+    Dibujo() {
         paradas = new ArrayList<>();
+        servicios = new ArrayList<>();
         paradasAlternas = new ArrayList<>();
         polylinesAlternos = new ArrayList<>();
-        servicios = new HashMap<>();
+        arrows = new ArrayList<>();
     }
 
     public List<Marker> getParadas() {
@@ -47,6 +50,7 @@ public class Dibujo {
     /**
      * quizas lo hago de otra forma mucho mas optima si me sobra el tiempo
      */
+
     @Deprecated
     public void hide() {
         polyline.setVisible(false);
@@ -56,22 +60,29 @@ public class Dibujo {
             mk.setVisible(false);
         for (Marker mk : paradasAlternas)
             mk.setVisible(false);
-        for (Marker mk : servicios.values()) {
+        for( Marker mk : arrows ){
             mk.setVisible(false);
         }
+      //  for(Marker mk : servicios)
+     //      mk.remove();
     }
 
     @Deprecated
-    public void show() {
+    public boolean show() {
+        boolean servicioAlterno = false;
         polyline.setVisible(true);
-        for (Polyline polylineAlterna : polylinesAlternos)
+        for (Polyline polylineAlterna : polylinesAlternos) {
             polylineAlterna.setVisible(true);
+            servicioAlterno = true;
+        }
         for (Marker mk : paradas)
             mk.setVisible(true);
         for (Marker mk : paradasAlternas)
             mk.setVisible(true);
-        for (Marker mk : servicios.values())
-            mk.setVisible(true);
+        for( Marker mk : arrows ){
+            mk.setVisible(false);
+        }
+        return servicioAlterno;
     }
 
 
@@ -90,9 +101,32 @@ public class Dibujo {
     }
 
     public void setAlpah(Boolean visible) {
-
         for (int i = 1; i < paradas.size() - 1; i++) {
             paradas.get(i).setVisible(visible);
+        }
+        for(Marker mk : paradasAlternas){
+            mk.setVisible(visible);
+        }
+    }
+
+    public void addMarkerServicio(String idServicio, Marker mk) {
+        servicios.add(mk);
+    }
+
+    public void addArrows(Marker mk) {
+        arrows.add(mk);
+    }
+
+    public void remove() {
+        polyline.remove();
+        for (Polyline polylineAlterna : polylinesAlternos)
+            polylineAlterna.remove();
+        for (Marker mk : paradas)
+            mk.remove();
+        for (Marker mk : paradasAlternas)
+            mk.remove();
+        for( Marker mk : arrows ){
+            mk.remove();
         }
     }
 }

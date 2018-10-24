@@ -27,11 +27,9 @@ import com.grupo214.usuario.R;
 import com.grupo214.usuario.activities.AMNotificacion;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
 import com.grupo214.usuario.alarma.NotificationBus;
-import com.grupo214.usuario.objects.Linea;
 import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Servicio;
-import com.grupo214.usuario.objects.ServicioAlarma;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,12 +53,10 @@ import java.util.TimerTask;
  */
 public class DondeEstaMiBondi implements Runnable {
 
-    private final static long REFRESH_TIME = 5000; // dibujar.
+    private final static long REFRESH_TIME = 4900; // dibujar.
     // 1 segundo de animacion
-    private static final long TIME_OBTENER_UBICACIONES = 5000;// cada 5 segundo llamara
+    private static final long TIME_OBTENER_UBICACIONES = 6000;// cada 5 segundo llamara
     private static final String TAG = "DondeEstaMiBondi";
-    private final ArrayList<Linea> mLinea;
-    //  private TimerTask calcularTiempoTask;
     private TimerTask obtenerUbicacionTask;
     private TimerTask accTask;
     private Timer timer;
@@ -71,26 +67,22 @@ public class DondeEstaMiBondi implements Runnable {
     private GoogleMap googleMap;
     private Context context;
     private RequestQueue requestQueue_getUbicacion;
-    private boolean flag = true;
-    private float tilt = 45;
     private SwitchCompat switchAcc;
     private HashMap<String, ParadaAlarma> paradasCercanas;
 
-    public DondeEstaMiBondi(GoogleMap googleMap, Context context, ArrayList<Linea> mLinea, HashMap<String, Ramal> ramales_seleccionados,
+    public DondeEstaMiBondi(GoogleMap googleMap, Context context, HashMap<String, Ramal> ramales_seleccionados,
                             final TiempoEstimadoAdapter tiempoEstimadoAdapter, final HashMap<String, Servicio> serviciosActivos) {
         this.googleMap = googleMap;
         this.context = context;
-        this.mLinea = mLinea;
         this.ramales_seleccionados = ramales_seleccionados;
         this.timer = new Timer();
         this.tiempoEstimadoAdapter = tiempoEstimadoAdapter;
         this.serviciosActivos = serviciosActivos;
-        //    this.serviciosActivos_ID = new ArrayList<>(serviciosActivos.keySet());
         inicializarTasks();
     }
 
     private static void crearNotificacion(final Context context, Servicio s, int idAlarma) {
-        Intent intent = new  Intent(context, NotificationBus.class);
+        Intent intent = new Intent(context, NotificationBus.class);
         intent.putExtra("linea", s.getLinea());
         intent.putExtra("ramal", s.getRamal());
         intent.putExtra("tiempo", s.getTiempoEstimado());
@@ -118,7 +110,7 @@ public class DondeEstaMiBondi implements Runnable {
                 String url = "http://dondeestamibondi.online/appPasajero/solicitarAsistenciaEnParada.php?" + parametros;
                 url.replace("?&", "&");
 
-                Log.d("DONDEESTAMIBONDI", url);
+                Log.d(TAG, url);
                 JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                         new Response.Listener<JSONObject>() {
                             @Override
@@ -145,12 +137,8 @@ public class DondeEstaMiBondi implements Runnable {
             requestQueue_getUbicacion = null;
         }
         String parameters = "";
-        if (ramales_seleccionados.size() == 0) {
-            //serviciosActivos.clear();
-            limpiar();
-            //stop();
-            return;
-        }
+
+
 
         for (Ramal r : ramales_seleccionados.values()) {
             if (r.isCheck()) {
@@ -205,20 +193,19 @@ public class DondeEstaMiBondi implements Runnable {
                                             .icon(BitmapDescriptorFactory.fromResource(resource)));
                                     servicio = new Servicio(idServicio, fecha, r.getIdRamal(), r.getLinea(), r.getDescripcion(), mk, resource, minutos);
                                     serviciosActivos.put(idServicio, servicio);
+                                  //  ramales_seleccionados.get(idRamal).addServicio(idServicio,mk);
                                     // Ojo de no buscar el servicio si no tengo la parada mas cercana todavia,
                                     // ver cuando llamo a esta funcoin o quizas deberia hacer que no se pase tan rapido s
                                     // tengo sueño, pero hay que programar pero dejo estas anotaciones para el dani del futuro
                                     // att: dani del pasado :)
                                     // PD: recuerda que la luz que te ilumina te hace mas fuerte attee: QUEWE
                                     tiempoEstimadoAdapter.add(serviciosActivos.get(idServicio));
-                                } else{
+                                } else {
                                     servicio.setActivo(true);
                                 }
 
-
                                 servicio.getMk().setIcon(BitmapDescriptorFactory.fromResource(resource));
                                 servicio.setIco(resource);
-                                Log.d("DondeEsta", "id " + idServicio + " tiempo: " + minutos);
                                 servicio.setTiempoEstimado(minutos);
                                 tiempoEstimadoAdapter.notifyDataSetChanged();
 
@@ -226,10 +213,11 @@ public class DondeEstaMiBondi implements Runnable {
                                     animateMarker(servicio.getMk(), destino, googleMap);
                                 // MarkerAnimation.animateMarkerToGB(servicio.getMk(),destino,LatLngInterpolator.Spherical());
                             }
+                            limpiar();
                             tiempoEstimadoAdapter.sort(Servicio.COMPARATOR);
                             tiempoEstimadoAdapter.notifyDataSetChanged();
-                            limpiar();
                         } catch (JSONException e) {
+                            limpiar();
                             Log.d("Json Error", e.toString());
                         }
                     }
@@ -237,6 +225,7 @@ public class DondeEstaMiBondi implements Runnable {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                limpiar();
                 Log.d("JSON:ERROR", error.toString());
             }
         });
@@ -247,13 +236,12 @@ public class DondeEstaMiBondi implements Runnable {
 
     }
 
-    public void limpiar() {
+    private void limpiar() {
         ArrayList<Servicio> serviciosEliminar = new ArrayList<>();
         for (Servicio s : serviciosActivos.values()) {
             Log.d(TAG, s.getIdServicio());
             if (!s.isActivo()) {
                 serviciosEliminar.add(s);
-
             } else
                 s.setActivo(false);
         }
@@ -262,7 +250,6 @@ public class DondeEstaMiBondi implements Runnable {
             serviciosActivos.remove(s.getIdServicio());
             tiempoEstimadoAdapter.remove(s);
         }
-
     }
 
     private void animateMarker(final Marker marker, final LatLng toPosition, GoogleMap googleMap) {
@@ -300,10 +287,8 @@ public class DondeEstaMiBondi implements Runnable {
     @Override
     public void run() {
 
-        timer.schedule(obtenerUbicacionTask, 0, TIME_OBTENER_UBICACIONES);
+        timer.schedule(obtenerUbicacionTask, 100, TIME_OBTENER_UBICACIONES);
         if (switchAcc.isChecked()) {
-            //    icoMakerParadaCercana = BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_acc);
-            //  armar link en 5 segundos.
             timer.schedule(accTask, 10000);
         }
 

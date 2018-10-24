@@ -8,8 +8,7 @@ import android.graphics.Color;
  */
 public class ColorRuta {
 
-    public static final int[] coloresRuta = {
-            Color.argb(150, 255, 0, 0),
+    private static final int[] coloresRuta = {
             Color.argb(150, 0, 0, 255),
             Color.argb(150, 0, 255, 0),
             Color.argb(150, 255, 127, 0),

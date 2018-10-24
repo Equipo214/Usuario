@@ -15,8 +15,9 @@ public class Ramal {
     private Boolean checked;
     private Dibujo dibujo;
     private String paradaCercana;
+    private int color;
 
-    public Ramal(String idLinea, String linea, String idRamal, String ramal, Recorrido recorridoPrimario, ArrayList<Recorrido> recorridosAlternos) {
+    public Ramal(String idLinea, String linea, String idRamal, String ramal, Recorrido recorridoPrimario, ArrayList<Recorrido> recorridosAlternos,int color) {
         this.idLinea = idLinea;
         this.linea = linea;
         this.idRamal = idRamal;
@@ -25,6 +26,7 @@ public class Ramal {
         this.recorridoPrimario = recorridoPrimario;
         this.recorridosAlternos = recorridosAlternos;
         this.checked = false;
+        this.color = color;
     }
 
     public Ramal(String idLinea, String linea, String idRamal, String ramal, boolean isChecked) {
@@ -97,4 +99,15 @@ public class Ramal {
         this.dibujo = dibujo;
     }
 
+    public void addServicio(String idServicio, Marker mk) {
+        this.dibujo.addMarkerServicio(idServicio,mk);
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public int getColor() {
+        return color;
+    }
 }

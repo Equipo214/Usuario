@@ -82,6 +82,9 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         AnimationFactory.doFade(convertView);
         prevPosition = childPosition;
 
+        ImageView ico = (ImageView) convertView
+                .findViewById(R.id.icoColectivo2);
+        ico.setColorFilter(r.getColor());
 
         return convertView;
     }

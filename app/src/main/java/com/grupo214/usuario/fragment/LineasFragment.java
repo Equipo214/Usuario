@@ -1,9 +1,15 @@
 package com.grupo214.usuario.fragment;
 
 import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.transition.Fade;
+import android.transition.TransitionManager;
+import android.transition.TransitionSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +50,7 @@ public class LineasFragment extends Fragment {
     private Button bt_dondeEstaMiBondi;
     private ViewPager tabViewPager;
     private Dialog startMenuDialog;
+    private MapFragment mapFragment;
 
     public static void expand(final View v) {
         v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -111,7 +118,8 @@ public class LineasFragment extends Fragment {
         // ¿ DONDE ESTA MI BONDI ?
         bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
 
-  /*
+
+        /*
         Button testNot = (Button) rootView.findViewById(R.id.bt_testNOt);
         testNot.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +131,8 @@ public class LineasFragment extends Fragment {
                 getContext().startService(i);
             }
         });*/
-        final Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
+
+        final Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.slide_bottom);
 
         bt_dondeEstaMiBondi.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,11 +143,15 @@ public class LineasFragment extends Fragment {
                     Toast.makeText(getContext(), "Seleciona por lo menos un ramal.", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                bt_dondeEstaMiBondi.startAnimation(shake);
+
                 if (MainActivity.puntoPartida == null) {
                     startMenuDialog.show();
+                } else{
+                    mapFragment.dondeEstaMiBondi(MainActivity.puntoPartida);
                 }
-
                 tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
+
             }
         });
 
@@ -164,10 +177,13 @@ public class LineasFragment extends Fragment {
                 Log.d(TAG, ramales_seleccionados.toString());
                 r.setChecked(!r.isCheck());
                 if (r.isCheck()) {
-                    r.getDibujo().show();
+
+                   if( mapFragment.cargarRamal(r) ){
+                       Toast.makeText(getContext(),"Hay recorrido alternativo para este ramal",Toast.LENGTH_LONG).show();
+                   }
                     ramales_seleccionados.put(r.getIdRamal(), r);
                 } else {
-                    r.getDibujo().hide();
+                    r.getDibujo().remove();
                     ramales_seleccionados.remove(r.getIdRamal());
                 }
 
@@ -186,8 +202,9 @@ public class LineasFragment extends Fragment {
         this.ramales_seleccionados = ramales_seleccionados;
     }
 
-    public void setTabViewPager(ViewPager tabViewPager) {
+    public void setParams(ViewPager tabViewPager,MapFragment mapFragment) {
         this.tabViewPager = tabViewPager;
+        this.mapFragment = mapFragment;
     }
 
     public void setStartMenuDialog(Dialog startMenuDialog) {
@@ -199,7 +216,7 @@ public class LineasFragment extends Fragment {
             for (Ramal r : l.getRamales())
                 if (r.getIdRamal().equals(idRamal)) {
                     r.setChecked(true);
-                    r.getDibujo().show();
+                    mapFragment.cargarRamal(r);
                     ramales_seleccionados.put(r.getIdRamal(), r);
                     DatabaseAlarms.getInstance(getContext()).updateRamal(r.getIdRamal(), r.isCheck());
                     for (Marker mk : r.getDibujo().getParadas())

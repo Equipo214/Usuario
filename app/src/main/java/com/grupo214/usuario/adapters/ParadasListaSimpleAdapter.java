@@ -19,6 +19,7 @@ import com.grupo214.usuario.Util.DatabaseAlarms;
 import com.grupo214.usuario.activities.MainActivity;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
+import com.grupo214.usuario.fragment.NotificacionFragment;
 import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
 
@@ -43,7 +44,6 @@ public class ParadasListaSimpleAdapter extends RecyclerView.Adapter<ParadasLista
         this.mInflater = LayoutInflater.from(context);
         this.mData = new ArrayList<>();
         this.mData.addAll(data.values());
-
     }
 
     public void setTabViewPager(ViewPager tabViewPager) {
@@ -116,6 +116,7 @@ public class ParadasListaSimpleAdapter extends RecyclerView.Adapter<ParadasLista
                                 //Yes button clicked
                                 ParadaAlarma paradaAlarma = mData.get(getAdapterPosition());
                                 DatabaseAlarms.getInstance(context).deleteParadaAlarma(paradaAlarma);
+                                NotificacionFragment.notifyDataSetChange(context);
                                 notifyDataSetChanged();
                             }
                         }
