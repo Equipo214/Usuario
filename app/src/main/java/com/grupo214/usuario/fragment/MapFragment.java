@@ -437,8 +437,6 @@ public class MapFragment extends Fragment {
             ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), r.getIdLinea(), r.getIdRamal(), parada.getLatLng());
             mk.setTag(paradaAlarma);
         }
-        r.getDibujo().getParadas().get(r.getParadas().size() - 1).
-                setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_fin));
 
 
         boolean alternativo = false;
