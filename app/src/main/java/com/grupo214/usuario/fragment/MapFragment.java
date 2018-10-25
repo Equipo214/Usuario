@@ -312,8 +312,9 @@ public class MapFragment extends Fragment {
     public void dondeEstaMiBondi(LatLng latLng) {
 
         for (Ramal r : ramalesSeleccionados.values()) {
-            markerCercanos.get(r.getIdRamal())
-                    .setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi));
+            if (markerCercanos.get(r.getIdRamal()) != null)
+                markerCercanos.get(r.getIdRamal())
+                        .setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi));
         }
         actulizarMarkers();
         markerCercanos.clear();
