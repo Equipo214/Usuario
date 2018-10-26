@@ -335,6 +335,7 @@ public class MapFragment extends Fragment {
             mk.setVisible(true);
             r.setParadaCercana(((ParadaAlarma) mk.getTag()).getId_parada());
             mk.setIcon(icoMakerParadaCercana);
+            mk.showInfoWindow();
             if (paradasConAlarmas.get(mk.getId()) != null)
                 paradasConAlarmas.remove(mk.getId());
         }
