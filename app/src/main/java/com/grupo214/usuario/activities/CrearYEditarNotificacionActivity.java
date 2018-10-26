@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -34,7 +33,7 @@ import static com.grupo214.usuario.fragment.NotificacionFragment.AGREGAR;
 import static com.grupo214.usuario.fragment.NotificacionFragment.EDITAR;
 
 
-public class AMNotificacion extends AppCompatActivity {
+public class CrearYEditarNotificacionActivity extends AppCompatActivity {
 
     private static final int ZONE_HOUR = -3;
     public static String EXTRA_ID_ALARMA = "EXTRA_ID_ALARMA";
@@ -57,7 +56,7 @@ public class AMNotificacion extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_add_edit_alarm);
+        setContentView(R.layout.activity_add_edit_alarm);
         modo = getIntent().getExtras().getString("modo");
         editText = (EditText) findViewById(R.id.edit_alarm_label);
         tx_parada_fixed_not_add = (TextView) findViewById(R.id.tx_parada_fixed_not_add);
@@ -138,7 +137,7 @@ public class AMNotificacion extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //guardar();
-                AMNotificacion.super.onBackPressed();
+                CrearYEditarNotificacionActivity.super.onBackPressed();
                 dialog.dismiss();
             }
         });

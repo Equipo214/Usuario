@@ -1,7 +1,5 @@
 package com.grupo214.usuario.objects;
 
-import android.annotation.SuppressLint;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.Util.Util;
 
@@ -28,16 +26,16 @@ public class ServicioAlarma {
     private int tiempoEstimado;
     private int ico;
     private boolean activo;
-    private ArrayList<LatLng> paradasDelRamal;
+    private ArrayList<LatLng> paradasDelRamalSeleccionadas;
 
     public ServicioAlarma(String idServicio, String fecha, String linea, String ramal,
-                          ArrayList<LatLng> paradasDelRamal) {
+                          ArrayList<LatLng> paradasDelRamalSeleccionadas) {
         this.idServicio = idServicio;
         this.linea = linea;
         this.ramal = ramal;
         this.fecha = fecha;
         this.activo = true;
-        this.paradasDelRamal = paradasDelRamal;
+        this.paradasDelRamalSeleccionadas = paradasDelRamalSeleccionadas;
 
     }
 
@@ -82,7 +80,7 @@ public class ServicioAlarma {
     }
 
     public boolean isNearByDistance(int i) {
-        for (LatLng parada : paradasDelRamal) {
+        for (LatLng parada : paradasDelRamalSeleccionadas) {
             if (Util.calculateDistance(ubicacion, parada) < i)
                 return true;
         }

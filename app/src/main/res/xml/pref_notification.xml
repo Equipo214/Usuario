@@ -33,9 +33,9 @@
     <PreferenceCategory android:title="Activar cuando">
 
         <ListPreference
-            android:defaultValue="distance"
+            android:defaultValue="time"
             android:entries="@array/pref_parameter_titles"
-            android:entryValues="@array/pref_parameter_titles"
+            android:entryValues="@array/pref_parameter_values"
             android:key="list_preference_parameter"
             android:summary="%s"
             android:title="Tiempo o Distancia" />
@@ -45,12 +45,12 @@
             android:dependency="list_preference_parameter"
             android:entries="@array/pref_distance_titles"
             android:entryValues="@array/pref_distance_value"
-            android:key="list_preference_distance"
+                android:key="list_preference_distance"
             android:summary="%s"
             android:title="@string/pref_title_distance" />
 
         <ListPreference
-            android:defaultValue="300"
+            android:defaultValue="5"
             android:dependency="list_preference_parameter"
             android:entries="@array/pref_time_titles"
             android:entryValues="@array/pref_time_value"

@@ -4,14 +4,11 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.grupo214.usuario.activities.AMNotificacion;
+import com.grupo214.usuario.activities.CrearYEditarNotificacionActivity;
 
-import static com.grupo214.usuario.activities.AMNotificacion.EXTRA_ID_ALARMA;
-import static com.grupo214.usuario.alarma.LocationService.ID_LOCATION_SERVICE;
+import static com.grupo214.usuario.activities.CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA;
 
 public class ActionReceiver extends BroadcastReceiver {
 
@@ -26,7 +23,7 @@ public class ActionReceiver extends BroadcastReceiver {
         String posponer = intent.getStringExtra("posponer");
         String cancelar = intent.getStringExtra("cancelar");
 
-        int idAlarma = intent.getIntExtra(AMNotificacion.EXTRA_ID_ALARMA, 0);
+        int idAlarma = intent.getIntExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA, 0);
 
         if (aceptar != null && aceptar.equals("Aceptar")) {
             Toast.makeText(context, "¡Buen viaje!", Toast.LENGTH_LONG).show();

@@ -18,7 +18,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
-import com.grupo214.usuario.activities.AMNotificacion;
+import com.grupo214.usuario.activities.CrearYEditarNotificacionActivity;
 import com.grupo214.usuario.objects.Alarm;
 import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.grupo214.usuario.activities.AMNotificacion.EXTRA_ID_ALARMA;
+import static com.grupo214.usuario.activities.CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA;
 
 public class CheckPostsReceiver extends BroadcastReceiver {
 
@@ -58,15 +58,16 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         for (ServicioAlarma s : serviciosOrdenados) {
             if (s.isActivo()) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                String tipo = preferences.getString("pref_parameter_values", "nope");
-                // obtener configuarcion usuario para saber si es distancia o tiempo
-                if (tipo.equals("time")) {
-                    if (s.isNearByTime(15)) {  // 15 minutos levantar configuracion usuario -1
+                String tipo = preferences.getString("list_preference_parameter", "time");
+                if (tipo.equals("distance")) {
+                    int distacia = Integer.parseInt( preferences.getString("list_preference_distance", "300"));
+                    if (s.isNearByDistance(distacia)) {// 300 metros.
                         crearNotificacion(context, s, idAlarma);
                         return true;
                     }
                 } else {
-                    if (s.isNearByDistance(300)) {// 300 metros.
+                    int tiempo = Integer.parseInt(preferences.getString("list_preference_time", "5"));
+                    if (s.isNearByTime(tiempo)) {  // 15 minutos levantar configuracion usuario -1
                         crearNotificacion(context, s, idAlarma);
                         return true;
                     }
@@ -85,7 +86,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         intent.putExtra("ramal", s.getRamal());
         intent.putExtra("tiempo", s.getTiempoEstimado());
         intent.putExtra("color", s.getIco());
-        intent.putExtra(AMNotificacion.EXTRA_ID_ALARMA, idAlarma);
+        intent.putExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA, idAlarma);
         context.startService(intent);
         timer.cancel();
         timer.schedule(new TimerTask() {
@@ -119,11 +120,11 @@ public class CheckPostsReceiver extends BroadcastReceiver {
 
         timer = new Timer();
 
-        if (!intent.hasExtra(AMNotificacion.EXTRA_ID_ALARMA)) {
+        if (!intent.hasExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA)) {
             Toast.makeText(context, "¿Donde esta mi bondi? Nunca deberia aparecer esto.", Toast.LENGTH_LONG).show();
             return;
         }
-        int idAlarma = intent.getIntExtra(AMNotificacion.EXTRA_ID_ALARMA, 0);
+        int idAlarma = intent.getIntExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA, 0);
         final Alarm alarm = DatabaseAlarms.getInstance(context).getAlarm(idAlarma);
         final HashMap<String, Ramal> ramales = new HashMap<>();
 

@@ -94,7 +94,7 @@
         <item>Media distancia (300 metros)</item>
         <item>Lejos (500 metros)</item>
     </string-array>
-    <string-array name="pref_time_value">
+    <string-array  name="pref_time_value">
         <item>3</item>
         <item>5</item>
         <item>10</item>
@@ -104,7 +104,7 @@
         <item>100</item>
         <item>300</item>
         <item>500</item>
-    </string-array>
+    </string-array >
 
 
     <string-array name="pref_parameter_titles">
@@ -166,7 +166,7 @@
     <string name="title_activity_warn">Warn</string>
     <string name="warn_button">¡Enterado!</string>
     <string name="warn_content">Estas llegando a tu parada</string>
-
+    <string name="notificar_a_patir_de">NOTIFICAR A PATIR DE</string>
 
 
 </resources>

@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.activities.AMNotificacion;
+import com.grupo214.usuario.activities.CrearYEditarNotificacionActivity;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
 import com.grupo214.usuario.alarma.NotificationBus;
 import com.grupo214.usuario.objects.ParadaAlarma;
@@ -87,7 +87,7 @@ public class DondeEstaMiBondi implements Runnable {
         intent.putExtra("ramal", s.getRamal());
         intent.putExtra("tiempo", s.getTiempoEstimado());
         intent.putExtra("color", s.getIco());
-        intent.putExtra(AMNotificacion.EXTRA_ID_ALARMA, idAlarma);
+        intent.putExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA, idAlarma);
         context.startService(intent);
     }
 

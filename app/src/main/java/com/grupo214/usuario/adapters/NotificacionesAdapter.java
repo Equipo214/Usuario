@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.grupo214.usuario.Dialog.DialogoEliminarNotificacion;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
-import com.grupo214.usuario.activities.AMNotificacion;
+import com.grupo214.usuario.activities.CrearYEditarNotificacionActivity;
 import com.grupo214.usuario.fragment.LineasFragment;
 import com.grupo214.usuario.fragment.MapFragment;
 import com.grupo214.usuario.fragment.NotificacionFragment;
@@ -116,7 +116,7 @@ public class NotificacionesAdapter extends ArrayAdapter<Alarm> {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Editar " + curAlarm.getLabel(), Toast.LENGTH_LONG).show();
-                getContext().startActivity(new Intent(getContext(), AMNotificacion.class)
+                getContext().startActivity(new Intent(getContext(), CrearYEditarNotificacionActivity.class)
                         .putExtra("modo", NotificacionFragment.EDITAR)
                         .putExtra("id", curAlarm.getId()));
             }
