@@ -108,12 +108,6 @@ public final class DatabaseAlarms extends SQLiteOpenHelper {
 
 
     public int updateRamal(String idRamal, Boolean check) {
-        Log.d(
-                TAG,
-                "idRamal" + idRamal +
-                        "Check " + check +
-                        "updateRamal()"
-        );
         final String where = COL_ID_RAMAL + "=?";
         final String[] whereArgs = new String[]{idRamal};
         return getWritableDatabase()

@@ -1,43 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_likSube"
-            android:icon="@mipmap/ic_sube_flecha"
-            android:title="@string/nav_likSube" />
-        <item
-            android:id="@+id/nav_linkTarifas"
-            android:icon="@drawable/ic_local_atm_black_24dp"
-            android:title="@string/nav_linkTarifas" />
-        <item
-            android:id="@+id/nav_ajustes"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/nav_ajustes" />
-        <item
-            android:id="@+id/nav_destino"
-            android:icon="@drawable/ic_alarm"
-            android:title="@string/nav_destino" />
-
-    </group>
-
-    <item android:title="Comunicacion">
+    <item android:title="@string/links_de_inter_s">
         <menu>
+            <item
+                android:id="@+id/nav_likSube"
+                android:icon="@mipmap/ic_sube"
+                android:title="@string/nav_likSube" />
+            <item
+                android:id="@+id/nav_linkTarifas"
+                android:icon="@drawable/ic_local_atm_black_24dp"
+                android:title="@string/nav_linkTarifas" />
+        </menu>
+    </item>
+    <item android:title="@string/comunicacion">
+        <menu>
+            <item
+                android:id="@+id/nav_acc"
+                android:icon="@drawable/ic_accessible_black_24dp"
+                android:title="@string/nav_acc"
+                app:actionLayout="@layout/action_view_switch" />
             <item
                 android:id="@+id/nav_comentario"
                 android:icon="@drawable/ic_menu_share"
                 android:title="@string/nav_comentario" />
-            <item
-                android:id="@+id/nav_acc"
-                app:actionLayout="@layout/action_view_switch"
-                android:icon="@drawable/ic_accessible_black_24dp"
-                android:title="@string/nav_acc">
-            </item>
-
         </menu>
     </item>
 
+    <item android:title="@string/social">
+        <menu>
+            <item
+                android:id="@+id/nav_facebook"
+                android:icon="@mipmap/ic_facebook"
+                android:title="@string/facebook" />
+            <item
+                android:id="@+id/nav_instagram"
+                android:icon="@mipmap/ic_instagram"
+                android:title="@string/instagram" />
+        </menu>
+    </item>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_ajustes"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/nav_ajustes" />
+    </group>
 </menu>

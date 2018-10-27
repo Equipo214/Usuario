@@ -44,7 +44,6 @@ public class CommentaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_commentary);
 
         ImageButton bt_enviar = (ImageButton) findViewById(R.id.bt_enviar);
-        ImageButton bt_backComm = (ImageButton) findViewById(R.id.bt_backComm);
         tx_comentario = findViewById(R.id.tx_comentario);
 
 
@@ -53,12 +52,6 @@ public class CommentaryActivity extends AppCompatActivity {
 
         cargarDatos();
 
-        bt_backComm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CommentaryActivity.super.onBackPressed();
-            }
-        });
         bt_enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +87,10 @@ public class CommentaryActivity extends AppCompatActivity {
                 String item = adapter.getItemAtPosition(position).toString();
                 idLinea = lineas_id_nombres.get(lineas_nombres.indexOf(item));
                 traerRamal(idLinea);
-
+                if(!idLinea.equals("-1")){
+                    lineas_nombres.remove("Seleccione una linea");
+                    lineas_id_nombres.remove("-1");
+                }
             }
 
             @Override
@@ -107,11 +103,14 @@ public class CommentaryActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 idRamal = ramal_id_nombres.get(ramal_nombres.indexOf(item));
+                if(!idRamal.equals("-1")){
+                    ramal_nombres.remove("Seleccione un ramal");
+                    ramal_id_nombres.remove("-1");
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
     }
@@ -121,7 +120,7 @@ public class CommentaryActivity extends AppCompatActivity {
 
         lineas_nombres = new ArrayList<>();
         lineas_id_nombres = new ArrayList<>();
-        lineas_nombres.add("");
+        lineas_nombres.add("Seleccione una linea");
         lineas_id_nombres.add("-1");
         for (Linea l : mLinea) {
             lineas_nombres.add(l.getLinea());
@@ -134,11 +133,12 @@ public class CommentaryActivity extends AppCompatActivity {
 
 
     private void traerRamal(String idLinea) {
+
         Linea linea = Linea.getByID(mLinea, idLinea);
         ramal_nombres = new ArrayList<>();
         ramal_id_nombres = new ArrayList<>();
 
-        ramal_nombres.add("");
+        ramal_nombres.add("Seleccione un ramal");
         ramal_id_nombres.add("-1");
         if (linea != null)
             for (Ramal r : linea.getRamales()) {

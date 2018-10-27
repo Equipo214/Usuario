@@ -60,7 +60,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
                 String tipo = preferences.getString("list_preference_parameter", "time");
                 if (tipo.equals("distance")) {
-                    int distacia = Integer.parseInt( preferences.getString("list_preference_distance", "300"));
+                    int distacia = Integer.parseInt(preferences.getString("list_preference_distance", "300"));
                     if (s.isNearByDistance(distacia)) {// 300 metros.
                         crearNotificacion(context, s, idAlarma);
                         return true;
@@ -117,7 +117,6 @@ public class CheckPostsReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         TimerTask obtenerUbicacionTask;
         this.context = context;
-
         timer = new Timer();
 
         if (!intent.hasExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA)) {
@@ -145,8 +144,6 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         } else {
             Toast.makeText(context, "No hay paradas para crear las notificaciones.", Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     private void getUbicacion(final HashMap<String, Ramal> ramales, final Alarm alarm,

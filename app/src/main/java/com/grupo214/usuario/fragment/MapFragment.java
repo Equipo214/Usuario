@@ -7,13 +7,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
@@ -24,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,13 +92,13 @@ public class MapFragment extends Fragment {
     private LocationManager locationManager;
     private GoogleMap.InfoWindowAdapter infoWindowAdapterParadas;
     private Boolean visible = false;
+    private ImageView locationMarker;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
-
-
         markerCercanos = new HashMap<>();
         paradasCercanas = new HashMap<>();
         paradasConAlarmas = new HashMap<>();
@@ -108,17 +107,30 @@ public class MapFragment extends Fragment {
         locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
         infoWindowAdapterParadas = new GoogleMap.InfoWindowAdapter() {
             public View getInfoWindow(Marker marker) {
-                return null;
+                View view = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+                ((TextView) view.findViewById(R.id.title_info)).setText(marker.getTitle());
+                ((TextView) view.findViewById(R.id.snippet_info)).setText(marker.getSnippet());
+                return view;
             }
 
             public View getInfoContents(Marker marker) {
-                View view = getLayoutInflater().inflate(R.layout.container_info_windows, null);
-                ((TextView) view.findViewById(R.id.list_text_linea)).setText(marker.getTitle());
-                ((TextView) view.findViewById(R.id.list_text_ramal)).setText(marker.getSnippet());
-                return view;
+              return null;
             }
         };
+
         lv_listTiempoEstimado = (ListView) rootView.findViewById(R.id.listaTiempoEstimado);
+        locationMarker = (ImageView) rootView.findViewById(R.id.locationMarker);
+        locationMarker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                locationMarker.setVisibility(View.INVISIBLE);
+                LatLng latLng = googleMap.getCameraPosition().target;
+                startMakerUser.setPosition(latLng);
+                startMakerUser.setVisible(true);
+                dondeEstaMiBondi(latLng);
+            }
+        });
+
         adaptador.setLv(lv_listTiempoEstimado);
         lv_listTiempoEstimado.setAdapter(adaptador);
 
@@ -151,6 +163,8 @@ public class MapFragment extends Fragment {
 
                 googleMap.getUiSettings().setZoomControlsEnabled(true);
                 googleMap.getUiSettings().setIndoorLevelPickerEnabled(false);
+                googleMap.getUiSettings().setCompassEnabled(true);
+                googleMap.getUiSettings().setTiltGesturesEnabled(true);
                 googleMap.getUiSettings().setMapToolbarEnabled(false);
 
                 googleMap.setBuildingsEnabled(false);
@@ -181,6 +195,7 @@ public class MapFragment extends Fragment {
                     }
                 });
 
+
                 googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
@@ -194,7 +209,7 @@ public class MapFragment extends Fragment {
                         }
                         if (marker.getTitle().contains(TITLE_USER_MAKER)) {
                             startMakerUser.setVisible(false);
-                            selecionar = true;
+                            showMarkerUser();
                             mensaje("Seleccioné una nueva ubicación para esperar el colectivo.");
                         }
 
@@ -249,10 +264,10 @@ public class MapFragment extends Fragment {
                         .anchor(0.5f, 0.5f);
 
                 startMakerUser = googleMap.addMarker(markerOptions);
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                /*  googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        if (selecionar) {
+                        if (false) {
                             if (!startMakerUser.isVisible())
                                 startMakerUser.setVisible(true);
                             startMakerUser.setPosition(latLng);
@@ -264,7 +279,7 @@ public class MapFragment extends Fragment {
                         }
                     }
                 });
-
+                */
                 //loadRoutes();
                 googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
                 updateDrawingRoutes();
@@ -333,7 +348,11 @@ public class MapFragment extends Fragment {
             markerCercanos.put(r.getIdRamal(), mk);
             paradasCercanas.put(r.getIdRamal(), ((ParadaAlarma) mk.getTag()));
             mk.setVisible(true);
-            r.setParadaCercana(((ParadaAlarma) mk.getTag()).getId_parada());
+
+
+            Log.e(TAG, mk.getId());
+            String paradaId = ((ParadaAlarma) mk.getTag()).getId_parada();
+            r.setParadaCercana(paradaId);
             mk.setIcon(icoMakerParadaCercana);
             mk.showInfoWindow();
             if (paradasConAlarmas.get(mk.getId()) != null)
@@ -406,6 +425,7 @@ public class MapFragment extends Fragment {
     }
 
     public boolean cargarRamal(Ramal r) {
+        r.newDibujo();
         List<LatLng> points = PolyUtil.decode(r.getCode_recorrido());
         int salto = (points.size() / 10) > 1 ? 10 : 1;
         for (int i = 1; i < points.size() - 1; i = i + salto) {
@@ -436,16 +456,14 @@ public class MapFragment extends Fragment {
                     .title("Parada línea " + r.getLinea())
                     .anchor(0.5f, 0.5f)
                     .snippet("Ramal: " + r.getDescripcion()));
-            r.getDibujo().agregarParada(mk);
             ParadaAlarma paradaAlarma = new ParadaAlarma(parada.getIdParda(), r.getIdLinea(), r.getIdRamal(), parada.getLatLng());
             mk.setTag(paradaAlarma);
+            r.getDibujo().agregarParada(mk);
         }
-
 
         boolean alternativo = false;
         for (Recorrido recorridoAlterno : r.getRecorridosAlternos()) {
             alternativo = true;
-            Log.d("MapFragment", "Recorrido alterno: " + recorridoAlterno.getRecorridoCompleto());
             Polyline pa = googleMap.addPolyline(new PolylineOptions()
                     .color(Color.RED)
                     .addAll(
@@ -481,6 +499,8 @@ public class MapFragment extends Fragment {
         //establecemos el contenido de nuestro dialog
         startMenuDialog.setContentView(R.layout.start_menu_route);
 
+
+        /// boton ubicacion
         ((Button) startMenuDialog.findViewById(R.id.bt_ubicacion)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -492,14 +512,20 @@ public class MapFragment extends Fragment {
             }
         });
 
+
+        // botton selecionar mapa
         ((Button) startMenuDialog.findViewById(R.id.bt_loc_map)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startMenuDialog.dismiss();
-                mensaje("Seleciona el punto de partida en el mapa");
-                selecionar = true;
+                showMarkerUser();
+                mensaje("Seleccioné una ubicación para esperar el colectivo.");
             }
         });
+    }
+
+    private void showMarkerUser() {
+        locationMarker.setVisibility(View.VISIBLE);
     }
 
     /*

@@ -31,7 +31,7 @@ import java.util.HashMap;
  *
  * @author Daniel Boullon
  */
-public final class NotificacionFragment extends Fragment {
+public final class NotificacionFragment extends Fragment  {
     private static final String TAG = "NotificacionFragment";
     public static String AGREGAR = "AGREGAR";
     public static String EDITAR = "EDITAR";

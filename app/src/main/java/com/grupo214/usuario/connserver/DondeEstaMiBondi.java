@@ -81,16 +81,6 @@ public class DondeEstaMiBondi implements Runnable {
         inicializarTasks();
     }
 
-    private static void crearNotificacion(final Context context, Servicio s, int idAlarma) {
-        Intent intent = new Intent(context, NotificationBus.class);
-        intent.putExtra("linea", s.getLinea());
-        intent.putExtra("ramal", s.getRamal());
-        intent.putExtra("tiempo", s.getTiempoEstimado());
-        intent.putExtra("color", s.getIco());
-        intent.putExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA, idAlarma);
-        context.startService(intent);
-    }
-
     private void inicializarTasks() {
         obtenerUbicacionTask = new TimerTask() {
             @Override

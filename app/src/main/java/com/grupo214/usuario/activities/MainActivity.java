@@ -3,11 +3,13 @@ package com.grupo214.usuario.activities;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -19,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +53,7 @@ import java.util.HashMap;
  *
  * @author Daniel Boullon
  */
-public class    MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     /**
@@ -108,6 +111,7 @@ public class    MainActivity extends AppCompatActivity
         // final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         tabLayout = (SmartTabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setOffscreenPageLimit(3);
         manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -142,7 +146,6 @@ public class    MainActivity extends AppCompatActivity
         });
 
 
-
         tabLayout.setDividerColors(Color.BLUE);
 
         mSectionsPageAdapter.addFragment(lineasFragment, "LINEAS");     // 0
@@ -171,12 +174,12 @@ public class    MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-
+        navigationView.setItemIconTintList(null);
         tabLayout.setOnTabClickListener(new SmartTabLayout.OnTabClickListener() {
             @Override
             public void onTabClicked(int position) {
                 if (position == TAB_MAPA) {
-                    if (mapFragment.isDondeEstaMiBondiActive()){
+                    if (mapFragment.isDondeEstaMiBondiActive()) {
                         mapFragment.dondeEstaMiBondi(puntoPartida);
                     }
                 }
@@ -196,7 +199,7 @@ public class    MainActivity extends AppCompatActivity
         lineasFragment.setStartMenuDialog(startMenuDialog);
         //  lineasFragment.setMapFragment(mapFragment);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);
-        lineasFragment.setParams(mViewPager,mapFragment);
+        lineasFragment.setParams(mViewPager, mapFragment);
         mapFragment.setStartMenuDialog(startMenuDialog);
         mapFragment.setLineas(mLineas, ramales_seleccionados);
         notificacionFragment.setTabViewPage(mViewPager);
@@ -227,25 +230,49 @@ public class    MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_likSube:
-                startActivity(new Intent(this, WebActivity.class)
-                        .putExtra("URL", LINK_SUBE));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK_SUBE)));
+
+                //    startActivity(new Intent(this, WebActivity.class)
+                //             .putExtra("URL", LINK_SUBE));
                 break;
 
             case R.id.nav_linkTarifas:
-                startActivity(new Intent(this, WebActivity.class)
-                        .putExtra("URL", LINK_TARIFAS));
-                break;
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK_TARIFAS)));
 
-            case R.id.nav_destino:
+                // startActivity(new Intent(this, WebActivity.class)
+                //         .putExtra("URL", LINK_TARIFAS));
                 break;
 
             case R.id.nav_ajustes:
                 mensaje("Ajustes");
-                startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(new Intent(this, SettingActivity.class));
                 break;
 
             case R.id.nav_comentario:
                 startActivity(new Intent(this, CommentaryActivity.class));
+                break;
+
+            case R.id.nav_facebook:
+                String facebookId = "fb://page/295459871051427";
+                String urlPage = "http://www.facebook.com/mypage";
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookId)));
+                } catch (Exception e) {
+                    Log.e(TAG, "Aplicación no instalada.");
+                    //Abre url de pagina.
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlPage)));
+                }
+                break;
+            case R.id.nav_instagram:
+                Uri uri = Uri.parse("http://instagram.com/_u/dondeestamibondi");
+                Intent likeIng = new Intent(Intent.ACTION_VIEW, uri);
+                likeIng.setPackage("com.instagram.android");
+                try {
+                    startActivity(likeIng);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://instagram.com/xxx")));
+                }
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

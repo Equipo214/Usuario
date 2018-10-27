@@ -29,9 +29,6 @@ public class LineasAdapter extends BaseExpandableListAdapter {
     private List<Linea> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<Ramal>> _listDataTextChild;
-    private int displayWidth;
-    private int prevPosition;
-
 
     public LineasAdapter(Context context, List<Linea> mLineas) {
         this._context = context;
@@ -63,7 +60,6 @@ public class LineasAdapter extends BaseExpandableListAdapter {
 
         final Ramal r = (Ramal) getChild(groupPosition, childPosition);
 
-        displayWidth = getDisplayWidth(_context);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -80,7 +76,6 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         checkBox.setChecked(r.isCheck());
 
         AnimationFactory.doFade(convertView);
-        prevPosition = childPosition;
 
         ImageView ico = (ImageView) convertView
                 .findViewById(R.id.icoColectivo2);

@@ -1,20 +1,44 @@
 <resources>
     <string name="SERVIDOR_LOCAL">http://192.168.0.70/login/consumirPosicion.php?</string>
-    <string name="app_name">¿Donde esta mi Bondi?</string>
+    <string name="app_name">¿Dónde está mi bondi?</string>
     <string name="navigation_drawer_open">Abrir</string>
     <string name="navigation_drawer_close">Cerrar</string>
     <string name="nav_header_title">¿Donde esta mi Bondi?</string>
     <string name="nav_header_subtitle">Ahorra tiempo</string>
     <string name="nav_header_desc">Menu</string>
-    <string name="action_search">Settings 2</string>
     <string name="title_activity_maps">Map</string>
-    <string name="Prototipo">Tus notificaciones apareceran aquí.</string>
+    <string name="prototipo">Tus notificaciones apareceran aquí.</string>
     <string name="nav_map">Mapa</string>
     <string name="nav_likSube">SUBE</string>
     <string name="nav_linkTarifas">Tarifas</string>
     <string name="nav_ajustes">Ajustes</string>
     <string name="nav_comentario">Comentarios</string>
     <string name="nav_acc">Solicitar accesibilidad</string>
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="pref_header_notifications">Alarmas</string>
+    <string name="pref_title_new_message_notifications">Activar notificaciones</string>
+    <string name="pref_title_ringtone">Tono de alarma</string>
+    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_vibrate">Vibrar</string>
+    <string name="pref_title_distance">Distancia</string>
+    <string name="pref_title_time">Tiempo</string>
+    <string name="alarma_en_parada">Alarma en paradaCercanaAlPasajero</string>
+    <string name="id_linea">Linea</string>
+    <string name="ramal">Ramal</string>
+    <string name="serverRestBase">http://dondeestamibondi.online</string>
+    <string name="GET_UBICACION">http://dondeestamibondi.online/appPasajero/getUbicacionServicios.php</string>
+    <string name="GET_RECORRIDOS">http://dondeestamibondi.online/appPasajero/getRecorridos.php</string>
+    <string name="nav_destino">Alarma</string>
+    <string name="etiqueta">Etiqueta</string>
+    <string name="guardar_alarma">Guardar Alarma</string>
+    <string name="title_activity_warn">Warn</string>
+    <string name="warn_button">¡Enterado!</string>
+    <string name="warn_content">Estas llegando a tu parada</string>
+    <string name="notificar_a_patir_de">NOTIFICAR A PATIR DE</string>
+    <string name="comunicacion">Comunicacion</string>
+    <string name="social">Social</string>
+    <string name="facebook">Facebook</string>
+    <string name="instagram">Instagram</string>
     <string name="style_json">[
   {
     "featureType": "poi",
@@ -69,25 +93,16 @@
         <item>0</item>
         <item>-1</item>
     </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-
+    <string name="links_de_inter_s">Links de interés</string>
+    <string name="d_nde_est_mi_bondi">¿Dónde está mi bondi?</string>
     <string-array name="pref_time_titles">
         <item>3 minutos</item>
         <item>5 minutos</item>
         <item>10 minutos</item>
         <item>15 minutos</item>
+        <item>20 minutos</item>
+        <item>25 minutos</item>
+        <item>30 minutos</item>
     </string-array>
     <string-array name="pref_distance_titles">
         <item>Cerca (100 metros)</item>
@@ -99,6 +114,9 @@
         <item>5</item>
         <item>10</item>
         <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
     </string-array>
     <string-array name="pref_distance_value">
         <item>100</item>
@@ -140,33 +158,5 @@
     </string-array>
 
     <string-array name="multi_select_list_preference_default_value" />
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Alarmas</string>
-
-    <string name="pref_title_new_message_notifications">Activar notificaciones</string>
-
-    <string name="pref_title_ringtone">Tono de alarma</string>
-    <string name="pref_ringtone_silent">Silent</string>
-    <string name="pref_title_vibrate">Vibrar</string>
-    <string name="pref_title_distance">Distancia</string>
-    <string name="pref_title_time">Tiempo</string>
-    <string name="alarma_en_parada">Alarma en paradaCercanaAlPasajero</string>
-    <string name="id_linea">Linea</string>
-    <string name="ramal">Ramal</string>
-    <string name="serverRestBase">http://dondeestamibondi.online</string>
-    <string name="GET_UBICACION">http://dondeestamibondi.online/appPasajero/getUbicacionServicios.php</string>
-    <string name="GET_RECORRIDOS">http://dondeestamibondi.online/appPasajero/getRecorridos.php</string>
-    <string name="nav_destino">Alarma</string>
-    <string name="etiqueta">Etiqueta</string>
-    <string name="guardar_alarma">Guardar Alarma</string>
-
-    <string name="title_activity_warn">Warn</string>
-    <string name="warn_button">¡Enterado!</string>
-    <string name="warn_content">Estas llegando a tu parada</string>
-    <string name="notificar_a_patir_de">NOTIFICAR A PATIR DE</string>
-
 
 </resources>

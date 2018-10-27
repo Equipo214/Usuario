@@ -24,7 +24,6 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
 
 
     private Marker marker;
-    //  private ArrayList<String> paradasAccId;
     private HashMap<String, Marker> paradasCercanas;
     private HashMap<String, LatLng> paradasConAlarmas;
 
@@ -32,7 +31,6 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
                           HashMap<String, LatLng> paradasConAlarmas,
                           HashMap<String, Marker> paradasCercanas) {
         this.marker = marker;
-        //   this.paradasAccId = paradasAccId;
         this.paradasConAlarmas = paradasConAlarmas;
         this.paradasCercanas = paradasCercanas;
     }
@@ -60,19 +58,6 @@ public class DialogoParadaOnInfo extends AppCompatDialogFragment {
                     dialogoAlarma.show(getFragmentManager(), "Dialog NotificationBus");
                 }
             });
-
-        /*
-        SwitchCompat switchCompat = getActivity().findViewById(R.id.accesibilidad_Switch);
-        if (switchCompat.isChecked())
-            builder.setPositiveButton("Accesibilidad", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    DialogoAccesibilidad dialogoAccesibilidad = new DialogoAccesibilidad();
-                    dialogoAccesibilidad.setParams(marker, paradasAccId);
-                    dialogoAccesibilidad.show(getFragmentManager(), "Dialog Accesibilidad");
-                }
-            });
-        */
         return builder.create();
     }
 

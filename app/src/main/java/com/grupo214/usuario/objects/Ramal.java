@@ -110,4 +110,12 @@ public class Ramal {
     public int getColor() {
         return color;
     }
+
+    public void removeDibujo() {
+        this.dibujo = null;
+    }
+
+    public void newDibujo() {
+        this.dibujo = new Dibujo();
+    }
 }

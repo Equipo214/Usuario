@@ -114,10 +114,8 @@ public class LineasFragment extends Fragment {
         adapter = new LineasAdapter(getContext(), mLineas);
         expandableListView.setAdapter(adapter);
 
-
         // ¿ DONDE ESTA MI BONDI ?
         bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
-
 
         /*
         Button testNot = (Button) rootView.findViewById(R.id.bt_testNOt);
@@ -178,9 +176,9 @@ public class LineasFragment extends Fragment {
                 r.setChecked(!r.isCheck());
                 if (r.isCheck()) {
 
-                   if( mapFragment.cargarRamal(r) ){
-                       Toast.makeText(getContext(),"Hay recorrido alternativo para este ramal",Toast.LENGTH_LONG).show();
-                   }
+                    if( mapFragment.cargarRamal(r) ){
+                        Toast.makeText(getContext(),"Hay un recorrido alternativo para el ramal "+ r.getDescripcion(),Toast.LENGTH_LONG).show();
+                    }
                     ramales_seleccionados.put(r.getIdRamal(), r);
                 } else {
                     r.getDibujo().remove();
