@@ -35,10 +35,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Dot;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
@@ -55,6 +59,7 @@ import com.grupo214.usuario.objects.Recorrido;
 import com.grupo214.usuario.objects.Servicio;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -93,6 +98,12 @@ public class MapFragment extends Fragment {
     private GoogleMap.InfoWindowAdapter infoWindowAdapterParadas;
     private Boolean visible = false;
     private ImageView locationMarker;
+
+    private static final Dot DOT = new Dot();
+    private static final Gap GAP = new Gap(20);
+    private static final Dash DASH = new Dash(50);
+    private static final List<PatternItem> PATTERN_DOTTED = Arrays.asList(DOT, GAP);
+    private static final List<PatternItem> PATTERN_DASHED = Arrays.asList(DASH, GAP);
 
 
     @Override
@@ -227,24 +238,6 @@ public class MapFragment extends Fragment {
                     }
                 });
 
-       /*         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                    @Override
-                    public void onMarkerDragStart(Marker marker) {
-                        dondeEstaMiBondi.stop();
-                    }
-
-                    @Override
-                    public void onMarkerDrag(Marker marker) {
-
-                    }
-
-                    @Override
-                    public void onMarkerDragEnd(Marker marker) {
-                        puntoPartida = marker.getPosition();
-                        dondeEstaMiBondi(puntoPartida);
-                    }
-                });
-        */
                 final LatLng pos = getLastKnownLocation();
 
                 if (pos != null)
@@ -259,7 +252,6 @@ public class MapFragment extends Fragment {
                         .position(new LatLng(0, 0))
                         .title(TITLE_USER_MAKER)
                         .snippet("Haga click para cambiar la posición.")
-                        //.draggable(true)
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_user_map_demo))
                         .anchor(0.5f, 0.5f);
 
@@ -427,6 +419,7 @@ public class MapFragment extends Fragment {
     public boolean cargarRamal(Ramal r) {
         r.newDibujo();
         List<LatLng> points = PolyUtil.decode(r.getCode_recorrido());
+        camare(points.get(0));
         int salto = (points.size() / 10) > 1 ? 10 : 1;
         for (int i = 1; i < points.size() - 1; i = i + salto) {
             float headingRotation = (float) SphericalUtil.computeHeading(points.get(i), points.get(i + 1));
@@ -466,8 +459,9 @@ public class MapFragment extends Fragment {
             alternativo = true;
             Polyline pa = googleMap.addPolyline(new PolylineOptions()
                     .color(Color.RED)
-                    .addAll(
-                            PolyUtil.decode(recorridoAlterno.getRecorridoCompleto())));
+                    .pattern(PATTERN_DASHED)
+                    .addAll(PolyUtil.decode(recorridoAlterno.getRecorridoCompleto())));
+
             r.getDibujo().addPolylineAlternative(pa);
             for (Parada parada : recorridoAlterno.getParadas()) {
                 Marker mk = googleMap.addMarker(new MarkerOptions()
@@ -482,6 +476,7 @@ public class MapFragment extends Fragment {
                 mk.setTag(paradaAlarma);
             }
         }
+
         return alternativo;
     }
 

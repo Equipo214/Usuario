@@ -4,13 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ic_parada_background"
+    android:background="@color/white"
+    android:windowSoftInputMode="stateVisible|adjustPan"
     tools:context=".activities.CommentaryActivity">
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Enviar comentario"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -20,39 +34,41 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/textView7">
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Linea:" />
+            android:text="@string/linea" />
 
         <Spinner
             android:id="@+id/spinner_linea"
             style="@style/Widget.AppCompat.Spinner"
-            android:background="@android:drawable/dialog_holo_light_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="40dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:focusableInTouchMode="true" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ramal:" />
+            android:text="@string/ramal_com" />
 
         <Spinner
             android:id="@+id/spinner_ramal"
             style="@style/Widget.AppCompat.Spinner"
-            android:background="@android:drawable/dialog_holo_light_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="40dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:focusableInTouchMode="true" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Comentario:" />
+            android:text="@string/comentario_co" />
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -60,29 +76,35 @@
 
             <EditText
                 android:id="@+id/tx_comentario"
-                style="@style/Widget.AppCompat.EditText"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="@android:drawable/dialog_holo_light_frame"
+                android:layout_marginBottom="1dp"
+                android:background="@android:drawable/alert_light_frame"
                 android:gravity="top|start"
-                android:hint="Ingrese su comentario aqui..."
-                android:inputType="textLongMessage"
+                android:hint="@string/hint_com"
+                android:inputType="text|textMultiLine|textCapSentences"
+                android:lineSpacingExtra="8sp"
+                android:paddingBottom="30dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="10dp"
+                android:paddingTop="20dp"
                 android:shadowColor="@color/tabSelect"
+                android:singleLine="false"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="24sp"
+                android:typeface="normal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
-
     </LinearLayout>
-
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/bt_enviar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:background="@android:drawable/edit_text"

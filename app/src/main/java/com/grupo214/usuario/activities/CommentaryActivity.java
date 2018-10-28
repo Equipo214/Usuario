@@ -57,9 +57,9 @@ public class CommentaryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String comentario = tx_comentario.getText().toString();
                 if (idLinea != null && idRamal != null)
-                    if (spinner_linea.getSelectedItem().toString().equals("")) {
+                    if (idLinea.equals("-1")) {
                         Toast.makeText(getApplicationContext(), "Selecione una linea.", Toast.LENGTH_LONG).show();
-                    } else if (spinner_ramal.getSelectedItem().toString().equals("")) {
+                    } else if (idRamal.equals("-1")) {
                         Toast.makeText(getApplicationContext(), "Selecione un ramal.", Toast.LENGTH_LONG).show();
                     } else if (comentario.length() < CANT_CARACTERES) {
                         Toast.makeText(getApplicationContext(), "Ingresar un minimo de " + CANT_CARACTERES + " caracteres.", Toast.LENGTH_LONG).show();
@@ -92,7 +92,6 @@ public class CommentaryActivity extends AppCompatActivity {
                     lineas_id_nombres.remove("-1");
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }

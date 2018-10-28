@@ -95,6 +95,11 @@
     </string-array>
     <string name="links_de_inter_s">Links de interés</string>
     <string name="d_nde_est_mi_bondi">¿Dónde está mi bondi?</string>
+    <string name="linea">Linea:</string>
+    <string name="ramal_com">Ramal:</string>
+    <string name="comentario_co">Comentario:</string>
+    <string name="hint_com">Ingrese su comentario aqui...</string>
+    <string name="cargando_l_neas">Cargando líneas...</string>
     <string-array name="pref_time_titles">
         <item>3 minutos</item>
         <item>5 minutos</item>

@@ -35,7 +35,6 @@ import static com.grupo214.usuario.fragment.NotificacionFragment.EDITAR;
 
 public class CrearYEditarNotificacionActivity extends AppCompatActivity {
 
-    private static final int ZONE_HOUR = -3;
     public static String EXTRA_ID_ALARMA = "EXTRA_ID_ALARMA";
     SparseBooleanArray dias;
     EditText editText;
@@ -92,10 +91,10 @@ public class CrearYEditarNotificacionActivity extends AppCompatActivity {
             int horas = (int) ((milis / (1000 * 60 * 60)) % 24);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                timePicker.setHour(horas + ZONE_HOUR);
+                timePicker.setHour(horas );
                 timePicker.setMinute(minutos);
             } else {
-                timePicker.setCurrentHour(horas + ZONE_HOUR);
+                timePicker.setCurrentHour(horas );
                 timePicker.setCurrentMinute(minutos);
             }
 
@@ -132,11 +131,10 @@ public class CrearYEditarNotificacionActivity extends AppCompatActivity {
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
 
         alt_bld.setTitle("Salir");
-        alt_bld.setMessage("¿Desea salir? Los cambios no guardados se perderan");
+            alt_bld.setMessage("¿Desea salir? Los cambios no guardados se perderán");
         alt_bld.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //guardar();
                 CrearYEditarNotificacionActivity.super.onBackPressed();
                 dialog.dismiss();
             }
@@ -239,7 +237,6 @@ public class CrearYEditarNotificacionActivity extends AppCompatActivity {
             alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
             assert alarmMgr != null;
 
-            Log.d("AMN", "Creo esto: " + alarm_time);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 alarmMgr.setAlarmClock(new AlarmManager.AlarmClockInfo(alarm_time, pendingIntent), pendingIntent);
                 //    AlarmManager.AlarmClockInfo alarmClockInfo = alarmMgr.getNextAlarmClock();

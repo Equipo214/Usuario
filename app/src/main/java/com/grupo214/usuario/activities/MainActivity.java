@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.nav_facebook:
                 String facebookId = "fb://page/295459871051427";
-                String urlPage = "http://www.facebook.com/mypage";
+                String urlPage = "http://www.facebook.com/dondeestamibondi";
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookId)));
                 } catch (Exception e) {
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity
                     startActivity(likeIng);
                 } catch (ActivityNotFoundException e) {
                     startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("http://instagram.com/xxx")));
+                            Uri.parse("http://instagram.com/dondeestamibondi")));
                 }
                 break;
         }

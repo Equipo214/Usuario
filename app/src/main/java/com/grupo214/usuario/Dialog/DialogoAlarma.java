@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
 
-
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -45,8 +44,8 @@ public class DialogoAlarma extends AppCompatDialogFragment {
                                     .fromResource(R.mipmap.ic_parada_alarma_iv));
                             marker.setAlpha(1f);// ICONO ALARMA
                             paradasConAlarmas.put(marker.getId(), marker.getPosition());
-                            intent.putExtra("lat",marker.getPosition().latitude);
-                            intent.putExtra("lng",marker.getPosition().longitude);
+                            intent.putExtra("lat", marker.getPosition().latitude);
+                            intent.putExtra("lng", marker.getPosition().longitude);
                             getActivity().startService(intent);
                         } else {
                             marker.setIcon(BitmapDescriptorFactory
