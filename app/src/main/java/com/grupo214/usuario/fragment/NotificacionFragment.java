@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
-import com.grupo214.usuario.activities.CrearYEditarNotificacionActivity;
+import com.grupo214.usuario.activities.NotificacionManagerActivity;
 import com.grupo214.usuario.adapters.NotificacionesAdapter;
 import com.grupo214.usuario.adapters.NotificacionesNombreAdapter;
 import com.grupo214.usuario.objects.Alarm;
@@ -103,7 +103,7 @@ public final class NotificacionFragment extends Fragment  {
         bt_float.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), CrearYEditarNotificacionActivity.class).putExtra("modo", AGREGAR));
+                startActivity(new Intent(getContext(), NotificacionManagerActivity.class).putExtra("modo", AGREGAR));
             }
         });
 

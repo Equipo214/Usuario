@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.CheckBox;
@@ -33,7 +32,7 @@ import static com.grupo214.usuario.fragment.NotificacionFragment.AGREGAR;
 import static com.grupo214.usuario.fragment.NotificacionFragment.EDITAR;
 
 
-public class CrearYEditarNotificacionActivity extends AppCompatActivity {
+public class NotificacionManagerActivity extends AppCompatActivity {
 
     public static String EXTRA_ID_ALARMA = "EXTRA_ID_ALARMA";
     SparseBooleanArray dias;
@@ -86,15 +85,15 @@ public class CrearYEditarNotificacionActivity extends AppCompatActivity {
             sabado.setChecked(alarm.getDay(Alarm.SAT));
             domingo.setChecked(alarm.getDay(Alarm.SUN));
 
-            long milis = alarm.getTime();
+            long milis = alarm.getTime() - 10800000; // ajustar la zona horaria
             int minutos = (int) ((milis / (1000 * 60)) % 60);
             int horas = (int) ((milis / (1000 * 60 * 60)) % 24);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                timePicker.setHour(horas );
+                timePicker.setHour(horas);
                 timePicker.setMinute(minutos);
             } else {
-                timePicker.setCurrentHour(horas );
+                timePicker.setCurrentHour(horas);
                 timePicker.setCurrentMinute(minutos);
             }
 
@@ -135,7 +134,7 @@ public class CrearYEditarNotificacionActivity extends AppCompatActivity {
         alt_bld.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                CrearYEditarNotificacionActivity.super.onBackPressed();
+                NotificacionManagerActivity.super.onBackPressed();
                 dialog.dismiss();
             }
         });

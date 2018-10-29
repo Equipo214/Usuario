@@ -11,7 +11,8 @@
     android:key="notifications_new_message_vibrate"
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
 
-    <PreferenceCategory android:title="Alarma">
+    <PreferenceCategory
+        android:title="Alarma">
 
         <SwitchPreference
             android:defaultValue="true"
@@ -38,8 +39,7 @@
             android:entryValues="@array/pref_parameter_values"
             android:key="list_preference_parameter"
             android:summary="%s"
-                android:title="Tiempo o Distancia" />
-
+            android:title="Tiempo o Distancia" />
 
 
         <ListPreference
@@ -47,7 +47,7 @@
             android:dependency="list_preference_parameter"
             android:entries="@array/pref_distance_titles"
             android:entryValues="@array/pref_distance_value"
-                android:key="list_preference_distance"
+            android:key="list_preference_distance"
             android:summary="%s"
             android:title="@string/pref_title_distance" />
 

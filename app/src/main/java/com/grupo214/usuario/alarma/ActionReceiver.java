@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.grupo214.usuario.activities.CrearYEditarNotificacionActivity;
+import com.grupo214.usuario.activities.NotificacionManagerActivity;
 
-import static com.grupo214.usuario.activities.CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA;
+import static com.grupo214.usuario.activities.NotificacionManagerActivity.EXTRA_ID_ALARMA;
 
 public class ActionReceiver extends BroadcastReceiver {
 
@@ -23,7 +23,7 @@ public class ActionReceiver extends BroadcastReceiver {
         String posponer = intent.getStringExtra("posponer");
         String cancelar = intent.getStringExtra("cancelar");
 
-        int idAlarma = intent.getIntExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA, 0);
+        int idAlarma = intent.getIntExtra(NotificacionManagerActivity.EXTRA_ID_ALARMA, 0);
 
         if (aceptar != null && aceptar.equals("Aceptar")) {
             Toast.makeText(context, "¡Buen viaje!", Toast.LENGTH_LONG).show();

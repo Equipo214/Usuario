@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
     }
 
 
@@ -197,7 +196,6 @@ public class MainActivity extends AppCompatActivity
         lineasFragment = new LineasFragment();
         mapFragment = new MapFragment();
         lineasFragment.setStartMenuDialog(startMenuDialog);
-        //  lineasFragment.setMapFragment(mapFragment);
         lineasFragment.setLineas(mLineas, ramales_seleccionados);
         lineasFragment.setParams(mViewPager, mapFragment);
         mapFragment.setStartMenuDialog(startMenuDialog);
@@ -244,7 +242,6 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_ajustes:
-                mensaje("Ajustes");
                 startActivity(new Intent(this, SettingActivity.class));
                 break;
 
@@ -259,7 +256,6 @@ public class MainActivity extends AppCompatActivity
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookId)));
                 } catch (Exception e) {
                     Log.e(TAG, "Aplicación no instalada.");
-                    //Abre url de pagina.
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlPage)));
                 }
                 break;

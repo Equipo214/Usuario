@@ -18,7 +18,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
 import com.grupo214.usuario.R;
 import com.grupo214.usuario.Util.DatabaseAlarms;
-import com.grupo214.usuario.activities.CrearYEditarNotificacionActivity;
+import com.grupo214.usuario.activities.NotificacionManagerActivity;
 import com.grupo214.usuario.objects.Alarm;
 import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.grupo214.usuario.activities.CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA;
+import static com.grupo214.usuario.activities.NotificacionManagerActivity.EXTRA_ID_ALARMA;
 
 public class CheckPostsReceiver extends BroadcastReceiver {
 
@@ -86,7 +86,7 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         intent.putExtra("ramal", s.getRamal());
         intent.putExtra("tiempo", s.getTiempoEstimado());
         intent.putExtra("color", s.getIco());
-        intent.putExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA, idAlarma);
+        intent.putExtra(NotificacionManagerActivity.EXTRA_ID_ALARMA, idAlarma);
         context.startService(intent);
         timer.cancel();
         timer.schedule(new TimerTask() {
@@ -119,11 +119,11 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         this.context = context;
         timer = new Timer();
 
-        if (!intent.hasExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA)) {
+        if (!intent.hasExtra(NotificacionManagerActivity.EXTRA_ID_ALARMA)) {
             Toast.makeText(context, "¿Donde esta mi bondi? Nunca deberia aparecer esto.", Toast.LENGTH_LONG).show();
             return;
         }
-        int idAlarma = intent.getIntExtra(CrearYEditarNotificacionActivity.EXTRA_ID_ALARMA, 0);
+        int idAlarma = intent.getIntExtra(NotificacionManagerActivity.EXTRA_ID_ALARMA, 0);
         final Alarm alarm = DatabaseAlarms.getInstance(context).getAlarm(idAlarma);
         final HashMap<String, Ramal> ramales = new HashMap<>();
 

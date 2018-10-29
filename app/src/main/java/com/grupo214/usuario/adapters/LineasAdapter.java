@@ -35,8 +35,6 @@ public class LineasAdapter extends BaseExpandableListAdapter {
         this._listDataHeader = new ArrayList<>();
         this._listDataTextChild = new HashMap<>();
 
-//  ACA LLEGA NULL, DEBO VALIDAR PORQUE; DEBERIA LLEGAR SIEMPRE ALGO VALIDO A ESTA PARTE :(
-// creo que solo es cuando toco el truenito :3
         for (Linea l : mLineas) {
             this._listDataHeader.add(l);
             this._listDataTextChild.put(l.getLinea(), l.getRamales());
@@ -142,12 +140,6 @@ public class LineasAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
-    }
-
-    int getDisplayWidth(Context context) {
-        final Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay();
-        return display.getWidth();
     }
 
 }

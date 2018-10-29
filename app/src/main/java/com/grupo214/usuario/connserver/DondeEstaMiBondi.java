@@ -2,7 +2,6 @@ package com.grupo214.usuario.connserver;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -24,9 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.grupo214.usuario.R;
-import com.grupo214.usuario.activities.CrearYEditarNotificacionActivity;
 import com.grupo214.usuario.adapters.TiempoEstimadoAdapter;
-import com.grupo214.usuario.alarma.NotificationBus;
 import com.grupo214.usuario.objects.ParadaAlarma;
 import com.grupo214.usuario.objects.Ramal;
 import com.grupo214.usuario.objects.Servicio;

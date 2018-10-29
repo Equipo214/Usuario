@@ -88,7 +88,6 @@ public class MapFragment extends Fragment {
     private GoogleMap googleMap;
     private ArrayList<Linea> mLinea;
     private Marker startMakerUser;
-    private boolean selecionar = false; // por si las moscas.
     private HashMap<String, Marker> markerCercanos;
     private HashMap<String, ParadaAlarma> paradasCercanas;
     private ListView lv_listTiempoEstimado;
@@ -102,6 +101,7 @@ public class MapFragment extends Fragment {
     private static final Dot DOT = new Dot();
     private static final Gap GAP = new Gap(20);
     private static final Dash DASH = new Dash(50);
+
     private static final List<PatternItem> PATTERN_DOTTED = Arrays.asList(DOT, GAP);
     private static final List<PatternItem> PATTERN_DASHED = Arrays.asList(DASH, GAP);
 
@@ -188,13 +188,10 @@ public class MapFragment extends Fragment {
                     public boolean onMarkerClick(final Marker marker) {
                         if (marker.getTitle() == null)
                             return true;
-
-                        if (marker.getTitle().contains("Parada")) {
-                            return false; // quizas mueva todo aca() AHRE LOCO CUANDO ESCRIBO "TODO" CAMBIA DE COLOR
-                        }
-                        if (marker.getTitle().contains(TITLE_USER_MAKER)) {
+                        if (marker.getTitle().contains("Parada"))
                             return false;
-                        }
+                        if (marker.getTitle().contains(TITLE_USER_MAKER))
+                            return false;
                         return false;
                     }
                 });
@@ -275,8 +272,8 @@ public class MapFragment extends Fragment {
                 //loadRoutes();
                 googleMap.setInfoWindowAdapter(infoWindowAdapterParadas);
                 updateDrawingRoutes();
-
                 dialogDondeEstaMiBondi();
+
                 switchAcc = (SwitchCompat) getActivity().findViewById(R.id.accesibilidad_Switch);
 
                 switchAcc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -294,7 +291,6 @@ public class MapFragment extends Fragment {
 
     private void actulizarMarkers() {
         float zoom = googleMap.getCameraPosition().zoom;
-
         if (!visible && zoom < ZOOM) {
             for (Linea l : mLinea) {
                 for (Ramal r : l.getRamales()) {
@@ -315,15 +311,16 @@ public class MapFragment extends Fragment {
             }
             visible = !visible;
         }
-
     }
 
     public void dondeEstaMiBondi(LatLng latLng) {
 
         for (Ramal r : ramalesSeleccionados.values()) {
-            if (markerCercanos.get(r.getIdRamal()) != null)
-                markerCercanos.get(r.getIdRamal())
+            if (markerCercanos.get(r.getIdRamal()) != null){
+                 markerCercanos.get(r.getIdRamal())
                         .setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_parada_bondi));
+
+            }
         }
         actulizarMarkers();
         markerCercanos.clear();
@@ -340,13 +337,10 @@ public class MapFragment extends Fragment {
             markerCercanos.put(r.getIdRamal(), mk);
             paradasCercanas.put(r.getIdRamal(), ((ParadaAlarma) mk.getTag()));
             mk.setVisible(true);
-
-
-            Log.e(TAG, mk.getId());
             String paradaId = ((ParadaAlarma) mk.getTag()).getId_parada();
             r.setParadaCercana(paradaId);
             mk.setIcon(icoMakerParadaCercana);
-            mk.showInfoWindow();
+            mk.setZIndex(1.0f);
             if (paradasConAlarmas.get(mk.getId()) != null)
                 paradasConAlarmas.remove(mk.getId());
         }
@@ -365,7 +359,7 @@ public class MapFragment extends Fragment {
 
     void mensaje(String msj) {
         Toast toast = Toast.makeText(getContext(), msj, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.setGravity(Gravity.CENTER, 0, 30);
         toast.show();
     }
 
@@ -476,7 +470,6 @@ public class MapFragment extends Fragment {
                 mk.setTag(paradaAlarma);
             }
         }
-
         return alternativo;
     }
 
@@ -572,8 +565,10 @@ public class MapFragment extends Fragment {
         }
         if (bestLocation != null)
             return new LatLng(bestLocation.getLatitude(), bestLocation.getLongitude());
-        else
+        else{
+            mensaje("Error de señal de GPS, intente de nuevo");
             return null;
+        }
     }
 
     private void requerirGPS() {

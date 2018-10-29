@@ -50,29 +50,27 @@
             app:layout_constraintStart_toStartOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ListView
-            android:id="@+id/listaTiempoEstimado"
-            style="@style/Widget.AppCompat.ListView.DropDown"
+      <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@color/tabUnSelect"
-            android:dividerHeight="1dp"
-            android:headerDividersEnabled="true"
-            android:scrollbars="vertical" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tx_servicio_back"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/common_google_signin_btn_text_light_disabled"
-            android:gravity="center"
-            android:text="Los Servicios apareceran aquí." />
-    </RelativeLayout>
+            <ListView
+                android:id="@+id/listaTiempoEstimado"
+                style="@style/Widget.AppCompat.ListView.DropDown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@color/tabUnSelect"
+                android:dividerHeight="1dp"
+                android:headerDividersEnabled="true"
+                android:scrollbars="vertical" />
 
+            <TextView
+                android:id="@+id/tx_servicio_back"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/common_google_signin_btn_text_light_disabled"
+                android:gravity="center"
+                android:text="Los Servicios apareceran aquí." />
+        </RelativeLayout>
 
 </LinearLayout>
