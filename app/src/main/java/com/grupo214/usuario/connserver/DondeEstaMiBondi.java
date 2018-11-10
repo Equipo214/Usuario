@@ -178,6 +178,7 @@ public class DondeEstaMiBondi implements Runnable {
                                             .position(destino)
                                             .visible(true)
                                             .icon(BitmapDescriptorFactory.fromResource(resource)));
+                                    mk.setZIndex(2.0f);
                                     servicio = new Servicio(idServicio, fecha, r.getIdRamal(), r.getLinea(), r.getDescripcion(), mk, resource, minutos);
                                     serviciosActivos.put(idServicio, servicio);
                                   //  ramales_seleccionados.get(idRamal).addServicio(idServicio,mk);
@@ -273,7 +274,6 @@ public class DondeEstaMiBondi implements Runnable {
 
     @Override
     public void run() {
-
         timer.schedule(obtenerUbicacionTask, 100, TIME_OBTENER_UBICACIONES);
         if (switchAcc.isChecked()) {
             timer.schedule(accTask, 10000);
@@ -285,9 +285,11 @@ public class DondeEstaMiBondi implements Runnable {
         timer.cancel(); // ver si funca esto;
         for (Servicio s : serviciosActivos.values())
             s.getMk().remove();
-
         serviciosActivos.clear();
         tiempoEstimadoAdapter.clear();
+        timer = null;
+        timer = new Timer();
+        inicializarTasks();
     }
 
     public void reiniciar() {

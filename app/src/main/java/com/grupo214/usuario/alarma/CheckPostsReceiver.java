@@ -89,7 +89,9 @@ public class CheckPostsReceiver extends BroadcastReceiver {
         intent.putExtra(NotificacionManagerActivity.EXTRA_ID_ALARMA, idAlarma);
         context.startService(intent);
         timer.cancel();
-        timer.schedule(new TimerTask() {
+        timer.purge();
+        timer = null;
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 clearNotification(context);

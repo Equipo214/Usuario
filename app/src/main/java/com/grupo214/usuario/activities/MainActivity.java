@@ -175,14 +175,33 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setItemIconTintList(null);
-        tabLayout.setOnTabClickListener(new SmartTabLayout.OnTabClickListener() {
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onTabClicked(int position) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (position == TAB_MAPA) {
-                    if (mapFragment.isDondeEstaMiBondiActive()) {
+                    if (lineasFragment.isChange() && mapFragment.isDondeEstaMiBondiActive()) {
                         mapFragment.dondeEstaMiBondi(puntoPartida);
                     }
+                } else if (position == TAB_LINEA) {
+                    lineasFragment.setChange(false);
                 }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == TAB_MAPA) {
+                    if (lineasFragment.isChange() && mapFragment.isDondeEstaMiBondiActive()) {
+                        mapFragment.dondeEstaMiBondi(puntoPartida);
+                    }
+                } else if (position == TAB_LINEA) {
+                    lineasFragment.setChange(false);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
     }

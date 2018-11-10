@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,9 +46,12 @@ public class LineasFragment extends Fragment {
     private ExpandableListView.OnChildClickListener onChildClickListener;
     private ExpandableListView.OnGroupExpandListener onGroupExpandListener;
     private View.OnClickListener onClickListener;
+    private View.OnLongClickListener onLongClickListener;
+    private boolean afterLongClick = false;
+    private boolean change = false;
+
 
     public LineasFragment() {
-
         onChildClickListener = new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -65,16 +69,14 @@ public class LineasFragment extends Fragment {
                     r.getDibujo().remove();
                     ramales_seleccionados.remove(r.getIdRamal());
                 }
-
-                Log.d(TAG, r.toString());
                 checkBox.setChecked(r.isCheck());
                 DatabaseAlarms.getInstance(getContext()).updateRamal(r.getIdRamal(), r.isCheck());
-
+                change = true;
                 return false;
             }
         };
 
-        onGroupExpandListener  = new ExpandableListView.OnGroupExpandListener() {
+        onGroupExpandListener = new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
                 for (int i = 0; i < mLineas.size(); i++)
@@ -86,6 +88,10 @@ public class LineasFragment extends Fragment {
         onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (afterLongClick){
+                    afterLongClick = false;
+                    return;
+                }
                 // setTab Change Tab algo con tab
                 if (ramales_seleccionados.size() == 0) {
                     Toast.makeText(getContext(), "Seleciona por lo menos un ramal.", Toast.LENGTH_SHORT).show();
@@ -96,6 +102,24 @@ public class LineasFragment extends Fragment {
                     mapFragment.dondeEstaMiBondi(MainActivity.puntoPartida);
                     tabViewPager.setCurrentItem(MainActivity.TAB_MAPA);
                 }
+            }
+        };
+
+        onLongClickListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mapFragment.isDondeEstaMiBondiActive()) {
+                    MainActivity.puntoPartida = null;
+                    mapFragment.dondeEstaMiBondiStop();
+
+                    Toast toast = Toast.makeText(getContext(),"Se dejo de buscar bondis", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+
+                    afterLongClick = true;
+                    mapFragment.setDondeEstaMiBondiActive(false);
+                }
+                return false;
             }
         };
 
@@ -110,6 +134,7 @@ public class LineasFragment extends Fragment {
         expandableListView.setAdapter(adapter);
         bt_dondeEstaMiBondi = (Button) rootView.findViewById(R.id.bt_dondeEstaMiBondi);
         bt_dondeEstaMiBondi.setOnClickListener(onClickListener);
+        bt_dondeEstaMiBondi.setOnLongClickListener(onLongClickListener);
         expandableListView.setOnGroupExpandListener(onGroupExpandListener);
         expandableListView.setOnChildClickListener(onChildClickListener);
         return rootView;
@@ -145,6 +170,13 @@ public class LineasFragment extends Fragment {
                 }
     }
 
+    public void setChange(boolean change) {
+        this.change = change;
+    }
+
+    public boolean isChange() {
+        return change;
+    }
         /*
         Button testNot = (Button) rootView.findViewById(R.id.bt_testNOt);
         testNot.setOnClickListener(new View.OnClickListener() {
@@ -157,5 +189,4 @@ public class LineasFragment extends Fragment {
                 getContext().startService(i);
             }
         });*/
-
 }
